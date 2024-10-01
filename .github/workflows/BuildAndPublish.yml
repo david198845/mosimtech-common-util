@@ -50,8 +50,10 @@ jobs:
 
       - name: Upload JAR to Release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.RELEASE_UPLOAD_URL }}
           asset_path: build/libs/*.jar
           asset_name: common-util-${{ steps.get-version.outputs.VERSION }}.jar
           asset_content_type: application/java-archive
