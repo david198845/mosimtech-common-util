@@ -36,14 +36,18 @@ jobs:
         id: get-version
         run: echo "::set-output name=VERSION::$(grep version build.gradle | head -1 | awk -F= '{print $2}' | tr -d ' ')"
 
-      - name: Create GitHub Release
+      - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: comnoco/create-release-action@v2.0.5
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: v${{ steps.get-version.outputs.VERSION }}
-          release_name: Release ${{ steps.get-version.outputs.VERSION }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
           draft: false
           prerelease: false
 
