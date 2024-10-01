@@ -49,10 +49,10 @@ jobs:
       - name: Debug
         id: Debug
         run: |
-          echo "${{ steps.create_release.RELEASE_UPLOAD_URL }}" 
-          echo "${{ steps.create_release.RELEASE_HTML_URL}}" 
-          echo "${{ steps.create_release.RELEASE_ID}}" 
-          echo "${{ steps.create_release.RELEASE_TAG}}" 
+          echo "${{ env.RELEASE_UPLOAD_URL }}" 
+          echo "${{ env.RELEASE_HTML_URL}}" 
+          echo "${{ env.RELEASE_ID}}" 
+          echo "${{ env.RELEASE_TAG}}" 
 
 
       - name: Upload JAR to Release
