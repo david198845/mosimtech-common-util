@@ -42,7 +42,7 @@ jobs:
         with:
           version-source: file
           version-file: ./build.gradle.kts
-          version-file-extraction-pattern: '(?<=version=).+'
+          version-file-extraction-pattern: 'version\s*=\s*\"(.*)\"'
 
       - name: Create Release
         id: create_release
