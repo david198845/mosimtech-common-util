@@ -78,3 +78,5 @@ jobs:
           asset_path: ./build/libs/common-util-${{ steps.get_version.outputs.VERSION }}.jar
           asset_name: common-util-${{ steps.get_version.outputs.VERSION }}.jar
           asset_content_type: application/java-archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Token für Upload-Schritt
