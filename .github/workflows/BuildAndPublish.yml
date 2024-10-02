@@ -13,11 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.2.0
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4.4.0
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: ''
 
       - name: Give Gradlew execute permission
         run: chmod +x ./gradlew
@@ -40,34 +40,34 @@ jobs:
         run: |
           VERSION=$(grep "^version =" build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
           echo "VERSION=${VERSION}"
-          echo "::set-output name=VERSION::${VERSION}"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Get last commit message for changelog
         id: get_commit_message
         run: |
           COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}"
-          echo "::set-output name=COMMIT_MESSAGE::${COMMIT_MESSAGE}"
+          echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}" >> $GITHUB_ENV
 
       - name: Determine if this is a draft release (SNAPSHOT version)
         id: check_snapshot
         run: |
-          if [[ "${{ steps.get_version.outputs.VERSION }}" == *"SNAPSHOT"* ]]; then
+          if [[ "${VERSION}" == *"SNAPSHOT"* ]]; then
             echo "IS_DRAFT=true"
           else
             echo "IS_DRAFT=false"
           fi
-          echo "::set-output name=IS_DRAFT::${IS_DRAFT}"
+          echo "IS_DRAFT=${IS_DRAFT}" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: ${{ steps.get_version.outputs.VERSION }}
-          body: ${{ steps.get_commit_message.outputs.COMMIT_MESSAGE }}
-          draft: ${{ steps.check_snapshot.outputs.IS_DRAFT }}
-          prerelease: false
+          tag_name: v${{ env.VERSION }}
+          release_name: v${{ env.VERSION }}
+          body: ${{ env.COMMIT_MESSAGE }}
+          draft: ${{ env.IS_DRAFT }}
+          prerelease: ${{ env.IS_DRAFT }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -75,8 +75,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/common-util-${{ steps.get_version.outputs.VERSION }}.jar
-          asset_name: common-util-${{ steps.get_version.outputs.VERSION }}.jar
+          asset_path: ./build/libs/your-app-name-${{ env.VERSION }}.jar
+          asset_name: your-app-name-${{ env.VERSION }}.jar
           asset_content_type: application/java-archive
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Token für Upload-Schritt
