@@ -79,3 +79,5 @@ jobs:
           asset_path: ./build/libs/common-util-${{ env.VERSION }}.jar
           asset_name: common-util-${{ env.VERSION }}.jar
           asset_content_type: application/java-archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
