@@ -1,17 +1,16 @@
-name: Build and Publish
+name: Build and Release Jar
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
-      
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up JDK 21
@@ -19,43 +18,42 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}
 
       - name: Build with Gradle
         run: ./gradlew clean build
 
-      - name: Create release directory
-        run: mkdir -p release
+      - name: Extract version from build.gradle.kts
+        id: get_version
+        run: |
+          VERSION=$(grep "^version" build.gradle.kts | cut -d'\"' -f2)
+          echo "VERSION=${VERSION}"
+          echo "::set-output name=VERSION::${VERSION}"
 
-      - name: Copy JAR to release directory
-        run: cp build/libs/*.jar release/
-      - name: Changelog
-        uses: scottbrenner/generate-changelog-action@master
-        id: Changelog
-        env:
-          REPO: ${{ github.repository }}
-      - name: Generate versions
-        uses: HardNorth/github-version-generate@v1.4.0
-        with:
-          version-source: file
-          version-file: ./build.gradle.kts
-          version-file-extraction-pattern: 'version\s*=\s*\"(.*)\"'
-
-      - name: Create Release
+      - name: Create GitHub Release
         id: create_release
-        uses: "ergebnis/.github/actions/github/release/create@1.8.0"
+        uses: actions/create-release@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-
-      - name: Upload JAR to Release
-        uses: actions/upload-release-asset@v1
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          release_name: v${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Jar to Release
+        uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ env.RELEASE_UPLOAD_URL }}
-          asset_path: build/libs/common-util-${{ env.RELEASE_VERSION }}.jar
-          asset_name: common-util-${{ env.RELEASE_VERSION }}.jar
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/libs/your-app-name-${{ steps.get_version.outputs.VERSION }}.jar
+          asset_name: your-app-name-${{ steps.get_version.outputs.VERSION }}.jar
           asset_content_type: application/java-archive
