@@ -45,7 +45,8 @@ jobs:
       - name: Get last commit message for changelog
         id: get_commit_message
         run: |
-          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          # Extrahiere die Commit-Nachricht und entferne Zeilenumbrüche
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B | tr -d '\n' | sed 's/"/\\"/g')
           echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}"
           echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}" >> $GITHUB_ENV
 
