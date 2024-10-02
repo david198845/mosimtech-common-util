@@ -38,9 +38,9 @@ jobs:
       - name: Extract version from build.gradle.kts
         id: get_version
         run: |
-          VERSION=$(sed -n 's/^version = "\([^"]*\)"/\1/p' build.gradle.kts)
+          VERSION=$(grep "^version =" build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
           echo "VERSION=${VERSION}"
-          echo "::set-output name=VERSION::${VERSION}"N}"
+          echo "::set-output name=VERSION::${VERSION}"
 
       - name: Create GitHub Release
         id: create_release
