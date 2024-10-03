@@ -1,11 +1,13 @@
-package de.modulix.mosimtech.model
+package de.modulix.mosimtech.model.urn
+
+import de.modulix.mosimtech.model.namespace.Namespace
 
 /**
  * Represents a Uniform Resource Name (URN) with a namespace, a namespace-specific string (NSS),
  * and an optional namespace identifier (NID).
  *
  * A URN (Uniform Resource Name) is an URI (Uniform Resource Identifier) that uniquely and permanently identifies a resource.
- * This class provides the structure and essential parts of an URN.
+ * This interface provides the structure and essential parts of an URN.
  *
  * @property namespace The namespace of the URN. This is a higher-level category or domain that helps
  *                     uniquely identify the resource. Example: "urn:isbn".
@@ -20,45 +22,28 @@ package de.modulix.mosimtech.model
  * - Namespace-specific string (NSS): "978-3-16-148410-0"
  * - Optional namespace identifier (NID): not present in this example
  */
-data class Urn(
-    val namespace: String,
-    val nss: String,
-    val nid: String? = null
-) {
+interface UrnDefinition {
+    /**
+     * The namespace of the URN.
+     */
+    val namespace: Namespace
+
+    /**
+     * The namespace-specific string of the URN.
+     */
+    val nss: String
+
+    /**
+     * The optional namespace identifier of the URN.
+     */
+    val nid: String?
+
     /**
      * Converts the URN components to a string representation.
      *
      * @return A string in the format "urn:<namespace>:<nss>" if the NID is not specified;
      *         otherwise, the format will be "urn:<namespace>:<nss>:<nss>".
      */
-    fun toUrnString(): String {
-        return if (nid != null) "urn:$namespace:$nss"
-        else "urn:$namespace:$nss:$nss"
-    }
+    fun toUrnString(): String
 
-    companion object {
-        /**
-         * Parses a string representation of a URN (Uniform Resource Name) and returns an instance of the Urn class.
-         *
-         * @param urnString The string representation of the URN to be parsed.
-         * @return An instance of the Urn class if the string can be successfully parsed, or null if the format is invalid.
-         */
-        fun parse(urnString: String): Urn? {
-            val parts = urnString.split(":", limit = 4)
-            if (parts.size < 3 || parts[0] != "urn") {
-                return null
-            }
-
-            // Handle cases urn:keycloak:user:123-123-123 and urn:user:132-123-465
-            return if (parts.size == 4) {
-                Urn(
-                    namespace = parts[1],
-                    nid = parts[2],
-                    nss = parts[3]
-                )
-            } else {
-                Urn(namespace = parts[1], nss = parts[2])
-            }
-        }
-    }
 }

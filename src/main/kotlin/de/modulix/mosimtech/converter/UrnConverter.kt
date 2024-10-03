@@ -1,6 +1,6 @@
 package de.modulix.mosimtech.converter
 
-import de.modulix.mosimtech.model.Urn
+import de.modulix.mosimtech.model.urn.Urn
 
 
 /**

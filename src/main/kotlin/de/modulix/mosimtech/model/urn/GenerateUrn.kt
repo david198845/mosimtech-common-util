@@ -1,4 +1,4 @@
-package de.modulix.mosimtech.identifier
+package de.modulix.mosimtech.model.urn
 
 
 /**
@@ -6,7 +6,7 @@ package de.modulix.mosimtech.identifier
  *
  * This annotation is typically used on fields where a unique identifier (URN) needs to be generated
  * automatically before persisting the object. The presence of this annotation on a field indicates
- * that the system should generate a URN for that field.
+ * that the system should generate an URN for that field.
  */
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)

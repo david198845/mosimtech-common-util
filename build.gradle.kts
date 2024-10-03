@@ -4,13 +4,17 @@ plugins {
 }
 
 group = "de.modulix.mosimtech"
-version = "1.0.3-SNAPSHOT"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.17.2")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0")
+    implementation("org.slf4j:slf4j-api:2.0.16")
     testImplementation(kotlin("test"))
 }
 

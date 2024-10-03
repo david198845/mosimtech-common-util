@@ -1,26 +1,28 @@
 package de.modulix.mosimtech.model
 
-import de.modulix.mosimtech.identifier.GenerateUrn
+import de.modulix.mosimtech.model.urn.GenerateUrn
 import de.modulix.mosimtech.identifier.IdGenerator
+import de.modulix.mosimtech.model.urn.Urn
 import java.time.ZonedDateTime
 
+
 /**
- * BaseModel serves as a foundational class providing common properties and functionalities
- * for all models that extend it. It facilitates tracking creation and modification details,
- * and it ensures unique identification of instances.
+ * BaseModel serves as a base class for entities that require common properties such as URN-based ID,
+ * creation date, last modified date, and information about the creator and last modifier.
  *
- * @property id Unique identifier for the model, can be null.
- * @property creationDate Date when the model was created.
- * @property lastModifiedDate Date when the model was last modified, can be null.
- * @property lastModifiedBy User who last modified the model, can be null.
- * @property createdBy User who created the model.
+ * @property id The unique identifier for the entity, represented as a URN. This is nullable and can be
+ * generated automatically if annotated with `@GenerateUrn`.
+ * @property creationDate The date and time when the entity was created.
+ * @property lastModifiedDate The date and time when the entity was last modified, nullable.
+ * @property lastModifiedBy The URN of the user or system that last modified the entity, nullable.
+ * @property createdBy The URN of the user or system that created the entity.
  */
 open class BaseModel(
-    val id: String? = null,
-    val creationDate: ZonedDateTime,
-    val lastModifiedDate: ZonedDateTime? = null,
-    val lastModifiedBy: Urn? = null,
-    val createdBy: Urn
+    open val id: Urn? = null,
+    open val creationDate: ZonedDateTime,
+    open val lastModifiedDate: ZonedDateTime? = null,
+    open val lastModifiedBy: Urn? = null,
+    open val createdBy: Urn
     ) {
 
     /**
@@ -92,7 +94,7 @@ open class BaseModel(
      * @return a new instance of BaseModel with the specified properties.
      */
     open fun copy(
-        id: String? = this.id,
+        id: Urn? = this.id,
         creationDate: ZonedDateTime = this.creationDate,
         lastModifiedDate: ZonedDateTime? = this.lastModifiedDate,
         lastModifiedBy: Urn? = this.lastModifiedBy,
