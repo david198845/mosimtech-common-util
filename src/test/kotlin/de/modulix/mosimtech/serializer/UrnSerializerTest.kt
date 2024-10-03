@@ -30,7 +30,7 @@ class UrnSerializerTest {
         serializer.serialize(urn, generator, null)
         generator.close()
 
-        Assertions.assertEquals("\"urn:test:abc:def\"", writer.toString())
+        Assertions.assertEquals("\"urn:Test:def:abc\"", writer.toString())
     }
 
     /**
@@ -57,6 +57,6 @@ class UrnSerializerTest {
             serializer.serialize(urnWithoutNid, generatorWithoutNid, null)
             generatorWithoutNid.flush() // Ensure all content is written to the StringWriter
         }
-        Assertions.assertEquals("\"urn:example:abc\"", stringWriter.toString())
+        Assertions.assertEquals("\"urn:Test:abc\"", stringWriter.toString())
     }
 }
