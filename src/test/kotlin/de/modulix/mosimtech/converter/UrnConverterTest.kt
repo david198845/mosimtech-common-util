@@ -1,49 +1,61 @@
 package de.modulix.mosimtech.converter
 
-import de.modulix.mosimtech.model.namespace.DefaultNamespace
 import de.modulix.mosimtech.model.urn.Urn
-import org.junit.jupiter.api.Assertions
+import de.modulix.mosimtech.namespace.TestNamespace
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-
-/**
-
- * `UrnConverterTest` is to test converting `Urn` values to `String` (to be persisted in database)
- * and converting `String` values back to `Urn` (when reading from database).
- *
- * Each test focuses on testing the `convertToEntityAttribute` method in the `UrnConverter` class.
-
- */
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 class UrnConverterTest {
+
     private val urnConverter = object : UrnConverter() {}
 
+    private val testNamespace = TestNamespace.Test
+
     @Test
-    fun testValidUrnToEntityConversion() {
-        val testUrn = Urn(
-            namespace = DefaultNamespace.Undefined,
-            nss = "testString",
-            nid = "TestId"
-        )
-        checkUrnConversion(testUrn)
+    fun `convertToEntityAttribute should parse URN string correctly`() {
+
+        val urnMock: Urn = mock {
+            on { namespace } doReturn testNamespace
+            on { nss } doReturn "testNid"
+            on { nid } doReturn setOf("test")
+            on { toUrnString() } doReturn "urn:test:test:testNid"
+        }
+
+        val dbData = "urn:test:test:testNid"
+
+        Urn.registerNamespace(testNamespace)
+
+        val urn = urnConverter.convertToEntityAttribute(dbData)
+
+        assertEquals(urnMock.namespace, urn?.namespace)
+        assertEquals(urnMock.nss, urn?.nss)
+        assertEquals(urnMock.nid, urn?.nid)
     }
 
     @Test
-    fun testNullToEntityConversion() {
-        val urnFromDatabaseData = urnConverter.convertToEntityAttribute(null)
-        Assertions.assertNull(urnFromDatabaseData)
+    fun `convertToEntityAttribute should return null when dbData is null`() {
+        val urn = urnConverter.convertToEntityAttribute(null)
+        assertNull(urn)
     }
 
     @Test
-    fun testInvalidUrnStringToEntityConversion() {
-        val invalidUrn = "invalidUrnString"
-        val result = urnConverter.convertToEntityAttribute(invalidUrn)
-        Assertions.assertNull(result, "Expected the result to be null for an invalid URN string")
+    fun `convertToDatabaseColumn should convert URN to string correctly`() {
+        val urnMock: Urn = mock {
+            on { toUrnString() } doReturn "urn:test:test:testNid"
+        }
+
+        val result = urnConverter.convertToDatabaseColumn(urnMock)
+
+        assertEquals("urn:test:test:testNid", result)
     }
 
-    private fun checkUrnConversion(testUrn: Urn) {
-        val urnAsDatabaseData = urnConverter.convertToDatabaseColumn(testUrn)
-        Assertions.assertEquals(urnAsDatabaseData,"urn:undefined:TestId:testString")
-        val urnFromDatabaseData = urnConverter.convertToEntityAttribute(urnAsDatabaseData)
-        Assertions.assertEquals(testUrn, urnFromDatabaseData)
+    @Test
+    fun `convertToDatabaseColumn should return null when attribute is null`() {
+        val result = urnConverter.convertToDatabaseColumn(null)
+
+        assertNull(result)
     }
 }

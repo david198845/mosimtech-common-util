@@ -36,7 +36,7 @@ interface UrnDefinition {
     /**
      * The optional namespace identifier of the URN.
      */
-    val nid: String?
+    val nid: Set<String>?
 
     /**
      * Converts the URN components to a string representation.

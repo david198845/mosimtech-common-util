@@ -16,7 +16,7 @@ internal class UrnDeserializerTest {
 
     @Test
     fun testDeserialize_withValidUrnString() {
-        val input = "{ \"urn\" : \"urn:Test:nss\" }"
+        val input = "{ \"urn\" : \"urn:test:nss\" }"
         Urn.registerNamespace(TestNamespace.Test)
         val parser = jsonFactory.createParser(input)
         parser.nextToken()
@@ -26,13 +26,13 @@ internal class UrnDeserializerTest {
         val result = deserializer.deserialize(parser, null)
 
         assertNotNull(result)
-        assertEquals("Test", result.namespace.identifier)
+        assertEquals("test", result.namespace.identifier)
         assertEquals("nss", result.nss)
     }
 
     @Test
     fun testDeserialize_withIncompleteUrnString() {
-        val input = "{ \"urn\" : \"urn:Test:\" }"
+        val input = "{ \"urn\" : \"urn:test:\" }"
         Urn.registerNamespace(TestNamespace.Test)
         val parser = jsonFactory.createParser(input)
         parser.nextToken()
@@ -41,7 +41,7 @@ internal class UrnDeserializerTest {
         val deserializer = UrnDeserializer()
         val result = deserializer.deserialize(parser, null)
         assertNotNull(result)
-        assertEquals("Test", result.namespace.identifier)
+        assertEquals("test", result.namespace.identifier)
         assertEquals("", result.nss)
     }
 

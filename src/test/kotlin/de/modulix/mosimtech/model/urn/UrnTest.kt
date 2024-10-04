@@ -1,65 +1,81 @@
 package de.modulix.mosimtech.model.urn
 
-import de.modulix.mosimtech.model.namespace.Namespace
+import de.modulix.mosimtech.namespace.TestNamespace
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class UrnTest {
 
-    private data class TestNamespace(override val identifier: String) : Namespace
 
     @Test
-    fun toUrnStringWithoutNid() {
-        val testUrn = Urn(TestNamespace("testspace"), "nss")
-
-        val urnString = testUrn.toUrnString()
-
-        assertEquals("urn:testspace:nss", urnString)
+    fun `Test Urn creation and conversion to string without nid`() {
+        val urn = Urn(TestNamespace.Test, "nss")
+        val urnString = urn.toUrnString()
+        assertEquals("urn:test:nss", urnString)
     }
 
     @Test
-    fun toUrnStringWithNid() {
-        val testUrn = Urn(TestNamespace("testspace"), "nss", "nid")
-
-        val urnString = testUrn.toUrnString()
-
-        assertEquals("urn:testspace:nid:nss", urnString)
+    fun `Test Urn creation and conversion to string with nid`() {
+        val urn = Urn(TestNamespace.Test, "nss", setOf("nid1", "nid2"))
+        val urnString = urn.toUrnString()
+        assertEquals("urn:test:nid1:nid2:nss", urnString)
     }
 
     @Test
-    fun registerNamespaceTest() {
-        val testNamespace = TestNamespace("newNamespace")
-        Urn.registerNamespace(testNamespace)
-        assert(Urn.knownNamespaces.contains(testNamespace))
+    fun `Test namespace registration and parsing valid urn string with nid`() {
+        Urn.registerNamespace(TestNamespace.Test)
+        val urn = Urn.parse("urn:test:nid1:nid2:nss")
+        assertNotNull(urn)
+        assertEquals(TestNamespace.Test, urn?.namespace)
+        assertEquals("nss", urn?.nss)
+        assertEquals(setOf("nid1", "nid2"), urn?.nid)
     }
 
     @Test
-    fun parseWithNid() {
-        val testNamespace = TestNamespace("parseSpace")
-        Urn.registerNamespace(testNamespace)
-        val testString = "urn:parseSpace:nid:nss"
-
-        val parsedUrn = Urn.parse(testString)
-
-        assertEquals(Urn(testNamespace, "nss", "nid"), parsedUrn)
+    fun `Test namespace registration and parsing valid urn string without nid`() {
+        Urn.registerNamespace(TestNamespace.Test)
+        val urn = Urn.parse("urn:test:nss")
+        assertNotNull(urn)
+        assertEquals(TestNamespace.Test, urn?.namespace)
+        assertEquals("nss", urn?.nss)
+        assertNull(urn?.nid)
     }
 
     @Test
-    fun parseWithoutNid() {
-        val testNamespace = TestNamespace("parseWithout")
-        Urn.registerNamespace(testNamespace)
-        val testString = "urn:parseWithout:nss"
-
-        val parsedUrn = Urn.parse(testString)
-
-        assertEquals(Urn(testNamespace, "nss"), parsedUrn)
+    fun `Test parsing invalid urn string`() {
+        val urn = Urn.parse("notValidUrn")
+        assertNull(urn)
     }
 
     @Test
-    fun parseInvalidFormat() {
-        val testString = "invalid:format:string"
-        val parsedUrn = Urn.parse(testString)
-
-        assertEquals(null, parsedUrn)
+    fun `Test parsing urn string with unregistered namespace`() {
+        Urn.registerNamespace(TestNamespace.Test)
+        val urn = Urn.parse("urn:unregistered:nss")
+        assertNotNull(urn)
+        assertNotEquals(TestNamespace.Test, urn?.namespace)
+        assertEquals("nss", urn?.nss)
+        assertNull(urn?.nid)
     }
+
+    @Test
+    fun `Should convert valid Urn String to Urn object`() {
+        Urn.registerNamespace(TestNamespace.Test)
+        val expected = Urn(TestNamespace.Test, "1234")
+        Assertions.assertEquals(expected, "urn:test:1234".toUrn())
+    }
+
+    @Test
+    fun `Should convert valid Urn String with nid to Urn object`() {
+        Urn.registerNamespace(TestNamespace.Test)
+        val expected = Urn(TestNamespace.Test, "1234", setOf("01", "02"))
+        Assertions.assertEquals(expected, "urn:test:01:02:1234".toUrn())
+    }
+
+    @Test
+    fun `Should throw Exception when converting invalid Urn String to Urn object`() {
+        assertNull("invalid:String".toUrn())
+    }
+
 }

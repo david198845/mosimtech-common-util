@@ -4,18 +4,30 @@ plugins {
 }
 
 group = "de.modulix.mosimtech"
-version = "1.1.2"
+version = "1.2.0"
+
+// Versions-Variablen
+val jacksonDatabindVersion = "2.17.0"
+val jacksonDataformatCsvVersion = "2.17.2"
+val kotlinStdlibJdk8Version = "2.0.0"
+val slf4jApiVersion = "2.0.16"
+val mockitoCoreVersion = "5.0.0"
+val mockitoJunitJupiterVersion = "5.0.0"
+val mockitoKotlinVersion = "5.0.0"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.17.2")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0")
-    implementation("org.slf4j:slf4j-api:2.0.16")
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonDataformatCsvVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinStdlibJdk8Version")
+    implementation("org.slf4j:slf4j-api:$slf4jApiVersion")
     testImplementation(kotlin("test"))
+    testImplementation("org.mockito:mockito-core:$mockitoCoreVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
 }
 
 tasks.test {
@@ -25,6 +37,7 @@ tasks.test {
 kotlin {
     jvmToolchain(21)
 }
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {

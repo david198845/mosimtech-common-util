@@ -1,10 +1,8 @@
 package de.modulix.mosimtech.model
 
-import de.modulix.mosimtech.model.urn.GenerateUrn
-import de.modulix.mosimtech.identifier.IdGenerator
 import de.modulix.mosimtech.model.urn.Urn
+import java.io.Serializable
 import java.time.ZonedDateTime
-
 
 
 /**
@@ -21,30 +19,10 @@ import java.time.ZonedDateTime
  * @property lastModifiedBy The identifier (URN) of the user or system that last modified the object.
  * @property createdBy The identifier (URN) of the user or system that created the object.
  */
-interface BaseModel {
-
-
+interface BaseModel : Serializable {
     val id: Urn?
     val creationDate: ZonedDateTime
     val lastModifiedDate: ZonedDateTime?
     val lastModifiedBy: Urn?
     val createdBy: Urn
-
-    /**
-     * Method to be called before persisting the object.
-     *
-     * This method checks if the `id` field of the object is null. If it is null and the field has the
-     * `@GenerateUrn` annotation, the method generates a new URN using `IdGenerator.generateUrn()`
-     * and assigns it to the `id` field.
-     */
-    fun prePersist() {
-        if (id == null) {
-            val field = this::class.java.getDeclaredField("id")
-            if (field.isAnnotationPresent(GenerateUrn::class.java)) {
-                field.isAccessible = true
-                field.set(this, IdGenerator.generateUrn())
-            }
-        }
-    }
-
 }

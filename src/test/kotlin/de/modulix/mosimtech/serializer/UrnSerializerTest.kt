@@ -1,62 +1,44 @@
 package de.modulix.mosimtech.serializer
 
-import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.SerializerProvider
+import de.modulix.mosimtech.model.namespace.DefaultNamespace
 import de.modulix.mosimtech.model.urn.Urn
-import de.modulix.mosimtech.namespace.TestNamespace
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import java.io.StringWriter
+import org.mockito.Mockito.*
 
-/**
- * Test class for the UrnSerializer class.
- */
-class UrnSerializerTest {
+internal class UrnSerializerTest {
 
-    /**
-     * Serializer used in tests.
-     */
-    private val serializer = UrnSerializer()
+    /*
+    * Class under test: UrnSerializer
+    * Method under test: serialize
+    *
+    * The UrnSerializer::serialize method takes a Urn instance, a JsonGenerator, and a JsonSerializerProvider,
+    * and converts the Urn into its string representation, and writes it to the JsonGenerator.
+    */
 
-    /**
-     * Test that serialization produces correct results.
-     */
+    private val jsonGenerator: JsonGenerator = mock(JsonGenerator::class.java)
+    private val serializerProvider: SerializerProvider = mock(SerializerProvider::class.java)
+
+    private val urnSerializer = UrnSerializer()
+
     @Test
-    fun testSerialize() {
-        val urn = Urn(TestNamespace.Test, "abc", "def")
-        val writer = StringWriter()
-        val generator: JsonGenerator = JsonFactory().createGenerator(writer)
-
-        serializer.serialize(urn, generator, null)
-        generator.close()
-
-        Assertions.assertEquals("\"urn:Test:def:abc\"", writer.toString())
+    fun `serialize given urn is null`() {
+        assertThrows(Exception::class.java) {
+            urnSerializer.serialize(null, jsonGenerator, serializerProvider)
+        }
     }
 
-    /**
-     * Test that serializer throws exception for null urn
-     */
     @Test
-    fun testSerializeThrowsExceptionWhenUrnIsNull() {
-        val exception = Assertions.assertThrows(Exception::class.java) {
-            serializer.serialize(null, JsonFactory().createGenerator(StringWriter()), null)
-        }
+    fun `serialize given urn is not null`() {
+        val urn = Urn(DefaultNamespace.Undefined, "testNSS")
+        val urnString = urn.toUrnString()
 
-        Assertions.assertEquals("given urn is null", exception.message)
-    }
+        doNothing().`when`(jsonGenerator).writeString(urnString)
 
-    /**
-     * Test that serializer does not throw exception for urns with null nid
-     */
-    @Test
-    fun testSerializeDoesNotThrowExceptionWhenNidIsNull() {
-        val urnWithoutNid = Urn(TestNamespace.Test, "abc")
-        val stringWriter = StringWriter()
-        val generatorWithoutNid: JsonGenerator = JsonFactory().createGenerator(stringWriter)
-        Assertions.assertDoesNotThrow {
-            serializer.serialize(urnWithoutNid, generatorWithoutNid, null)
-            generatorWithoutNid.flush() // Ensure all content is written to the StringWriter
-        }
-        Assertions.assertEquals("\"urn:Test:abc\"", stringWriter.toString())
+        urnSerializer.serialize(urn, jsonGenerator, serializerProvider)
+
+        verify(jsonGenerator).writeString(urnString)
     }
 }

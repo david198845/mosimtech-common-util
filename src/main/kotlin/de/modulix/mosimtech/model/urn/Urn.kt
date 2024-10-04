@@ -23,17 +23,17 @@ import de.modulix.mosimtech.model.namespace.Namespace
  * - Namespace-specific string (NSS): "978-3-16-148410-0"
  * - Optional namespace identifier (NID): not present in this example
  *
- *  * Example of a complete URN with all components:
- *  * - Complete URN: "urn:user:keycloak:978-3-16-148410-0"
- *  * - Namespace: "user"
- *  * - Namespace-specific string (NSS): "978-3-16-148410-0"
- *  * - Optional namespace identifier (NID): keycloak
+ * Example of a complete URN with all components:
+ * - Complete URN: "urn:user:keycloak:978-3-16-148410-0"
+ * - Namespace: "user"
+ * - Namespace-specific string (NSS): "978-3-16-148410-0"
+ * - Optional namespace identifier (NID): keycloak
  *
  */
 data class Urn(
     override val namespace: Namespace,
     override val nss: String,
-    override val nid: String? = null
+    override val nid: Set<String>? = null
 ) : UrnDefinition {
     /**
      * Converts the URN components to a string representation.
@@ -43,10 +43,17 @@ data class Urn(
      */
     override fun toUrnString(): String {
         return if (nid == null) "urn:${namespace.identifier}:$nss"
-        else "urn:${namespace.identifier}:$nid:$nss"
+        else {
+            "urn:${namespace.identifier}:${nid.joinToString(":") { it }}:$nss"
+        }
     }
 
     companion object {
+        private const val URN_PREFIX = "urn"
+        private const val NID_URN = 4
+        private const val MIN_URN_PARTS = 3
+        private const val NID_START_INDEX = 2
+        private const val NID_END_INDEX_OFFSET = 1
 
         val knownNamespaces: MutableSet<Namespace> = mutableSetOf(DefaultNamespace.Undefined)
 
@@ -65,22 +72,36 @@ data class Urn(
          * @param urnString The string representation of the URN to be parsed.
          * @return An instance of the Urn class if the string can be successfully parsed, or null if the format is invalid.
          */
+
+
         fun parse(urnString: String): Urn? {
-            val parts = urnString.split(":", limit = 4)
-            if (parts.size < 3 || parts[0] != "urn") {
+            val parts = urnString.split(":")
+            if (parts.size < MIN_URN_PARTS || parts[0] != URN_PREFIX) {
                 return null
             }
-            val namespace = knownNamespaces.firstOrNull { it.identifier == parts[1] } ?: DefaultNamespace.Undefined
-            // Handle cases urn:keycloak:user:123-123-123 and urn:user:132-123-465
-            return if (parts.size == 4) {
+            val namespace = extractNamespace(parts[1])
+
+            return if (parts.size >= NID_URN) {
                 Urn(
                     namespace = namespace,
-                    nid = parts[2],
-                    nss = parts[3]
+                    nid = parts.subList(NID_START_INDEX, parts.size - NID_END_INDEX_OFFSET).toSet(),
+                    nss = parts.last()
                 )
             } else {
-                Urn(namespace = namespace, nss = parts[2])
+                Urn(namespace = namespace, nss = parts[NID_START_INDEX])
             }
+        }
+
+        private fun extractNamespace(part: String): Namespace {
+            return knownNamespaces.firstOrNull { it.identifier == part } ?: DefaultNamespace.Undefined
         }
     }
 }
+
+
+/**
+ * Converts the current string to a URN (Uniform Resource Name) instance.
+ *
+ * @return An instance of the Urn class parsed from the current string.
+ */
+fun String.toUrn(): Urn? = Urn.parse(this)
