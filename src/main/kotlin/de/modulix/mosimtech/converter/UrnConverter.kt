@@ -16,7 +16,7 @@ abstract class UrnConverter {
      * @param attribute The URN object to be converted. Can be null.
      * @return The string representation of the URN suitable for database storage, or null if the input URN is null.
      */
-    fun convertToDatabaseColumn(attribute: Urn?): String? {
+    open fun convertToDatabaseColumn(attribute: Urn?): String? {
         return attribute?.toUrnString()
     }
 
@@ -26,7 +26,7 @@ abstract class UrnConverter {
      * @param dbData The string representation of the URN from the database. Can be null.
      * @return An instance of the Urn class if the string can be successfully parsed, or null if the input is null or invalid.
      */
-    fun convertToEntityAttribute(dbData: String?): Urn? {
+    open fun convertToEntityAttribute(dbData: String?): Urn? {
         return dbData?.let { Urn.parse(it) }
     }
 }

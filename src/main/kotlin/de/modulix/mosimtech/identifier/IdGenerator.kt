@@ -1,4 +1,3 @@
-// Datei: IdGenerator.kt
 package de.modulix.mosimtech.identifier
 
 import de.modulix.mosimtech.model.namespace.DefaultNamespace
