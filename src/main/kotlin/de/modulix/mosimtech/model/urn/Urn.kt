@@ -1,7 +1,12 @@
 package de.modulix.mosimtech.model.urn
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import de.modulix.mosimtech.model.namespace.DefaultNamespace
 import de.modulix.mosimtech.model.namespace.Namespace
+import de.modulix.mosimtech.serializer.UrnDeserializer
+import de.modulix.mosimtech.serializer.UrnSerializer
 
 /**
  * Represents a Uniform Resource Name (URN) with a namespace, a namespace-specific string (NSS),
@@ -30,11 +35,41 @@ import de.modulix.mosimtech.model.namespace.Namespace
  * - Optional namespace identifier (NID): keycloak
  *
  */
+@JsonSerialize(using = UrnSerializer::class)
+@JsonDeserialize(using = UrnDeserializer::class)
 data class Urn(
-    override val namespace: Namespace,
-    override val nss: String,
-    override val nid: Set<String>? = null
+    @JsonProperty("namespace") override val namespace: Namespace,
+    @JsonProperty("nss") override val nss: String,
+    @JsonProperty("nid") override val nid: Set<String>? = null
 ) : UrnDefinition {
+
+
+    init {
+        require(namespace in knownNamespaces) { "Unknown namespace: $namespace" }
+    }
+
+
+    /**
+     * Constructs an instance of the Urn class from the given URN string.
+     *
+     * This constructor uses the `parse` function to parse the provided `urnString` and
+     * initialize an Urn object. If the `urnString` cannot be parsed, the initialization
+     * may result in a null object, depending on the implementation of the `parse` function.
+     *
+     * @param urnString The string representation of a URN to be parsed and used to initialize the Urn object.
+     */
+    constructor(urnString: String) : this(parse(urnString))
+
+    /**
+     * Private constructor for the Urn class that initializes the instance with
+     * the namespace, namespace-specific string (NSS), and optional namespace identifier (NID)
+     * from another Urn instance.
+     *
+     * @param data The Urn instance from which to copy the namespace, NSS, and NID values.
+     */
+    private constructor(data: Urn?) : this(data!!.namespace, data.nss, data.nid)
+
+
     /**
      * Converts the URN components to a string representation.
      *
@@ -46,6 +81,10 @@ data class Urn(
         else {
             "urn:${namespace.identifier}:${nid.joinToString(":") { it }}:$nss"
         }
+    }
+
+    override fun toString(): String {
+        return toUrnString()
     }
 
     companion object {
