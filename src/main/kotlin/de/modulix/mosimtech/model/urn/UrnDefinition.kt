@@ -1,6 +1,7 @@
 package de.modulix.mosimtech.model.urn
 
 import de.modulix.mosimtech.model.namespace.Namespace
+import java.io.Serializable
 
 /**
  * Represents a Uniform Resource Name (URN) with a namespace, a namespace-specific string (NSS),
@@ -22,7 +23,7 @@ import de.modulix.mosimtech.model.namespace.Namespace
  * - Namespace-specific string (NSS): "978-3-16-148410-0"
  * - Optional namespace identifier (NID): not present in this example
  */
-interface UrnDefinition {
+interface UrnDefinition : Serializable {
     /**
      * The namespace of the URN.
      */
