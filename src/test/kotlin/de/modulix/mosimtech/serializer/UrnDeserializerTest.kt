@@ -26,8 +26,8 @@ internal class UrnDeserializerTest {
         val result = deserializer.deserialize(parser, null)
 
         assertNotNull(result)
-        assertEquals("test", result.namespace.identifier)
-        assertEquals("nss", result.nss)
+        assertEquals("test", result?.namespace?.identifier)
+        assertEquals("nss", result?.nss)
     }
 
     @Test
@@ -40,9 +40,7 @@ internal class UrnDeserializerTest {
         parser.nextToken()
         val deserializer = UrnDeserializer()
         val result = deserializer.deserialize(parser, null)
-        assertNotNull(result)
-        assertEquals("test", result.namespace.identifier)
-        assertEquals("", result.nss)
+        assertNull(result)
     }
 
     @Test

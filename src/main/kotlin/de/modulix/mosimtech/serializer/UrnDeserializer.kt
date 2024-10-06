@@ -20,8 +20,8 @@ class UrnDeserializer : StdDeserializer<Urn>(Urn::class.java) {
      * @param p1 The `DeserializationContext` that can be used to access contextual information.
      * @return An instance of `Urn` parsed from the input JSON string.
      */
-    override fun deserialize(p0: JsonParser?, p1: DeserializationContext?): Urn {
+    override fun deserialize(p0: JsonParser?, p1: DeserializationContext?): Urn? {
         val input = p0!!.text
-        return Urn.parse(input)!!
+        return Urn.parse(input)
     }
 }
