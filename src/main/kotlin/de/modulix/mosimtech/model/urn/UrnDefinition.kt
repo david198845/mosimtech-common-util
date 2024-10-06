@@ -1,6 +1,5 @@
 package de.modulix.mosimtech.model.urn
 
-import de.modulix.mosimtech.model.namespace.Namespace
 import java.io.Serializable
 
 /**
@@ -27,7 +26,7 @@ interface UrnDefinition : Serializable {
     /**
      * The namespace of the URN.
      */
-    val namespace: Namespace
+    val namespace: String
 
     /**
      * The namespace-specific string of the URN.

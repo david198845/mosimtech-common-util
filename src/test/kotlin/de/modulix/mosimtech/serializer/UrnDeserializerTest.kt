@@ -2,8 +2,6 @@ package de.modulix.mosimtech.serializer
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.modulix.mosimtech.model.urn.Urn
-import de.modulix.mosimtech.namespace.TestNamespace
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -13,11 +11,27 @@ internal class UrnDeserializerTest {
 
     private val jsonFactory = JsonFactory(ObjectMapper())
 
+    @Test
+    fun testDeserialize_Urn_object() {
+        val input = "{ \"urn\" : {\n" +
+                "    \"namespace\": \"user\",\n" +
+                "    \"nss\": \"0bfad384-1e92-4395-b7ad-022192fc46cd\",\n" +
+                "    \"nid\": [\"momasoft\"]\n" +
+                "  } }"
+        val parser = jsonFactory.createParser(input)
+        parser.nextToken()
+        parser.nextToken()
+        parser.nextToken()
+        val deserializer = UrnDeserializer()
+        val result = deserializer.deserialize(parser, null)
+        assertNotNull(result)
+        assertEquals("user", result?.namespace)
+        assertEquals("0bfad384-1e92-4395-b7ad-022192fc46cd", result?.nss)
+    }
 
     @Test
     fun testDeserialize_withValidUrnString() {
         val input = "{ \"urn\" : \"urn:test:nss\" }"
-        Urn.registerNamespace(TestNamespace.Test)
         val parser = jsonFactory.createParser(input)
         parser.nextToken()
         parser.nextToken()
@@ -26,14 +40,14 @@ internal class UrnDeserializerTest {
         val result = deserializer.deserialize(parser, null)
 
         assertNotNull(result)
-        assertEquals("test", result?.namespace?.identifier)
+        assertEquals("test", result?.namespace)
         assertEquals("nss", result?.nss)
     }
 
     @Test
     fun testDeserialize_withIncompleteUrnString() {
         val input = "{ \"urn\" : \"urn:test:\" }"
-        Urn.registerNamespace(TestNamespace.Test)
+
         val parser = jsonFactory.createParser(input)
         parser.nextToken()
         parser.nextToken()
@@ -46,7 +60,7 @@ internal class UrnDeserializerTest {
     @Test
     fun testDeserialize_withEmptyUrnString() {
         val input = "{ \"urn\" : \"\" }"
-        Urn.registerNamespace(TestNamespace.Test)
+
         val parser = jsonFactory.createParser(input)
         parser.nextToken()
         parser.nextToken()

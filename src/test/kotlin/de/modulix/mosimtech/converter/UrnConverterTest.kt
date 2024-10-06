@@ -18,15 +18,13 @@ class UrnConverterTest {
     fun `convertToEntityAttribute should parse URN string correctly`() {
 
         val urnMock: Urn = mock {
-            on { namespace } doReturn testNamespace
+            on { namespace } doReturn testNamespace.identifier
             on { nss } doReturn "testNid"
             on { nid } doReturn setOf("test")
             on { toUrnString() } doReturn "urn:test:test:testNid"
         }
 
         val dbData = "urn:test:test:testNid"
-
-        Urn.registerNamespace(testNamespace)
 
         val urn = urnConverter.convertToEntityAttribute(dbData)
 

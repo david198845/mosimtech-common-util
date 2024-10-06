@@ -3,7 +3,6 @@ package de.modulix.mosimtech.model.urn
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import de.modulix.mosimtech.model.namespace.DefaultNamespace
 import de.modulix.mosimtech.model.namespace.Namespace
 import de.modulix.mosimtech.serializer.UrnDeserializer
 import de.modulix.mosimtech.serializer.UrnSerializer
@@ -38,15 +37,24 @@ import de.modulix.mosimtech.serializer.UrnSerializer
 @JsonSerialize(using = UrnSerializer::class)
 @JsonDeserialize(using = UrnDeserializer::class)
 open class Urn(
-    @JsonProperty("namespace") override val namespace: Namespace,
+    @JsonProperty("namespace") override val namespace: String,
     @JsonProperty("nss") override val nss: String,
     @JsonProperty("nid") override val nid: Set<String>? = null
 ) : UrnDefinition {
 
-
-    init {
-        require(namespace in knownNamespaces) { "Unknown namespace: $namespace" }
-    }
+    /**
+     * Constructs an instance of the `Urn` class by assigning the provided `namespace`, `nss`,
+     * and optionally `nid` values.
+     *
+     * @param namespace The `Namespace` object representing the namespace identifier.
+     * @param nss The namespace-specific string (NSS) part of the URN.
+     * @param nid A set of namespace identifiers (NID) which are optional.
+     */
+    constructor(namespace: Namespace, nss: String, nid: Set<String>? = null) : this(
+        namespace = namespace.identifier,
+        nss = nss,
+        nid = nid
+    )
 
 
     /**
@@ -77,9 +85,9 @@ open class Urn(
      *         otherwise, the format will be "urn:<namespace>:<nss>:<nss>".
      */
     override fun toUrnString(): String {
-        return if (nid == null) "urn:${namespace.identifier}:$nss"
+        return if (nid == null) "urn:${namespace}:$nss"
         else {
-            "urn:${namespace.identifier}:${nid!!.joinToString(":") { it }}:$nss"
+            "urn:${namespace}:${nid!!.joinToString(":") { it }}:$nss"
         }
     }
 
@@ -169,17 +177,6 @@ open class Urn(
         private const val NID_START_INDEX = 2
         private const val NID_END_INDEX_OFFSET = 1
 
-        val knownNamespaces: MutableSet<Namespace> = mutableSetOf(DefaultNamespace.Undefined)
-
-        /**
-         * Registers one or more namespaces to be recognized by the URN system.
-         *
-         * @param namespace Vararg parameter for one or more namespaces to be registered.
-         */
-        fun registerNamespace(vararg namespace: Namespace) {
-            namespace.forEach { knownNamespaces.add(it) }
-        }
-
         /**
          * Parses a string representation of a URN (Uniform Resource Name) and returns an instance of the Urn class.
          *
@@ -193,22 +190,17 @@ open class Urn(
             if (parts.size < MIN_URN_PARTS || parts[0] != URN_PREFIX) {
                 return null
             }
-            val namespace = extractNamespace(parts[1])
-
             return if (parts.size >= NID_URN) {
                 Urn(
-                    namespace = namespace,
+                    namespace = parts[1],
                     nid = parts.subList(NID_START_INDEX, parts.size - NID_END_INDEX_OFFSET).toSet(),
                     nss = parts.last()
                 )
             } else {
-                Urn(namespace = namespace, nss = parts[NID_START_INDEX])
+                Urn(namespace = parts[1], nss = parts[NID_START_INDEX])
             }
         }
 
-        private fun extractNamespace(part: String): Namespace {
-            return knownNamespaces.firstOrNull { it.identifier == part } ?: DefaultNamespace.Undefined
-        }
     }
 }
 

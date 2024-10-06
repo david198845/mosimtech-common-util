@@ -33,7 +33,7 @@ class IdGeneratorTest {
         val urn = idGenerator.generateUrn()
 
         with(urn) {
-            assertEquals(DefaultNamespace.Undefined, namespace)
+            assertEquals(DefaultNamespace.Undefined.identifier, namespace)
             assertNotNull(nss)
             assertEquals(null, nid)
         }
@@ -44,7 +44,7 @@ class IdGeneratorTest {
         val urn = idGenerator.generateUrn(TestNamespace.Test, "custom-nid")
 
         with(urn) {
-            assertEquals(TestNamespace.Test, this.namespace)
+            assertEquals(TestNamespace.Test.identifier, this.namespace)
             assertNotNull(nss)
             assertEquals(setOf("custom-nid"), nid)
         }
@@ -56,7 +56,7 @@ class IdGeneratorTest {
         val urn = idGenerator.generateUrn(TestNamespace.Test, "nid1", "nid2")
 
         with(urn) {
-            assertEquals(TestNamespace.Test, this.namespace)
+            assertEquals(TestNamespace.Test.identifier, this.namespace)
             assertNotNull(nss)
             assertEquals(setOf("nid1", "nid2"), nid)
         }
