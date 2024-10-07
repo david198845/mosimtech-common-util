@@ -36,11 +36,22 @@ import de.modulix.mosimtech.serializer.UrnSerializer
  */
 @JsonSerialize(using = UrnSerializer::class)
 @JsonDeserialize(using = UrnDeserializer::class)
-open class Urn(
-    @JsonProperty("namespace") override val namespace: String,
-    @JsonProperty("nss") override val nss: String,
-    @JsonProperty("nid") override val nid: Set<String>? = null
-) : UrnDefinition {
+open class Urn() : UrnDefinition {
+
+    @JsonProperty("namespace")
+    override lateinit var namespace: String
+
+    @JsonProperty("nss")
+    override lateinit var nss: String
+
+    @JsonProperty("nid")
+    override var nid: Set<String>? = null
+
+    constructor(namespace: String, nss: String, nid: Set<String>? = null) : this() {
+        this.namespace = namespace
+        this.nss = nss
+        this.nid = nid
+    }
 
     /**
      * Constructs an instance of the `Urn` class by assigning the provided `namespace`, `nss`,
@@ -66,7 +77,7 @@ open class Urn(
      *
      * @param urnString The string representation of a URN to be parsed and used to initialize the Urn object.
      */
-    constructor(urnString: String) : this(parse(urnString))
+    constructor(urnString: String) : this(parse(urnString)!!)
 
     /**
      * Private constructor for the Urn class that initializes the instance with
@@ -75,7 +86,7 @@ open class Urn(
      *
      * @param data The Urn instance from which to copy the namespace, NSS, and NID values.
      */
-    private constructor(data: Urn?) : this(data!!.namespace, data.nss, data.nid)
+    constructor(data: Urn) : this(data.namespace, data.nss, data.nid)
 
 
     /**
