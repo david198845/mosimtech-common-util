@@ -41,7 +41,7 @@ class UrnTest {
         assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
         assertEquals("nss", urn?.nss)
-        assertNull(urn?.nid)
+        assertTrue(urn?.nid!!.isEmpty())
     }
 
     @Test
@@ -56,7 +56,7 @@ class UrnTest {
         assertNotNull(urn)
         assertNotEquals(TestNamespace.Test.identifier, urn?.namespace)
         assertEquals("nss", urn?.nss)
-        assertNull(urn?.nid)
+        assertTrue(urn?.nid!!.isEmpty())
     }
 
     @Test
@@ -118,7 +118,7 @@ class UrnTest {
         val urn = Urn.parse("urn:test:nss")
         assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
-        assertNull(urn?.nid)
+        assertTrue(urn?.nid!!.isEmpty())
         assertEquals("nss", urn?.nss)
     }
 
@@ -180,7 +180,7 @@ class UrnTest {
     @Test
     fun `Test equals function comparing two URN with different nss`() {
 
-        val urn1: Urn = Urn(TestNamespace.Test, "nss")
+        val urn1 = Urn(TestNamespace.Test, "nss")
         val urn2: Urn? = Urn(TestNamespace.Test, "nss2")
         assertFalse(urn1.equals(urn2))
     }
@@ -188,7 +188,7 @@ class UrnTest {
     @Test
     fun `Test equals function comparing two URN with same nss`() {
 
-        val urn1: Urn = Urn(TestNamespace.Test, "nss")
+        val urn1 = Urn(TestNamespace.Test, "nss")
         val urn2: Urn? = Urn(TestNamespace.Test, "nss")
         assertTrue(urn1.equals(urn2))
     }
@@ -198,7 +198,7 @@ class UrnTest {
         val urn = Urn(DefaultNamespace.Undefined, "nss")
         assertEquals(DefaultNamespace.Undefined.identifier, urn.namespace)
         assertEquals("nss", urn.nss)
-        assertNull(urn.nid)
+        assertTrue(urn.nid.isEmpty())
     }
 
     @Test

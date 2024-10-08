@@ -46,7 +46,7 @@ open class Urn : UrnDefinition {
     override lateinit var nss: String
 
     @JsonProperty("nid")
-    override var nid: Set<String>? = null
+    override var nid: Set<String> = emptySet()
 
     /**
      * Primary constructor for the `Urn` class.
@@ -58,7 +58,7 @@ open class Urn : UrnDefinition {
      */
     constructor() {
         this.namespace = DefaultNamespace.Undefined.identifier
-        this.nss = "undefined"
+        this.nss = NSS_DEFAULT_VALUE
         this.nid = emptySet()
     }
 
@@ -69,7 +69,7 @@ open class Urn : UrnDefinition {
      * @param nss The Namespace Specific String (NSS) component of the URN.
      * @param nid An optional set of NIDs (Namespace Identifiers) associated with the URN. Defaults to null if not provided.
      */
-    constructor(namespace: String, nss: String, nid: Set<String>? = null) : this() {
+    constructor(namespace: String, nss: String, nid: Set<String> = emptySet()) : this() {
         this.namespace = namespace
         this.nss = nss
         this.nid = nid
@@ -83,7 +83,7 @@ open class Urn : UrnDefinition {
      * @param nss The namespace-specific string (NSS) part of the URN.
      * @param nid A set of namespace identifiers (NID) which are optional.
      */
-    constructor(namespace: Namespace, nss: String, nid: Set<String>? = null) : this(
+    constructor(namespace: Namespace, nss: String, nid: Set<String> = emptySet()) : this(
         namespace = namespace.identifier,
         nss = nss,
         nid = nid
@@ -118,9 +118,9 @@ open class Urn : UrnDefinition {
      *         otherwise, the format will be "urn:<namespace>:<nss>:<nss>".
      */
     override fun toUrnString(): String {
-        return if (nid == null || nid!!.isEmpty()) "urn:${namespace}:$nss"
+        return if (nid.isEmpty()) "urn:${namespace}:$nss"
         else {
-            "urn:${namespace}:${nid!!.takeIf { it.isNotEmpty() }!!.joinToString(":") { it }}:$nss"
+            "urn:${namespace}:${nid.takeIf { it.isNotEmpty() }.orEmpty().joinToString(":") { it }}:$nss"
         }
     }
 
@@ -190,7 +190,7 @@ open class Urn : UrnDefinition {
     override fun hashCode(): Int {
         var result = namespace.hashCode()
         result = 31 * result + nss.hashCode()
-        result = 31 * result + (nid?.hashCode() ?: 0)
+        result = 31 * result + nid.hashCode()
         return result
     }
 
@@ -203,12 +203,17 @@ open class Urn : UrnDefinition {
         return Urn(this)
     }
 
+    fun isDefault() = namespace == DefaultNamespace.Undefined.identifier && nss == NSS_DEFAULT_VALUE
+
     companion object {
+        const val NSS_DEFAULT_VALUE = "undefined"
         private const val URN_PREFIX = "urn"
         private const val NID_URN = 4
         private const val MIN_URN_PARTS = 3
         private const val NID_START_INDEX = 2
         private const val NID_END_INDEX_OFFSET = 1
+
+        fun isDefault(urn: Urn) = urn.isDefault()
 
         /**
          * Parses a string representation of a URN (Uniform Resource Name) and returns an instance of the Urn class.
