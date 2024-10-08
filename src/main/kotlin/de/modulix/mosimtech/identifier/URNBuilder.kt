@@ -1,6 +1,5 @@
 package de.modulix.mosimtech.identifier
 
-import de.modulix.mosimtech.model.namespace.DefaultNamespace
 import de.modulix.mosimtech.model.namespace.Namespace
 import de.modulix.mosimtech.model.urn.Urn
 import java.util.*
@@ -9,7 +8,7 @@ import java.util.*
  * An interface for generating Uniform Resource Names (URNs).
  * It provides methods to create URNs with specified namespaces and optional namespace identifiers.
  */
-interface IdGenerator {
+open class URNBuilder {
 
     /**
      * Generates a URN (Uniform Resource Name) string using the specified namespace and optional namespace identifiers.
@@ -18,7 +17,7 @@ interface IdGenerator {
      * @param nid Vararg parameter representing optional namespace identifiers.
      * @return A string representing the constructed URN.
      */
-    fun generateUrnString(namespace: Namespace = DefaultNamespace.Undefined, vararg nid: String?): String {
+    fun generateUrnString(namespace: Namespace, vararg nid: String?): String {
         return generateUrn(namespace, *nid).toUrnString()
     }
 
@@ -29,9 +28,9 @@ interface IdGenerator {
      * @param nid Vararg parameter representing optional namespace identifiers.
      * @return An instance of the `Urn` class representing the constructed URN.
      */
-    fun generateUrn(namespace: Namespace = DefaultNamespace.Undefined, vararg nid: String?): Urn {
+    fun generateUrn(namespace: Namespace, vararg nid: String?): Urn {
         val nidSet = nid.filterNotNull().toSet().takeIf { it.isNotEmpty() }
-        return Urn(namespace = namespace, nss = UUID.randomUUID().toString(), nid = nidSet)
+        return Urn(namespace, UUID.randomUUID().toString(), nidSet)
     }
 }
 

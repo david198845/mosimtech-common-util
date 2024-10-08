@@ -3,6 +3,7 @@ package de.modulix.mosimtech.model.urn
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import de.modulix.mosimtech.model.namespace.DefaultNamespace
 import de.modulix.mosimtech.model.namespace.Namespace
 import de.modulix.mosimtech.serializer.UrnDeserializer
 import de.modulix.mosimtech.serializer.UrnSerializer
@@ -36,7 +37,7 @@ import de.modulix.mosimtech.serializer.UrnSerializer
  */
 @JsonSerialize(using = UrnSerializer::class)
 @JsonDeserialize(using = UrnDeserializer::class)
-open class Urn() : UrnDefinition {
+open class Urn : UrnDefinition {
 
     @JsonProperty("namespace")
     override lateinit var namespace: String
@@ -47,6 +48,27 @@ open class Urn() : UrnDefinition {
     @JsonProperty("nid")
     override var nid: Set<String>? = null
 
+    /**
+     * Primary constructor for the `Urn` class.
+     *
+     * Initializes the URN components with default values:
+     * - `namespace` is set to the identifier of the `DefaultNamespace.Undefined`,
+     * - `nss` is set to "undefined",
+     * - `nid` is set to an empty set.
+     */
+    constructor() {
+        this.namespace = DefaultNamespace.Undefined.identifier
+        this.nss = "undefined"
+        this.nid = emptySet()
+    }
+
+    /**
+     * Constructs an instance of the Urn class with a specified namespace, NSS, and an optional NID.
+     *
+     * @param namespace The namespace component of the URN.
+     * @param nss The Namespace Specific String (NSS) component of the URN.
+     * @param nid An optional set of NIDs (Namespace Identifiers) associated with the URN. Defaults to null if not provided.
+     */
     constructor(namespace: String, nss: String, nid: Set<String>? = null) : this() {
         this.namespace = namespace
         this.nss = nss
@@ -96,9 +118,9 @@ open class Urn() : UrnDefinition {
      *         otherwise, the format will be "urn:<namespace>:<nss>:<nss>".
      */
     override fun toUrnString(): String {
-        return if (nid == null) "urn:${namespace}:$nss"
+        return if (nid == null || nid!!.isEmpty()) "urn:${namespace}:$nss"
         else {
-            "urn:${namespace}:${nid!!.joinToString(":") { it }}:$nss"
+            "urn:${namespace}:${nid!!.takeIf { it.isNotEmpty() }!!.joinToString(":") { it }}:$nss"
         }
     }
 
@@ -194,8 +216,6 @@ open class Urn() : UrnDefinition {
          * @param urnString The string representation of the URN to be parsed.
          * @return An instance of the Urn class if the string can be successfully parsed, or null if the format is invalid.
          */
-
-
         fun parse(urnString: String): Urn? {
             val parts = urnString.split(":").filter { it.isNotBlank() }
             if (parts.size < MIN_URN_PARTS || parts[0] != URN_PREFIX) {

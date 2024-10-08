@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.modulix.mosimtech"
-version = "1.3.1"
+version = "1.3.2"
 
 // Versions-Variablen
 val jacksonDatabindVersion = "2.17.0"
@@ -23,11 +23,13 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonDataformatCsvVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinStdlibJdk8Version")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.20")
     implementation("org.slf4j:slf4j-api:$slf4jApiVersion")
     testImplementation(kotlin("test"))
     testImplementation("org.mockito:mockito-core:$mockitoCoreVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion")
     testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
+    implementation(kotlin("reflect"))
 }
 
 tasks.test {
