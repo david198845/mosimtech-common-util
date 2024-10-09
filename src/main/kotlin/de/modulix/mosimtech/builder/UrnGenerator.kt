@@ -2,49 +2,47 @@ package de.modulix.mosimtech.builder
 
 import de.modulix.mosimtech.database.base.namespace.Namespace
 import de.modulix.mosimtech.database.base.urn.Urn
-
+import java.util.*
 
 /**
- * Utility class for generating Uniform Resource Names (URNs).
- *
- * This class extends `UrnBuilder` and provides a mechanism
- * for generating URNs based on specified namespaces and identifiers.
+ * An interface for generating Uniform Resource Names (URNs).
+ * It provides methods to create URNs with specified namespaces and optional namespace identifiers.
  */
-class UrnGenerator : UrnBuilder() {
+abstract class UrnGenerator {
 
-    companion object {
-        /**
-         * Generates a URN (Uniform Resource Name) using the provided namespace and name identifiers.
-         *
-         * This method combines the namespace and the variable number of name identifiers
-         * to create a standardized URN.
-         *
-         * @param namespace The Namespace within which the URN is being generated.
-         * @param nameIdentifiers A variable number of strings that serve as the unique name identifiers for the URN.
-         * @return The generated URN based on the provided namespace and name identifiers.
-         */
-        @JvmStatic
-        fun generateID(namespace: Namespace, vararg nameIdentifiers: String): Urn {
-            return generateUrnBasedOnIdentifiers(namespace, *nameIdentifiers)
-        }
-
-        /**
-         * Generates a URN (Uniform Resource Name) using the provided namespace and a variable number of name identifiers.
-         *
-         * This function combines the given namespace and name identifiers to create a standardized URN.
-         *
-         * @param namespace The Namespace within which the URN is being generated.
-         * @param nameIdentifiers A variable number of strings that serve as the unique name identifiers for the URN.
-         * @return The generated URN based on the provided namespace and name identifiers.
-         */
-        private fun generateUrnBasedOnIdentifiers(namespace: Namespace, vararg nameIdentifiers: String): Urn {
-            val urnGenerator = UrnGenerator()
-            return if (nameIdentifiers.isNotEmpty())
-                urnGenerator.generateUrn(namespace, *nameIdentifiers)
-            else
-                urnGenerator.generateUrn(namespace)
-        }
+    /**
+     * Generates a URN (Uniform Resource Name) string using the specified namespace and optional namespace identifiers.
+     *
+     * @param namespace The namespace to be used for the URN. If not specified, defaults to `DefaultNamespace.Undefined`.
+     * @param nid Vararg parameter representing optional namespace identifiers.
+     * @return A string representing the constructed URN.
+     */
+    fun generateUrnString(namespace: Namespace, vararg nid: String = emptyArray()): String {
+        return generateUrn(namespace, *nid).toUrnString()
     }
 
+    /**
+     * Generates a URN (Uniform Resource Name) using the specified namespace and optional namespace identifiers.
+     *
+     * @param namespace The namespace to be used for the URN. Defaults to `DefaultNamespace.Undefined` if not specified.
+     * @param nid Vararg parameter representing optional namespace identifiers.
+     * @return An instance of the `Urn` class representing the constructed URN.
+     */
+    fun generateUrn(namespace: Namespace, vararg nid: String = emptyArray()): Urn {
+        val nidSet = nid.toSet().takeIf { it.isNotEmpty() }.orEmpty()
+        return Urn(namespace, UUID.randomUUID().toString(), nidSet)
+    }
 
+    /**
+     * Generates a URN (Uniform Resource Name) using the specified namespace and optional namespace identifiers.
+     *
+     * @param namespace The namespace to be used for the URN.
+     * @param nid Vararg parameter representing optional namespace identifiers.
+     * @return An instance of the `Urn` class representing the constructed URN.
+     */
+    fun generateUrn(namespace: String, vararg nid: String = emptyArray()): Urn {
+        val nidSet = nid.toSet().takeIf { it.isNotEmpty() }.orEmpty()
+        return Urn(namespace, UUID.randomUUID().toString(), nidSet)
+    }
 }
+

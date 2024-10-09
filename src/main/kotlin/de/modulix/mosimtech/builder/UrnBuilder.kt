@@ -1,36 +1,101 @@
 package de.modulix.mosimtech.builder
 
+import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
 import de.modulix.mosimtech.database.base.namespace.Namespace
 import de.modulix.mosimtech.database.base.urn.Urn
-import java.util.*
+
 
 /**
- * An interface for generating Uniform Resource Names (URNs).
- * It provides methods to create URNs with specified namespaces and optional namespace identifiers.
+ * A builder class for constructing URNs (Uniform Resource Names) with specified namespaces and name identifiers.
+ *
+ * The `UrnBuilder` class extends `UrnGenerator` and provides a fluent interface for setting up and generating URNs.
  */
-abstract class UrnBuilder {
+class UrnBuilder : UrnGenerator() {
+
+    private var namespaceString: String = DefaultNamespace.Undefined.identifier
+    private var nid: Set<String> = emptySet()
+
 
     /**
-     * Generates a URN (Uniform Resource Name) string using the specified namespace and optional namespace identifiers.
+     * Sets the namespace for the URN (Uniform Resource Name) being built.
      *
-     * @param namespace The namespace to be used for the URN. If not specified, defaults to `DefaultNamespace.Undefined`.
-     * @param nid Vararg parameter representing optional namespace identifiers.
-     * @return A string representing the constructed URN.
+     * @param namespace The `Namespace` object representing the namespace to be used for the URN.
+     * @return The `UrnBuilder` instance to allow method chaining.
      */
-    fun generateUrnString(namespace: Namespace, vararg nid: String = emptyArray()): String {
-        return generateUrn(namespace, *nid).toUrnString()
+    fun namespace(namespace: Namespace): UrnBuilder {
+        this.namespaceString = namespace.identifier
+        return this
     }
 
     /**
-     * Generates a URN (Uniform Resource Name) using the specified namespace and optional namespace identifiers.
+     * Sets the namespace for the URN (Uniform Resource Name) being built.
      *
-     * @param namespace The namespace to be used for the URN. Defaults to `DefaultNamespace.Undefined` if not specified.
-     * @param nid Vararg parameter representing optional namespace identifiers.
-     * @return An instance of the `Urn` class representing the constructed URN.
+     * @param namespace The string representing the namespace to be used for the URN.
+     * @return The `UrnBuilder` instance to allow method chaining.
      */
-    fun generateUrn(namespace: Namespace, vararg nid: String = emptyArray()): Urn {
-        val nidSet = nid.toSet().takeIf { it.isNotEmpty() }.orEmpty()
-        return Urn(namespace, UUID.randomUUID().toString(), nidSet)
+    fun namespace(namespace: String): UrnBuilder {
+        this.namespaceString = namespace
+        return this
     }
+
+    /**
+     * Sets the namespace identifiers (NIDs) for the URN (Uniform Resource Name) being built.
+     *
+     * @param nid Variable number of namespace identifiers to be used for the URN.
+     * @return The `UrnBuilder` instance to allow method chaining.
+     */
+    fun nid(vararg nid: String): UrnBuilder {
+        this.nid = nid.toSet()
+        return this
+    }
+
+    /**
+     * Constructs a new `Urn` instance using the provided namespace string and namespace identifiers (NIDs).
+     *
+     * @return A new `Urn` instance that represents the constructed Uniform Resource Name.
+     */
+    fun build(): Urn {
+        return generateUrn(namespaceString, *nid.toTypedArray())
+    }
+
+    companion object {
+        /**
+         * Generates a URN (Uniform Resource Name) using the provided namespace and name identifiers.
+         *
+         * This method combines the namespace and the variable number of name identifiers
+         * to create a standardized URN.
+         *
+         * @param namespace The Namespace within which the URN is being generated.
+         * @param nameIdentifiers A variable number of strings that serve as the unique name identifiers for the URN.
+         * @return The generated URN based on the provided namespace and name identifiers.
+         */
+        @JvmStatic
+        fun generateID(namespace: Namespace, vararg nameIdentifiers: String): Urn {
+            return generateUrnBasedOnIdentifiers(namespace.identifier, *nameIdentifiers)
+        }
+
+        @JvmStatic
+        fun generateID(namespace: String, vararg nameIdentifiers: String): Urn {
+            return generateUrnBasedOnIdentifiers(namespace, *nameIdentifiers)
+        }
+
+        /**
+         * Generates a URN (Uniform Resource Name) using the provided namespace and a variable number of name identifiers.
+         *
+         * This function combines the given namespace and name identifiers to create a standardized URN.
+         *
+         * @param namespace The Namespace within which the URN is being generated.
+         * @param nameIdentifiers A variable number of strings that serve as the unique name identifiers for the URN.
+         * @return The generated URN based on the provided namespace and name identifiers.
+         */
+        private fun generateUrnBasedOnIdentifiers(namespace: String, vararg nameIdentifiers: String): Urn {
+            val urnGenerator = UrnBuilder()
+            return if (nameIdentifiers.isNotEmpty())
+                urnGenerator.generateUrn(namespace, *nameIdentifiers)
+            else
+                urnGenerator.generateUrn(namespace)
+        }
+    }
+
+
 }
-

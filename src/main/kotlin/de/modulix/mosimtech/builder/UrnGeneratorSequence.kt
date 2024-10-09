@@ -1,8 +1,5 @@
 package de.modulix.mosimtech.builder
 
-import de.modulix.mosimtech.database.base.namespace.Namespace
-import kotlin.reflect.KClass
-
 
 /**
  * Annotation to generate a URN (Uniform Resource Name) based identifier sequence for a field in an entity.
@@ -16,5 +13,5 @@ import kotlin.reflect.KClass
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.TYPE, AnnotationTarget.FIELD)
-annotation class UrnGeneratorSequence(val namespace: KClass<out Namespace>, vararg val nid: String = []) {
+annotation class UrnGeneratorSequence(val namespace: String, vararg val nid: String = []) {
 }

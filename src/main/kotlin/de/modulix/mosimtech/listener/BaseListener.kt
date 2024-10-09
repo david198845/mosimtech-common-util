@@ -1,9 +1,8 @@
 package de.modulix.mosimtech.listener
 
-import de.modulix.mosimtech.builder.UrnGenerator
+import de.modulix.mosimtech.builder.UrnBuilder
 import de.modulix.mosimtech.builder.UrnGeneratorSequence
 import de.modulix.mosimtech.database.base.BaseModel
-import kotlin.reflect.full.createInstance
 
 /**
  * Listener method to be invoked before an entity that extends `BaseModel` is persisted.
@@ -19,8 +18,8 @@ fun beforeSaveListener(entity: BaseModel) {
         field.takeIf { it.isAnnotationPresent(UrnGeneratorSequence::class.java) }?.apply {
             isAccessible = true
             val annotation = getAnnotation(UrnGeneratorSequence::class.java)
-            val namespace = annotation.namespace.createInstance()
-            set(entity, UrnGenerator.generateID(namespace, *annotation.nid))
+            val namespace = annotation.namespace
+            set(entity, UrnBuilder.generateID(namespace, *annotation.nid))
         }
     }
 }

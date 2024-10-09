@@ -1,9 +1,7 @@
 package de.modulix.mosimtech.database.jpa
 
-import de.modulix.mosimtech.builder.UrnGeneratorSequence
 import de.modulix.mosimtech.converter.jpa.UrnStringConverter
 import de.modulix.mosimtech.database.base.BaseModel
-import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
 import de.modulix.mosimtech.database.base.urn.Urn
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
@@ -33,7 +31,6 @@ import java.time.ZonedDateTime
 @MappedSuperclass
 abstract class AbstractBaseEntity : BaseModel {
 
-    @UrnGeneratorSequence(DefaultNamespace::class)
     @Column(name = "creationDate", nullable = false)
     @CreatedDate
     override lateinit var creationDate: ZonedDateTime
