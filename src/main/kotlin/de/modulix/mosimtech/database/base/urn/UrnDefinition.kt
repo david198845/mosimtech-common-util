@@ -46,4 +46,6 @@ interface UrnDefinition : Serializable {
      */
     fun toUrnString(): String
 
+    fun isDefault(): Boolean
+
 }

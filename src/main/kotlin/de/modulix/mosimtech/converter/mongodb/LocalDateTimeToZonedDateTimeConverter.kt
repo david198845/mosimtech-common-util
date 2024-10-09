@@ -13,7 +13,7 @@ import java.time.ZonedDateTime
  * - The designated time zone for conversion is always UTC.
  */
 @ReadingConverter
-class LocalDateTimeToZonedDateTimeConverter : Converter<LocalDateTime, ZonedDateTime> {
+open class LocalDateTimeToZonedDateTimeConverter : Converter<LocalDateTime, ZonedDateTime> {
     /**
      * Converts a given LocalDateTime instance to a ZonedDateTime instance in the UTC time zone.
      *

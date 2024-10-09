@@ -13,7 +13,7 @@ import de.modulix.mosimtech.database.base.urn.Urn
  *
  * It throws an exception if the `Urn` instance provided to it is null.
  */
-class UrnSerializer : StdSerializer<Urn>(Urn::class.java) {
+open class UrnSerializer : StdSerializer<Urn>(Urn::class.java) {
 
     /**
      * Serializes an `Urn` object into its string representation using a `JsonGenerator`.

@@ -203,7 +203,7 @@ open class Urn : UrnDefinition {
         return Urn(this)
     }
 
-    fun isDefault() = namespace == DefaultNamespace.Undefined.identifier && nss == NSS_DEFAULT_VALUE
+    override fun isDefault() = namespace == DefaultNamespace.Undefined.identifier && nss == NSS_DEFAULT_VALUE
 
     companion object {
         const val NSS_DEFAULT_VALUE = "undefined"

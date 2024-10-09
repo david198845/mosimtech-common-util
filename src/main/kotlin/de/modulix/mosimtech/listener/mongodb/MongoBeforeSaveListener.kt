@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent
  * This listener intercepts the lifecycle of MongoDB entities before they are converted and saved.
  * It ensures that identifier fields are correctly auto-generated for new entities.
  */
-class MongoBeforeSaveListener : AbstractMongoEventListener<AbstractBaseEntity>() {
+open class MongoBeforeSaveListener : AbstractMongoEventListener<AbstractBaseEntity>() {
 
     /**
      * Intercepts the lifecycle of MongoDB entities before they are converted and saved.

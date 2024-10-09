@@ -12,7 +12,7 @@ import java.time.ZonedDateTime
  * Implements the `Converter` interface provided by the Spring Framework for type conversion.
  */
 @WritingConverter
-class ZonedDateTimeToLocalDateTimeConverter : Converter<ZonedDateTime, LocalDateTime> {
+open class ZonedDateTimeToLocalDateTimeConverter : Converter<ZonedDateTime, LocalDateTime> {
     /**
      * Converts a `ZonedDateTime` object to a `LocalDateTime` object in UTC.
      *

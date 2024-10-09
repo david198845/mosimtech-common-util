@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter
  * This codec uses the `ISO_ZONED_DATE_TIME` formatter for converting
  * `ZonedDateTime` objects to their string representation and vice versa.
  */
-class ZonedDateTimeCodec : Codec<ZonedDateTime> {
+open class ZonedDateTimeCodec : Codec<ZonedDateTime> {
     private val formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
 
     /**

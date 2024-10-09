@@ -12,7 +12,7 @@ import de.modulix.mosimtech.database.base.urn.Urn
  * This deserializer handles the conversion of a JSON string representation of a URN
  * into an instance of the `Urn` class by leveraging the `Urn.parse` method.
  */
-class UrnDeserializer : StdDeserializer<Urn>(Urn::class.java) {
+open class UrnDeserializer : StdDeserializer<Urn>(Urn::class.java) {
 
     /**
      * Deserializes the JSON content into an `Urn` object.

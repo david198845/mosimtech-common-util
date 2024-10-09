@@ -10,7 +10,7 @@ import de.modulix.mosimtech.database.base.urn.Urn
  *
  * The `UrnBuilder` class extends `UrnGenerator` and provides a fluent interface for setting up and generating URNs.
  */
-class UrnBuilder : UrnGenerator() {
+open class UrnBuilder : UrnGenerator() {
 
     private var namespaceString: String = DefaultNamespace.Undefined.identifier
     private var nid: Set<String> = emptySet()
