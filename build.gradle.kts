@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.modulix.mosimtech"
-version = "2.0.2"
+version = "2.0.3"
 
 // Versions-Variablen
 val kotlinJvmPluginVersion = "2.0.20"

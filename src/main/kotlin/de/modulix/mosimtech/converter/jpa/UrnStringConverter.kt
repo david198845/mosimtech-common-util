@@ -2,14 +2,15 @@ package de.modulix.mosimtech.converter.jpa
 
 import de.modulix.mosimtech.database.base.urn.Urn
 import jakarta.persistence.AttributeConverter
+import jakarta.persistence.Converter
 
 
 /**
  * UrnConverter is an abstract class providing functionalities to convert URN (Uniform Resource Name)
  * objects to their string representation suitable for database storage and back to URN objects.
  */
-abstract class UrnStringConverter : AttributeConverter<Urn?, String?> {
-
+@Converter
+open class UrnStringConverter : AttributeConverter<Urn?, String?> {
 
     /**
      * Converts a URN object to its string representation suitable for database storage.
