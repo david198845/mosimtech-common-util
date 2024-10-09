@@ -1,10 +1,10 @@
-package de.modulix.mosimtech.model.urn
+package de.modulix.mosimtech.database.base.urn
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import de.modulix.mosimtech.model.namespace.DefaultNamespace
-import de.modulix.mosimtech.model.namespace.Namespace
+import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.base.namespace.Namespace
 import de.modulix.mosimtech.serializer.UrnDeserializer
 import de.modulix.mosimtech.serializer.UrnSerializer
 

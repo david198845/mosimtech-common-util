@@ -1,14 +1,14 @@
-package de.modulix.mosimtech.identifier
+package de.modulix.mosimtech.builder
 
-import de.modulix.mosimtech.model.namespace.Namespace
-import de.modulix.mosimtech.model.urn.Urn
+import de.modulix.mosimtech.database.base.namespace.Namespace
+import de.modulix.mosimtech.database.base.urn.Urn
 import java.util.*
 
 /**
  * An interface for generating Uniform Resource Names (URNs).
  * It provides methods to create URNs with specified namespaces and optional namespace identifiers.
  */
-open class URNBuilder {
+abstract class UrnBuilder {
 
     /**
      * Generates a URN (Uniform Resource Name) string using the specified namespace and optional namespace identifiers.

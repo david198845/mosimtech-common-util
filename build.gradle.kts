@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.modulix.mosimtech"
-version = "1.3.3"
+version = "2.0.0"
 
 // Versions-Variablen
 val jacksonDatabindVersion = "2.17.0"
@@ -25,6 +25,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinStdlibJdk8Version")
     implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.20")
     implementation("org.slf4j:slf4j-api:$slf4jApiVersion")
+    implementation("org.mongodb:bson:5.2.0")
+    implementation("org.springframework.data:spring-data-jpa:3.3.4")
+    implementation("org.springframework.data:spring-data-mongodb:4.3.4")
+    implementation("org.springframework.data:spring-data-neo4j:7.3.4")
+    implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+    implementation("jakarta.validation:jakarta.validation-api:3.1.0")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
     testImplementation(kotlin("test"))
     testImplementation("org.mockito:mockito-core:$mockitoCoreVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion")

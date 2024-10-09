@@ -2,8 +2,8 @@ package de.modulix.mosimtech.serializer
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
-import de.modulix.mosimtech.model.namespace.DefaultNamespace
-import de.modulix.mosimtech.model.urn.Urn
+import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.base.urn.Urn
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

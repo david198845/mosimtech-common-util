@@ -1,11 +1,8 @@
+package de.modulix.mosimtech.database.base.urn
 
-package de.modulix.mosimtech.model.urn
-
-
-import de.modulix.mosimtech.model.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
 import de.modulix.mosimtech.namespace.TestNamespace
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -29,7 +26,7 @@ class UrnTest {
     @Test
     fun `Test namespace registration and parsing valid urn string with nid`() {
         val urn = Urn.parse("urn:test:nid1:nid2:nss")
-        assertNotNull(urn)
+        Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
         assertEquals("nss", urn?.nss)
         assertEquals(setOf("nid1", "nid2"), urn?.nid)
@@ -38,25 +35,25 @@ class UrnTest {
     @Test
     fun `Test namespace registration and parsing valid urn string without nid`() {
         val urn = Urn.parse("urn:test:nss")
-        assertNotNull(urn)
+        Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
         assertEquals("nss", urn?.nss)
-        assertTrue(urn?.nid!!.isEmpty())
+        Assertions.assertTrue(urn?.nid!!.isEmpty())
     }
 
     @Test
     fun `Test parsing invalid urn string`() {
         val urn = Urn.parse("notValidUrn")
-        assertNull(urn)
+        Assertions.assertNull(urn)
     }
 
     @Test
     fun `Test parsing urn string with unregistered namespace`() {
         val urn = Urn.parse("urn:unregistered:nss")
-        assertNotNull(urn)
-        assertNotEquals(TestNamespace.Test.identifier, urn?.namespace)
+        Assertions.assertNotNull(urn)
+        Assertions.assertNotEquals(TestNamespace.Test.identifier, urn?.namespace)
         assertEquals("nss", urn?.nss)
-        assertTrue(urn?.nid!!.isEmpty())
+        Assertions.assertTrue(urn?.nid!!.isEmpty())
     }
 
     @Test
@@ -64,8 +61,8 @@ class UrnTest {
         val urn1 = Urn(TestNamespace.Test, "nss")
         val urn2 = Urn(TestNamespace.Test, "nss2")
         val urn3 = Urn(TestNamespace.Test, "nss")
-        assertFalse(urn1.equals(urn2))
-        assertTrue(urn1.equals(urn3))
+        Assertions.assertFalse(urn1.equals(urn2))
+        Assertions.assertTrue(urn1.equals(urn3))
     }
 
     @Test
@@ -74,13 +71,13 @@ class UrnTest {
         val urn = Urn(TestNamespace.Test, "nss")
         val urnString1 = "urn:test:nss"
         val urnString2 = "urn:test:nss2"
-        assertFalse(urn.equals(urnString2))
-        assertTrue(urn.equals(urnString1))
+        Assertions.assertFalse(urn.equals(urnString2))
+        Assertions.assertTrue(urn.equals(urnString1))
     }
 
     @Test
     fun `Test parse function with invalid input`() {
-        assertNull(Urn.parse("invalidUrn"))
+        Assertions.assertNull(Urn.parse("invalidUrn"))
     }
 
     @Test
@@ -99,14 +96,14 @@ class UrnTest {
 
     @Test
     fun `Should throw Exception when converting invalid Urn String to Urn object`() {
-        assertNull("invalid:String".toUrn())
+        Assertions.assertNull("invalid:String".toUrn())
     }
 
     @Test
     fun `Test parse function with valid input containing nid`() {
 
         val urn = Urn.parse("urn:test:nid:nss")
-        assertNotNull(urn)
+        Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
         assertEquals(setOf("nid"), urn?.nid)
         assertEquals("nss", urn?.nss)
@@ -116,9 +113,9 @@ class UrnTest {
     fun `Test parse function with valid input without nid`() {
 
         val urn = Urn.parse("urn:test:nss")
-        assertNotNull(urn)
+        Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
-        assertTrue(urn?.nid!!.isEmpty())
+        Assertions.assertTrue(urn?.nid!!.isEmpty())
         assertEquals("nss", urn?.nss)
     }
 
@@ -134,7 +131,7 @@ class UrnTest {
 
         val urn = Urn(TestNamespace.Test, "nss")
         val unrelatedObject = "unrelated"
-        assertFalse(urn.equals(unrelatedObject))
+        Assertions.assertFalse(urn.equals(unrelatedObject))
     }
 
     @Test
@@ -142,7 +139,7 @@ class UrnTest {
 
         val urn1 = Urn(TestNamespace.Test, "nss")
         val urn2 = Urn(TestNamespace.Test, "nss")
-        assertTrue(urn1.equals(urn2))
+        Assertions.assertTrue(urn1.equals(urn2))
     }
 
     @Test
@@ -150,7 +147,7 @@ class UrnTest {
 
         val urn1 = Urn(TestNamespace.Test, "nss")
         val urn2 = Urn(TestNamespace.Test, "nss2")
-        assertFalse(urn1.equals(urn2))
+        Assertions.assertFalse(urn1.equals(urn2))
     }
 
     @Test
@@ -158,7 +155,7 @@ class UrnTest {
 
         val urn = Urn(TestNamespace.Test, "nss")
         val urnString = "urn:test:nss"
-        assertTrue(urn.equals(urnString))
+        Assertions.assertTrue(urn.equals(urnString))
     }
 
     @Test
@@ -166,7 +163,7 @@ class UrnTest {
 
         val urn = Urn(TestNamespace.Test, "nss")
         val urnString = "urn:test:nss2"
-        assertFalse(urn.equals(urnString))
+        Assertions.assertFalse(urn.equals(urnString))
     }
 
     @Test
@@ -174,7 +171,7 @@ class UrnTest {
 
         val urn = Urn(TestNamespace.Test, "nss")
         val nullObject = null
-        assertFalse(urn.equals(nullObject))
+        Assertions.assertFalse(urn.equals(nullObject))
     }
 
     @Test
@@ -182,7 +179,7 @@ class UrnTest {
 
         val urn1 = Urn(TestNamespace.Test, "nss")
         val urn2: Urn? = Urn(TestNamespace.Test, "nss2")
-        assertFalse(urn1.equals(urn2))
+        Assertions.assertFalse(urn1.equals(urn2))
     }
 
     @Test
@@ -190,7 +187,7 @@ class UrnTest {
 
         val urn1 = Urn(TestNamespace.Test, "nss")
         val urn2: Urn? = Urn(TestNamespace.Test, "nss")
-        assertTrue(urn1.equals(urn2))
+        Assertions.assertTrue(urn1.equals(urn2))
     }
 
     @Test
@@ -198,7 +195,7 @@ class UrnTest {
         val urn = Urn(DefaultNamespace.Undefined, "nss")
         assertEquals(DefaultNamespace.Undefined.identifier, urn.namespace)
         assertEquals("nss", urn.nss)
-        assertTrue(urn.nid.isEmpty())
+        Assertions.assertTrue(urn.nid.isEmpty())
     }
 
     @Test
@@ -210,19 +207,19 @@ class UrnTest {
     @Test
     fun `Test parsing invalid urn with empty namespace`() {
         val urn = Urn.parse("urn::nss")
-        assertNull(urn)
+        Assertions.assertNull(urn)
     }
 
     @Test
     fun `Test parsing invalid urn with empty nss`() {
         val urn = Urn.parse("urn:test:")
-        assertNull(urn)
+        Assertions.assertNull(urn)
     }
 
     @Test
     fun `Test equals function with unrelated object type`() {
         val urn = Urn(TestNamespace.Test, "nss")
         val unrelatedObject = 1234
-        assertFalse(urn.equals(unrelatedObject))
+        Assertions.assertFalse(urn.equals(unrelatedObject))
     }
 }

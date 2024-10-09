@@ -1,6 +1,6 @@
-package de.modulix.mosimtech.model
+package de.modulix.mosimtech.database.base
 
-import de.modulix.mosimtech.model.urn.Urn
+import de.modulix.mosimtech.database.base.urn.Urn
 import java.io.Serializable
 import java.time.ZonedDateTime
 
@@ -21,8 +21,8 @@ import java.time.ZonedDateTime
  */
 interface BaseModel : Serializable {
     val id: Urn?
-    val creationDate: ZonedDateTime
+    val creationDate: ZonedDateTime?
     val lastModifiedDate: ZonedDateTime?
     val lastModifiedBy: Urn?
-    val createdBy: Urn
+    val createdBy: Urn?
 }
