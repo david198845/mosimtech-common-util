@@ -12,8 +12,9 @@ import de.modulix.mosimtech.database.base.urn.Urn
  */
 open class UrnBuilder : UrnGenerator() {
 
-    private var namespaceString: String = DefaultNamespace.Undefined.identifier
-    private var nid: Set<String> = emptySet()
+    protected var namespace: String = DefaultNamespace.Undefined.identifier
+    protected var snid: Set<String> = emptySet()
+    protected var nss: String = ""
 
 
     /**
@@ -22,8 +23,8 @@ open class UrnBuilder : UrnGenerator() {
      * @param namespace The `Namespace` object representing the namespace to be used for the URN.
      * @return The `UrnBuilder` instance to allow method chaining.
      */
-    fun namespace(namespace: Namespace): UrnBuilder {
-        this.namespaceString = namespace.identifier
+    open fun withNamespace(namespace: Namespace): UrnBuilder {
+        this.namespace = namespace.identifier
         return this
     }
 
@@ -33,19 +34,24 @@ open class UrnBuilder : UrnGenerator() {
      * @param namespace The string representing the namespace to be used for the URN.
      * @return The `UrnBuilder` instance to allow method chaining.
      */
-    fun namespace(namespace: String): UrnBuilder {
-        this.namespaceString = namespace
+    open fun withNamespace(namespace: String): UrnBuilder {
+        this.namespace = namespace
         return this
     }
 
     /**
      * Sets the namespace identifiers (NIDs) for the URN (Uniform Resource Name) being built.
      *
-     * @param nid Variable number of namespace identifiers to be used for the URN.
+     * @param snid Variable number of subnamespace identifiers to be used for the URN.
      * @return The `UrnBuilder` instance to allow method chaining.
      */
-    fun nid(vararg nid: String): UrnBuilder {
-        this.nid = nid.toSet()
+    open fun withSubNamespaceIdentifier(vararg snid: String): UrnBuilder {
+        this.snid = snid.toSet()
+        return this
+    }
+
+    open fun withNamespaceSpecificString(namespaceSpecificString: String): UrnBuilder {
+        this.nss = namespaceSpecificString
         return this
     }
 
@@ -54,8 +60,8 @@ open class UrnBuilder : UrnGenerator() {
      *
      * @return A new `Urn` instance that represents the constructed Uniform Resource Name.
      */
-    fun build(): Urn {
-        return generateUrn(namespaceString, *nid.toTypedArray())
+    open fun build(): Urn {
+        return generateUrn(namespace, nss, *snid.toTypedArray())
     }
 
     companion object {
@@ -70,13 +76,17 @@ open class UrnBuilder : UrnGenerator() {
          * @return The generated URN based on the provided namespace and name identifiers.
          */
         @JvmStatic
-        fun generateID(namespace: Namespace, vararg nameIdentifiers: String): Urn {
-            return generateUrnBasedOnIdentifiers(namespace.identifier, *nameIdentifiers)
+        fun generateID(
+            namespace: Namespace,
+            namespaceSpecificString: String = "",
+            vararg nameIdentifiers: String
+        ): Urn {
+            return generateUrnBasedOnIdentifiers(namespace.identifier, namespaceSpecificString, *nameIdentifiers)
         }
 
         @JvmStatic
-        fun generateID(namespace: String, vararg nameIdentifiers: String): Urn {
-            return generateUrnBasedOnIdentifiers(namespace, *nameIdentifiers)
+        fun generateID(namespace: String, namespaceSpecificString: String = "", vararg nameIdentifiers: String): Urn {
+            return generateUrnBasedOnIdentifiers(namespace, namespaceSpecificString, *nameIdentifiers)
         }
 
         /**
@@ -88,10 +98,14 @@ open class UrnBuilder : UrnGenerator() {
          * @param nameIdentifiers A variable number of strings that serve as the unique name identifiers for the URN.
          * @return The generated URN based on the provided namespace and name identifiers.
          */
-        private fun generateUrnBasedOnIdentifiers(namespace: String, vararg nameIdentifiers: String): Urn {
+        protected fun generateUrnBasedOnIdentifiers(
+            namespace: String,
+            namespaceSpecificString: String = "",
+            vararg nameIdentifiers: String
+        ): Urn {
             val urnGenerator = UrnBuilder()
             return if (nameIdentifiers.isNotEmpty())
-                urnGenerator.generateUrn(namespace, *nameIdentifiers)
+                urnGenerator.generateUrn(namespace, namespaceSpecificString, *nameIdentifiers)
             else
                 urnGenerator.generateUrn(namespace)
         }

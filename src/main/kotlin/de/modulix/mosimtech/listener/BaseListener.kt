@@ -19,7 +19,7 @@ fun beforeSaveListener(entity: BaseModel) {
             isAccessible = true
             val annotation = getAnnotation(UrnGeneratorSequence::class.java)
             val namespace = annotation.namespace
-            set(entity, UrnBuilder.generateID(namespace, *annotation.nid))
+            set(entity, UrnBuilder.generateID(namespace = namespace, nameIdentifiers = annotation.snid))
         }
     }
 }

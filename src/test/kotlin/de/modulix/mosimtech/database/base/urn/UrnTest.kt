@@ -10,35 +10,35 @@ class UrnTest {
 
 
     @Test
-    fun `Test Urn creation and conversion to string without nid`() {
+    fun `Test Urn creation and conversion to string without snid`() {
         val urn = Urn(TestNamespace.Test, "nss")
         val urnString = urn.toUrnString()
         assertEquals("urn:test:nss", urnString)
     }
 
     @Test
-    fun `Test Urn creation and conversion to string with nid`() {
+    fun `Test Urn creation and conversion to string with snid`() {
         val urn = Urn(TestNamespace.Test, "nss", setOf("nid1", "nid2"))
         val urnString = urn.toUrnString()
         assertEquals("urn:test:nid1:nid2:nss", urnString)
     }
 
     @Test
-    fun `Test namespace registration and parsing valid urn string with nid`() {
+    fun `Test namespace registration and parsing valid urn string with snid`() {
         val urn = Urn.parse("urn:test:nid1:nid2:nss")
         Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
-        assertEquals("nss", urn?.nss)
-        assertEquals(setOf("nid1", "nid2"), urn?.nid)
+        assertEquals("nss", urn?.nameSpecificString)
+        assertEquals(setOf("nid1", "nid2"), urn?.subNamespaceIdentifier)
     }
 
     @Test
-    fun `Test namespace registration and parsing valid urn string without nid`() {
+    fun `Test namespace registration and parsing valid urn string without snid`() {
         val urn = Urn.parse("urn:test:nss")
         Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
-        assertEquals("nss", urn?.nss)
-        Assertions.assertTrue(urn?.nid!!.isEmpty())
+        assertEquals("nss", urn?.nameSpecificString)
+        Assertions.assertTrue(urn?.subNamespaceIdentifier!!.isEmpty())
     }
 
     @Test
@@ -52,8 +52,8 @@ class UrnTest {
         val urn = Urn.parse("urn:unregistered:nss")
         Assertions.assertNotNull(urn)
         Assertions.assertNotEquals(TestNamespace.Test.identifier, urn?.namespace)
-        assertEquals("nss", urn?.nss)
-        Assertions.assertTrue(urn?.nid!!.isEmpty())
+        assertEquals("nss", urn?.nameSpecificString)
+        Assertions.assertTrue(urn?.subNamespaceIdentifier!!.isEmpty())
     }
 
     @Test
@@ -88,7 +88,7 @@ class UrnTest {
     }
 
     @Test
-    fun `Should convert valid Urn String with nid to Urn object`() {
+    fun `Should convert valid Urn String with snid to Urn object`() {
 
         val expected = Urn(TestNamespace.Test, "1234", setOf("01", "02"))
         Assertions.assertEquals(expected, "urn:test:01:02:1234".toUrn())
@@ -100,23 +100,23 @@ class UrnTest {
     }
 
     @Test
-    fun `Test parse function with valid input containing nid`() {
+    fun `Test parse function with valid input containing snid`() {
 
-        val urn = Urn.parse("urn:test:nid:nss")
+        val urn = Urn.parse("urn:test:snid:nss")
         Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
-        assertEquals(setOf("nid"), urn?.nid)
-        assertEquals("nss", urn?.nss)
+        assertEquals(setOf("snid"), urn?.subNamespaceIdentifier)
+        assertEquals("nss", urn?.nameSpecificString)
     }
 
     @Test
-    fun `Test parse function with valid input without nid`() {
+    fun `Test parse function with valid input without snid`() {
 
         val urn = Urn.parse("urn:test:nss")
         Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
-        Assertions.assertTrue(urn?.nid!!.isEmpty())
-        assertEquals("nss", urn?.nss)
+        Assertions.assertTrue(urn?.subNamespaceIdentifier!!.isEmpty())
+        assertEquals("nss", urn?.nameSpecificString)
     }
 
     @Test
@@ -194,12 +194,12 @@ class UrnTest {
     fun `Test Urn initialisation with default namespace defined in Urn object`() {
         val urn = Urn(DefaultNamespace.Undefined, "nss")
         assertEquals(DefaultNamespace.Undefined.identifier, urn.namespace)
-        assertEquals("nss", urn.nss)
-        Assertions.assertTrue(urn.nid.isEmpty())
+        assertEquals("nss", urn.nameSpecificString)
+        Assertions.assertTrue(urn.subNamespaceIdentifier.isEmpty())
     }
 
     @Test
-    fun `Test Urn creation with single nid`() {
+    fun `Test Urn creation with single snid`() {
         val urn = Urn(TestNamespace.Test, "nss", setOf("nid1"))
         assertEquals("urn:test:nid1:nss", urn.toUrnString())
     }

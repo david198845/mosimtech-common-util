@@ -25,4 +25,5 @@ interface BaseModel : Serializable {
     val lastModifiedDate: ZonedDateTime?
     val lastModifiedBy: Urn?
     val createdBy: Urn?
+    val userId: Urn?
 }

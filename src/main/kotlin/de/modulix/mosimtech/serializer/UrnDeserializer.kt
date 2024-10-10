@@ -29,12 +29,12 @@ open class UrnDeserializer : StdDeserializer<Urn>(Urn::class.java) {
         } else if (rootNode.isObject && rootNode.has("namespace")) {
             val namespace = rootNode["namespace"].asText()
             val nss = rootNode["nss"].asText()
-            val nid = extractNid(rootNode["nid"])
+            val snid = extractNid(rootNode["snid"])
 
-            return if (nid.isEmpty()) {
+            return if (snid.isEmpty()) {
                 Urn(namespace = namespace, nss = nss)
             } else {
-                Urn(namespace = namespace, nss = nss, nid = nid)
+                Urn(namespace = namespace, nss = nss, snid = snid)
             }
         } else {
             return null

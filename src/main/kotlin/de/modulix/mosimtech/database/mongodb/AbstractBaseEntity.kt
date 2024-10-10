@@ -45,4 +45,7 @@ abstract class AbstractBaseEntity : BaseModel {
 
     @LastModifiedDate
     override var lastModifiedDate: ZonedDateTime? = null
+
+    @NotNull
+    override val userId: Urn? = null
 }

@@ -10,29 +10,29 @@ import de.modulix.mosimtech.serializer.UrnSerializer
 
 /**
  * Represents a Uniform Resource Name (URN) with a namespace, a namespace-specific string (NSS),
- * and an optional namespace identifier (NID).
+ * and an optional namespace identifier (SNID).
  *
  * A URN (Uniform Resource Name) is an URI (Uniform Resource Identifier) that uniquely and permanently identifies a resource.
  * This class provides the structure and essential parts of an URN.
  *
- * @property namespace The namespace of the URN. This is a higher-level category or domain that helps
+ * @property namespace The namespace or namespace identifier of the URN. This is a higher-level category or domain that helps
  *                     uniquely identify the resource. Example: "urn:isbn".
- * @property nss The namespace-specific string of the URN. This is the specific part of the URN that identifies
+ * @property nameSpecificString The namespace-specific string of the URN. This is the specific part of the URN that identifies
  *               a particular resource within the given namespace. Example: "978-3-16-148410-0" for a book in the ISBN namespace.
- * @property nid The optional namespace identifier of the URN. This could be used for additional identification purposes or specific
+ * @property subNamespaceIdentifier The optional sub namespace identifier of the URN. This could be used for additional identification purposes or specific
  *               implementation details. Example: An identifier for versions or special distinctions.
  *
- * Example of a complete URN without NID:
+ * Example of a complete URN without snid:
  * - Complete URN: "urn:isbn:978-3-16-148410-0"
  * - Namespace: "isbn"
  * - Namespace-specific string (NSS): "978-3-16-148410-0"
- * - Optional namespace identifier (NID): not present in this example
+ * - Optional namespace identifier (snid): not present in this example
  *
  * Example of a complete URN with all components:
  * - Complete URN: "urn:user:keycloak:978-3-16-148410-0"
  * - Namespace: "user"
  * - Namespace-specific string (NSS): "978-3-16-148410-0"
- * - Optional namespace identifier (NID): keycloak
+ * - Optional sub namespace identifier (SNID): keycloak
  *
  */
 @JsonSerialize(using = UrnSerializer::class)
@@ -43,10 +43,10 @@ open class Urn : UrnDefinition {
     override lateinit var namespace: String
 
     @JsonProperty("nss")
-    override lateinit var nss: String
+    override lateinit var nameSpecificString: String
 
-    @JsonProperty("nid")
-    override var nid: Set<String> = emptySet()
+    @JsonProperty("snid")
+    override var subNamespaceIdentifier: Set<String> = emptySet()
 
     /**
      * Primary constructor for the `Urn` class.
@@ -54,39 +54,39 @@ open class Urn : UrnDefinition {
      * Initializes the URN components with default values:
      * - `namespace` is set to the identifier of the `DefaultNamespace.Undefined`,
      * - `nss` is set to "undefined",
-     * - `nid` is set to an empty set.
+     * - `snid` is set to an empty set.
      */
     constructor() {
         this.namespace = DefaultNamespace.Undefined.identifier
-        this.nss = NSS_DEFAULT_VALUE
-        this.nid = emptySet()
+        this.nameSpecificString = NSS_DEFAULT_VALUE
+        this.subNamespaceIdentifier = emptySet()
     }
 
     /**
-     * Constructs an instance of the Urn class with a specified namespace, NSS, and an optional NID.
+     * Constructs an instance of the Urn class with a specified namespace, NSS, and an optional snid.
      *
      * @param namespace The namespace component of the URN.
      * @param nss The Namespace Specific String (NSS) component of the URN.
-     * @param nid An optional set of NIDs (Namespace Identifiers) associated with the URN. Defaults to null if not provided.
+     * @param snid An optional set of SNIDs (Sub Namespace Identifiers) associated with the URN. Defaults to null if not provided.
      */
-    constructor(namespace: String, nss: String, nid: Set<String> = emptySet()) : this() {
+    constructor(namespace: String, nss: String, snid: Set<String> = emptySet()) : this() {
         this.namespace = namespace
-        this.nss = nss
-        this.nid = nid
+        this.nameSpecificString = nss
+        this.subNamespaceIdentifier = snid
     }
 
     /**
      * Constructs an instance of the `Urn` class by assigning the provided `namespace`, `nss`,
-     * and optionally `nid` values.
+     * and optionally `snid` values.
      *
      * @param namespace The `Namespace` object representing the namespace identifier.
      * @param nss The namespace-specific string (NSS) part of the URN.
-     * @param nid A set of namespace identifiers (NID) which are optional.
+     * @param snid A set of namespace identifiers (SNID) which are optional.
      */
-    constructor(namespace: Namespace, nss: String, nid: Set<String> = emptySet()) : this(
+    constructor(namespace: Namespace, nss: String, snid: Set<String> = emptySet()) : this(
         namespace = namespace.identifier,
         nss = nss,
-        nid = nid
+        snid = snid
     )
 
 
@@ -103,24 +103,26 @@ open class Urn : UrnDefinition {
 
     /**
      * Private constructor for the Urn class that initializes the instance with
-     * the namespace, namespace-specific string (NSS), and optional namespace identifier (NID)
+     * the namespace, namespace-specific string (NSS), and optional namespace identifier (snid)
      * from another Urn instance.
      *
-     * @param data The Urn instance from which to copy the namespace, NSS, and NID values.
+     * @param data The Urn instance from which to copy the namespace, NSS, and snid values.
      */
-    constructor(data: Urn) : this(data.namespace, data.nss, data.nid)
+    constructor(data: Urn) : this(data.namespace, data.nameSpecificString, data.subNamespaceIdentifier)
 
 
     /**
      * Converts the URN components to a string representation.
      *
-     * @return A string in the format "urn:<namespace>:<nss>" if the NID is not specified;
+     * @return A string in the format "urn:<namespace>:<nss>" if the snid is not specified;
      *         otherwise, the format will be "urn:<namespace>:<nss>:<nss>".
      */
     override fun toUrnString(): String {
-        return if (nid.isEmpty()) "urn:${namespace}:$nss"
+        return if (subNamespaceIdentifier.isEmpty()) "urn:${namespace}:$nameSpecificString"
         else {
-            "urn:${namespace}:${nid.takeIf { it.isNotEmpty() }.orEmpty().joinToString(":") { it }}:$nss"
+            "urn:${namespace}:${
+                subNamespaceIdentifier.takeIf { it.isNotEmpty() }.orEmpty().joinToString(":") { it }
+            }:$nameSpecificString"
         }
     }
 
@@ -164,7 +166,7 @@ open class Urn : UrnDefinition {
      * Checks if this `Urn` instance is equal to another object.
      *
      * The equality of two `Urn` instances is determined by comparing their `namespace`, `nss`,
-     * and `nid` properties.
+     * and `snid` properties.
      *
      * @param other The object to compare with this `Urn` instance.
      * @return `true` if the provided object is equal to this `Urn` instance, `false` otherwise.
@@ -174,41 +176,42 @@ open class Urn : UrnDefinition {
         if (other !is Urn) return false
 
         if (namespace != other.namespace) return false
-        if (nss != other.nss) return false
-        if (nid != other.nid) return false
+        if (nameSpecificString != other.nameSpecificString) return false
+        if (subNamespaceIdentifier != other.subNamespaceIdentifier) return false
 
         return true
     }
 
     /**
      * Generates the hash code for the current `Urn` instance.
-     * The hash code is calculated based on the `namespace`, `nss`, and `nid` properties
+     * The hash code is calculated based on the `namespace`, `nss`, and `snid` properties
      * ensuring a consistent and unique value representative of the URN's state.
      *
      * @return The generated hash code as an integer.
      */
     override fun hashCode(): Int {
         var result = namespace.hashCode()
-        result = 31 * result + nss.hashCode()
-        result = 31 * result + nid.hashCode()
+        result = 31 * result + nameSpecificString.hashCode()
+        result = 31 * result + subNamespaceIdentifier.hashCode()
         return result
     }
 
     /**
      * Creates a copy of the current `Urn` instance.
      *
-     * @return A new `Urn` instance with the same namespace, NSS, and NID values as the original.
+     * @return A new `Urn` instance with the same namespace, NSS, and snid values as the original.
      */
     fun copy(): Urn {
         return Urn(this)
     }
 
-    override fun isDefault() = namespace == DefaultNamespace.Undefined.identifier && nss == NSS_DEFAULT_VALUE
+    override fun isDefault() =
+        namespace == DefaultNamespace.Undefined.identifier && nameSpecificString == NSS_DEFAULT_VALUE
 
     companion object {
         const val NSS_DEFAULT_VALUE = "undefined"
         private const val URN_PREFIX = "urn"
-        private const val NID_URN = 4
+        private const val SNID_URN = 4
         private const val MIN_URN_PARTS = 3
         private const val NID_START_INDEX = 2
         private const val NID_END_INDEX_OFFSET = 1
@@ -226,10 +229,10 @@ open class Urn : UrnDefinition {
             if (parts.size < MIN_URN_PARTS || parts[0] != URN_PREFIX) {
                 return null
             }
-            return if (parts.size >= NID_URN) {
+            return if (parts.size >= SNID_URN) {
                 Urn(
                     namespace = parts[1],
-                    nid = parts.subList(NID_START_INDEX, parts.size - NID_END_INDEX_OFFSET).toSet(),
+                    snid = parts.subList(NID_START_INDEX, parts.size - NID_END_INDEX_OFFSET).toSet(),
                     nss = parts.last()
                 )
             } else {

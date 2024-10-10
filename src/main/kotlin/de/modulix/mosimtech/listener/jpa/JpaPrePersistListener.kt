@@ -25,7 +25,7 @@ open class JpaPrePersistListener {
      */
     @PrePersist
     @Throws(IllegalAccessException::class)
-    fun prePersist(entity: BaseModel) {
+    open fun prePersist(entity: BaseModel) {
         beforeSaveListener(entity)
     }
 }

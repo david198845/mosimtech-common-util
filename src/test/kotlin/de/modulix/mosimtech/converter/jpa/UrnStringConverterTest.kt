@@ -18,8 +18,8 @@ class UrnStringConverterTest {
 
         val urnMock: Urn = mock {
             on { namespace } doReturn testNamespace.identifier
-            on { nss } doReturn "testNid"
-            on { nid } doReturn setOf("test")
+            on { nameSpecificString } doReturn "testNid"
+            on { subNamespaceIdentifier } doReturn setOf("test")
             on { toUrnString() } doReturn "urn:test:test:testNid"
         }
 
@@ -28,8 +28,8 @@ class UrnStringConverterTest {
         val urn = urnConverter.convertToEntityAttribute(dbData)
 
         Assertions.assertEquals(urnMock.namespace, urn?.namespace)
-        Assertions.assertEquals(urnMock.nss, urn?.nss)
-        Assertions.assertEquals(urnMock.nid, urn?.nid)
+        Assertions.assertEquals(urnMock.nameSpecificString, urn?.nameSpecificString)
+        Assertions.assertEquals(urnMock.subNamespaceIdentifier, urn?.subNamespaceIdentifier)
     }
 
     @Test

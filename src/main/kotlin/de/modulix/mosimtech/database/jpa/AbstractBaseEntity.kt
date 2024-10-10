@@ -49,4 +49,7 @@ abstract class AbstractBaseEntity : BaseModel {
     @LastModifiedDate
     override var lastModifiedDate: ZonedDateTime? = null
 
+    @Column(name = "userId", nullable = false)
+    override lateinit var userId: Urn
+
 }

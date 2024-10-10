@@ -16,7 +16,7 @@ internal class UrnDeserializerTest {
         val input = "{ \"urn\" : {\n" +
                 "    \"namespace\": \"user\",\n" +
                 "    \"nss\": \"0bfad384-1e92-4395-b7ad-022192fc46cd\",\n" +
-                "    \"nid\": [\"momasoft\"]\n" +
+                "    \"snid\": [\"momasoft\"]\n" +
                 "  } }"
         val parser = jsonFactory.createParser(input)
         parser.nextToken()
@@ -26,7 +26,7 @@ internal class UrnDeserializerTest {
         val result = deserializer.deserialize(parser, null)
         assertNotNull(result)
         assertEquals("user", result?.namespace)
-        assertEquals("0bfad384-1e92-4395-b7ad-022192fc46cd", result?.nss)
+        assertEquals("0bfad384-1e92-4395-b7ad-022192fc46cd", result?.nameSpecificString)
     }
 
     @Test
@@ -41,7 +41,7 @@ internal class UrnDeserializerTest {
 
         assertNotNull(result)
         assertEquals("test", result?.namespace)
-        assertEquals("nss", result?.nss)
+        assertEquals("nss", result?.nameSpecificString)
     }
 
     @Test
