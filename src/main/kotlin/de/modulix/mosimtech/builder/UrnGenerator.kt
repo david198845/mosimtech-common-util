@@ -34,7 +34,7 @@ abstract class UrnGenerator {
      */
     fun generateUrn(namespace: Namespace, nss: String = "", vararg snid: String = emptyArray()): Urn {
         val nidSet = snid.toSet().takeIf { it.isNotEmpty() }.orEmpty()
-        return if (nss.isEmpty()) Urn(namespace.identifier, nss, nidSet)
+        return if (nss.isNotEmpty()) Urn(namespace.identifier, nss, nidSet)
         else Urn(namespace, UUID.randomUUID().toString(), nidSet)
     }
 
@@ -49,7 +49,7 @@ abstract class UrnGenerator {
      */
     fun generateUrn(namespace: String, nss: String = "", vararg snid: String = emptyArray()): Urn {
         val nidSet = snid.toSet().takeIf { it.isNotEmpty() }.orEmpty()
-        return if (nss.isEmpty()) Urn(namespace, nss, nidSet)
+        return if (nss.isNotEmpty()) Urn(namespace, nss, nidSet)
         else Urn(namespace, UUID.randomUUID().toString(), nidSet)
     }
 }

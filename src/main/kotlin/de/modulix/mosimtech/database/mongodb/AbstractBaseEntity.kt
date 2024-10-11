@@ -3,10 +3,7 @@ package de.modulix.mosimtech.database.mongodb
 import de.modulix.mosimtech.database.base.BaseModel
 import de.modulix.mosimtech.database.base.urn.Urn
 import jakarta.validation.constraints.NotNull
-import org.springframework.data.annotation.CreatedBy
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedBy
-import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.annotation.*
 import java.time.ZonedDateTime
 
 /**
@@ -31,7 +28,7 @@ import java.time.ZonedDateTime
  * is marked with the `@LastModifiedDate` annotation to automatically handle the persistence of
  * modification timestamps.
  */
-abstract class AbstractBaseEntity : BaseModel {
+abstract class AbstractBaseEntity() : BaseModel {
     @CreatedDate
     @NotNull
     override var creationDate: ZonedDateTime? = null
@@ -47,5 +44,25 @@ abstract class AbstractBaseEntity : BaseModel {
     override var lastModifiedDate: ZonedDateTime? = null
 
     @NotNull
-    override val userId: Urn? = null
+    override var userId: Urn? = null
+
+    @NotNull
+    override var valid: Boolean? = true
+
+    @Version
+    override val version: Long? = null
+
+    constructor(
+        creationDate: ZonedDateTime,
+        createdBy: Urn,
+        lastModifiedBy: Urn?,
+        lastModifiedDate: ZonedDateTime?,
+        userId: Urn
+    ) : this() {
+        this.creationDate = creationDate
+        this.createdBy = createdBy
+        this.lastModifiedBy = lastModifiedBy
+        this.lastModifiedDate = lastModifiedDate
+        this.userId = userId
+    }
 }

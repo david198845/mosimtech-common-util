@@ -26,4 +26,10 @@ interface BaseModel : Serializable {
     val lastModifiedBy: Urn?
     val createdBy: Urn?
     val userId: Urn?
+    val version: Long?
+    var valid: Boolean?
+
+    fun setInvalid() {
+        this.valid = false
+    }
 }

@@ -3,13 +3,12 @@ package de.modulix.mosimtech.database.jpa
 import de.modulix.mosimtech.converter.jpa.UrnStringConverter
 import de.modulix.mosimtech.database.base.BaseModel
 import de.modulix.mosimtech.database.base.urn.Urn
-import jakarta.persistence.Column
-import jakarta.persistence.Convert
-import jakarta.persistence.MappedSuperclass
+import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.ZonedDateTime
 
 /**
@@ -29,7 +28,8 @@ import java.time.ZonedDateTime
  * @property lastModifiedDate The date and time when the object was last modified.
  */
 @MappedSuperclass
-abstract class AbstractBaseEntity : BaseModel {
+@EntityListeners(AuditingEntityListener::class)
+abstract class AbstractBaseEntity() : BaseModel {
 
     @Column(name = "creationDate", nullable = false)
     @CreatedDate
@@ -50,6 +50,28 @@ abstract class AbstractBaseEntity : BaseModel {
     override var lastModifiedDate: ZonedDateTime? = null
 
     @Column(name = "userId", nullable = false)
+    @Convert(converter = UrnStringConverter::class)
     override lateinit var userId: Urn
+
+    @Version
+    @Column(name = "revision", nullable = true)
+    override var version: Long? = null
+
+    @Column(name = "valid", nullable = false)
+    override var valid: Boolean? = true
+
+    constructor(
+        creationDate: ZonedDateTime,
+        createdBy: Urn,
+        lastModifiedBy: Urn?,
+        lastModifiedDate: ZonedDateTime?,
+        userId: Urn
+    ) : this() {
+        this.creationDate = creationDate
+        this.createdBy = createdBy
+        this.lastModifiedBy = lastModifiedBy
+        this.lastModifiedDate = lastModifiedDate
+        this.userId = userId
+    }
 
 }

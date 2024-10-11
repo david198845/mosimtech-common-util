@@ -1,10 +1,11 @@
 plugins {
     kotlin("jvm") version "2.0.20"
     id("maven-publish")
+    id("org.jetbrains.dokka") version "1.9.0"
 }
 
 group = "de.modulix.mosimtech"
-version = "2.1.0"
+version = "2.1.4"
 
 // Versions-Variablen
 val kotlinJvmPluginVersion = "2.0.20"
@@ -52,6 +53,22 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.dokkaJavadoc.configure {
+    outputDirectory.set(layout.buildDirectory.dir("dokka"))
+}
+
+tasks.register<Jar>("dokkaJavadocJar") {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    archiveClassifier.set("javadoc")
+    from(tasks.dokkaJavadoc)
+}
+
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(sourceSets["main"].allSource)
+}
+
+
 kotlin {
     jvmToolchain(21)
 }
@@ -60,6 +77,8 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
+            artifact(tasks["dokkaJavadocJar"])
+            artifact(tasks["sourcesJar"])
             groupId = group as String
             artifactId = project.name
             version = project.version.toString()
@@ -67,7 +86,12 @@ publishing {
     }
     repositories {
         maven {
-            url = uri("${project.rootDir}/releases")
+            url = uri("http://192.168.2.31:9000/repository/maven-local-release/")
+            isAllowInsecureProtocol = true
+            credentials {
+                username = "admin"
+                password = "admin"
+            }
         }
     }
 }
