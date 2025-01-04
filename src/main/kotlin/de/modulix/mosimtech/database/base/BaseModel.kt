@@ -1,6 +1,6 @@
 package de.modulix.mosimtech.database.base
 
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.urn.Urn
 import java.io.Serializable
 import java.time.ZonedDateTime
 
@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
  * @property createdBy The identifier (URN) of the user or system that created the object.
  */
 interface BaseModel : Serializable {
-    val id: Urn?
+    var id: Urn?
     val creationDate: ZonedDateTime?
     val lastModifiedDate: ZonedDateTime?
     val lastModifiedBy: Urn?

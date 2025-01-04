@@ -3,7 +3,7 @@ package de.modulix.mosimtech.serializer
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.urn.Urn
 
 
 /**

@@ -1,7 +1,7 @@
 package de.modulix.mosimtech.aware
 //
-import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.urn.Urn
 import org.springframework.data.domain.AuditorAware
 import java.util.*
 

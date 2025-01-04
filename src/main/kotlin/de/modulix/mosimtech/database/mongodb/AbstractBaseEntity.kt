@@ -1,7 +1,7 @@
 package de.modulix.mosimtech.database.mongodb
 
 import de.modulix.mosimtech.database.base.BaseModel
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.urn.Urn
 import jakarta.validation.constraints.NotNull
 import org.springframework.data.annotation.*
 import java.time.ZonedDateTime

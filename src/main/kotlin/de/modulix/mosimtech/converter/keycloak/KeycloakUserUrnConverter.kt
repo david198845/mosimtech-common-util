@@ -1,8 +1,8 @@
 package de.modulix.mosimtech.converter.keycloak
 
 import de.modulix.mosimtech.builder.UrnBuilder
-import de.modulix.mosimtech.database.base.namespace.UserNamespace
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.namespace.UserNamespace
+import de.modulix.mosimtech.database.urn.Urn
 
 /**
  * KeycloakUserUrnConverter is a utility class responsible for converting Keycloak user IDs

@@ -1,7 +1,7 @@
 package de.modulix.mosimtech.builder
 
-import de.modulix.mosimtech.database.base.namespace.Namespace
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.namespace.Namespace
+import de.modulix.mosimtech.database.urn.Urn
 import java.util.*
 
 /**

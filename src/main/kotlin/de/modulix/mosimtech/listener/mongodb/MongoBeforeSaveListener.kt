@@ -1,7 +1,8 @@
 package de.modulix.mosimtech.listener.mongodb
 
+import de.modulix.mosimtech.builder.UrnBuilder
+import de.modulix.mosimtech.database.annotations.UrnNamespace
 import de.modulix.mosimtech.database.mongodb.AbstractBaseEntity
-import de.modulix.mosimtech.listener.beforeSaveListener
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent
 
@@ -20,7 +21,12 @@ open class MongoBeforeSaveListener : AbstractMongoEventListener<AbstractBaseEnti
      */
     override fun onBeforeConvert(event: BeforeConvertEvent<AbstractBaseEntity>) {
         val entity = event.getSource()
-        beforeSaveListener(entity)
+        if (entity.id == null || entity.id!!.isDefault()) {
+            val annotation = entity.javaClass.getAnnotation(UrnNamespace::class.java)
+                ?: throw IllegalStateException("Entity ${entity.javaClass.simpleName} must be annotated with @UrnNamespace")
+
+            entity.id = UrnBuilder.generateID(namespace = annotation.value, "", *annotation.subNamespaces)
+        }
     }
 
 }

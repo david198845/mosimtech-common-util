@@ -1,14 +1,13 @@
 plugins {
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm") version "2.1.0"
     id("maven-publish")
     id("org.jetbrains.dokka") version "1.9.0"
 }
 
 group = "de.modulix.mosimtech"
-version = "2.1.4"
+version = "2.4.4"
 
 // Versions-Variablen
-val kotlinJvmPluginVersion = "2.0.20"
 val jacksonDatabindVersion = "2.17.0"
 val jacksonDataformatCsvVersion = "2.17.2"
 val kotlinStdlibJdk8Version = "2.0.0"
@@ -18,9 +17,8 @@ val mockitoJunitJupiterVersion = "5.0.0"
 val mockitoKotlinVersion = "5.0.0"
 val kotlinReflectVersion = "2.0.20"
 val mongoDbBsonVersion = "5.2.0"
-val springDataJpaVersion = "3.3.4"
-val springDataMongoDbVersion = "4.3.4"
-val springDataNeo4jVersion = "7.3.4"
+val springDataJpaVersion = "3.4.1"
+val springDataMongoDbVersion = "4.4.1"
 val jakartaPersistenceApiVersion = "3.2.0"
 val jakartaValidationApiVersion = "3.1.0"
 val hibernateValidatorVersion = "8.0.1.Final"
@@ -38,7 +36,8 @@ dependencies {
     implementation("org.mongodb:bson:$mongoDbBsonVersion")
     implementation("org.springframework.data:spring-data-jpa:$springDataJpaVersion")
     implementation("org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion")
-    implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion")
+    implementation("org.javamoney:moneta:1.4.4")
+    implementation("org.zalando:jackson-datatype-money:1.3.0")
     implementation("jakarta.persistence:jakarta.persistence-api:$jakartaPersistenceApiVersion")
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationApiVersion")
     implementation("org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion")
@@ -86,7 +85,11 @@ publishing {
     }
     repositories {
         maven {
-            url = uri("http://192.168.2.31:9000/repository/maven-local-release/")
+            url = if (version.toString().endsWith("SNAPSHOT")) {
+                uri("http://192.168.2.31:9000/repository/maven-local-snapshot/")
+            } else {
+                uri("http://192.168.2.31:9000/repository/maven-local-release/")
+            }
             isAllowInsecureProtocol = true
             credentials {
                 username = "admin"

@@ -2,7 +2,9 @@ package de.modulix.mosimtech.database.jpa
 
 import de.modulix.mosimtech.converter.jpa.UrnStringConverter
 import de.modulix.mosimtech.database.base.BaseModel
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.urn.Urn
+import de.modulix.mosimtech.database.urn.toUrn
+import de.modulix.mosimtech.listener.jpa.UrnEntityListener
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
@@ -28,28 +30,39 @@ import java.time.ZonedDateTime
  * @property lastModifiedDate The date and time when the object was last modified.
  */
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener::class)
+@EntityListeners(value = [AuditingEntityListener::class, UrnEntityListener::class])
 abstract class AbstractBaseEntity() : BaseModel {
 
-    @Column(name = "creationDate", nullable = false)
+    @Id
+    @Column(name = "id", updatable = false, nullable = false)
+    @Convert(converter = UrnStringConverter::class)
+    private var _id: String? = null
+
+    override var id: Urn?
+        get() = _id?.toUrn()
+        set(value) {
+            _id = value?.toUrnString()
+        }
+
+    @Column(name = "creation_date", nullable = false)
     @CreatedDate
     override lateinit var creationDate: ZonedDateTime
 
-    @Column(name = "createdBy", nullable = false)
+    @Column(name = "created_by", nullable = false)
     @Convert(converter = UrnStringConverter::class)
     @CreatedBy
     override lateinit var createdBy: Urn
 
-    @Column(name = "lastModifiedBy", nullable = false)
+    @Column(name = "last_modified_by", nullable = false)
     @Convert(converter = UrnStringConverter::class)
     @LastModifiedBy
     override var lastModifiedBy: Urn? = null
 
-    @Column(name = "lastModifiedDate", nullable = false)
+    @Column(name = "last_modified_date", nullable = false)
     @LastModifiedDate
     override var lastModifiedDate: ZonedDateTime? = null
 
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     @Convert(converter = UrnStringConverter::class)
     override lateinit var userId: Urn
 
@@ -57,8 +70,9 @@ abstract class AbstractBaseEntity() : BaseModel {
     @Column(name = "revision", nullable = true)
     override var version: Long? = null
 
-    @Column(name = "valid", nullable = false)
+    @Column(name = "valid", nullable = false, columnDefinition = "boolean default true")
     override var valid: Boolean? = true
+
 
     constructor(
         creationDate: ZonedDateTime,

@@ -1,6 +1,6 @@
 package de.modulix.mosimtech.converter.jpa
 
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.urn.Urn
 import de.modulix.mosimtech.namespace.TestNamespace
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

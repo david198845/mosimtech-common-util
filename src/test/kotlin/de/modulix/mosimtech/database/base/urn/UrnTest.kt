@@ -1,6 +1,8 @@
 package de.modulix.mosimtech.database.base.urn
 
-import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.urn.Urn
+import de.modulix.mosimtech.database.urn.toUrn
 import de.modulix.mosimtech.namespace.TestNamespace
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -92,6 +94,14 @@ class UrnTest {
 
         val expected = Urn(TestNamespace.Test, "1234", setOf("01", "02"))
         Assertions.assertEquals(expected, "urn:test:01:02:1234".toUrn())
+    }
+
+    @Test
+    fun `Should convert valid Test Urn String with snid to Urn object`() {
+
+        val expected = Urn("shift_calc", "b1248df9-aad0-4f1b-8761-8276c00c0118", setOf("shifts"))
+        val targetUrn = Urn.parse("urn:shift_calc:shifts:b1248df9-aad0-4f1b-8761-8276c00c0118")
+        Assertions.assertEquals(expected, targetUrn)
     }
 
     @Test

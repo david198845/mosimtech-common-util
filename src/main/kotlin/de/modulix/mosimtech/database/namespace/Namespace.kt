@@ -1,4 +1,4 @@
-package de.modulix.mosimtech.database.base.namespace
+package de.modulix.mosimtech.database.namespace
 
 /**
  * Represents a named scope or context within which specific identifiers, such as those in URNs (Uniform Resource Names),

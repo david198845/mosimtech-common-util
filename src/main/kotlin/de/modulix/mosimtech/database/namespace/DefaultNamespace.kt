@@ -1,4 +1,4 @@
-package de.modulix.mosimtech.database.base.namespace
+package de.modulix.mosimtech.database.namespace
 
 /**
  * Enum class representing the default namespaces available for URNs.

@@ -1,4 +1,4 @@
-package de.modulix.mosimtech.database.base.namespace
+package de.modulix.mosimtech.database.namespace
 
 /**
  * An object that implements the Namespace interface to represent a specific user-related scope.

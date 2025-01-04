@@ -1,8 +1,8 @@
 package de.modulix.mosimtech.builder
 
-import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
-import de.modulix.mosimtech.database.base.namespace.Namespace
-import de.modulix.mosimtech.database.base.urn.Urn
+import de.modulix.mosimtech.database.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.namespace.Namespace
+import de.modulix.mosimtech.database.urn.Urn
 
 
 /**
@@ -95,19 +95,19 @@ open class UrnBuilder : UrnGenerator() {
          * This function combines the given namespace and name identifiers to create a standardized URN.
          *
          * @param namespace The Namespace within which the URN is being generated.
-         * @param nameIdentifiers A variable number of strings that serve as the unique name identifiers for the URN.
+         * @param subNamespaceIdentifier A variable number of strings that serve as the unique name identifiers for the URN.
          * @return The generated URN based on the provided namespace and name identifiers.
          */
         protected fun generateUrnBasedOnIdentifiers(
             namespace: String,
-            namespaceSpecificString: String = "",
-            vararg nameIdentifiers: String
+            nameSpecificString: String = "",
+            vararg subNamespaceIdentifier: String
         ): Urn {
             val urnGenerator = UrnBuilder()
-            return if (nameIdentifiers.isNotEmpty())
-                urnGenerator.generateUrn(namespace, namespaceSpecificString, *nameIdentifiers)
+            return if (subNamespaceIdentifier.isNotEmpty())
+                urnGenerator.generateUrn(namespace, nameSpecificString, *subNamespaceIdentifier)
             else
-                urnGenerator.generateUrn(namespace)
+                urnGenerator.generateUrn(namespace, nameSpecificString)
         }
     }
 

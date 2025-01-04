@@ -1,4 +1,4 @@
-package de.modulix.mosimtech.database.base.urn
+package de.modulix.mosimtech.database.urn
 
 import java.io.Serializable
 

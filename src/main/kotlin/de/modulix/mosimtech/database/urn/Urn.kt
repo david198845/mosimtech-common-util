@@ -1,12 +1,16 @@
-package de.modulix.mosimtech.database.base.urn
+package de.modulix.mosimtech.database.urn
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
-import de.modulix.mosimtech.database.base.namespace.Namespace
+import de.modulix.mosimtech.database.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.namespace.Namespace
 import de.modulix.mosimtech.serializer.UrnDeserializer
 import de.modulix.mosimtech.serializer.UrnSerializer
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serial
+import java.io.Serializable
 
 /**
  * Represents a Uniform Resource Name (URN) with a namespace, a namespace-specific string (NSS),
@@ -37,16 +41,16 @@ import de.modulix.mosimtech.serializer.UrnSerializer
  */
 @JsonSerialize(using = UrnSerializer::class)
 @JsonDeserialize(using = UrnDeserializer::class)
-open class Urn : UrnDefinition {
+open class Urn : UrnDefinition, Serializable {
 
     @JsonProperty("namespace")
     override lateinit var namespace: String
 
-    @JsonProperty("nss")
-    override lateinit var nameSpecificString: String
-
     @JsonProperty("snid")
     override var subNamespaceIdentifier: Set<String> = emptySet()
+
+    @JsonProperty("nss")
+    override lateinit var nameSpecificString: String
 
     /**
      * Primary constructor for the `Urn` class.
@@ -203,6 +207,23 @@ open class Urn : UrnDefinition {
      */
     fun copy(): Urn {
         return Urn(this)
+    }
+
+    @Serial
+    private fun writeObject(out: ObjectOutputStream) {
+        out.writeUTF(this.toUrnString())
+    }
+
+    @Serial
+    private fun readObject(input: ObjectInputStream) {
+        val urnString = input.readUTF()
+        val parsed = parse(urnString)
+        parsed?.let {
+            namespace = it.namespace
+            nameSpecificString = it.nameSpecificString
+            subNamespaceIdentifier = it.subNamespaceIdentifier
+        }
+        // Setzen Sie hier die internen Felder der Urn-Klasse
     }
 
     override fun isDefault() =

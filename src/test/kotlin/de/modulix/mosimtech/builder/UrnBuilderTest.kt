@@ -1,6 +1,6 @@
 package de.modulix.mosimtech.builder
 
-import de.modulix.mosimtech.database.base.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.namespace.DefaultNamespace
 import de.modulix.mosimtech.namespace.TestNamespace
 import kotlin.test.Test
 import kotlin.test.assertEquals
