@@ -5,9 +5,9 @@ plugins {
 }
 
 group = "de.modulix.mosimtech"
-version = "2.4.4"
+version = "2.4.10"
 
-// Versions-Variablen
+// Versions-Variablen-
 val jacksonDatabindVersion = "2.17.0"
 val jacksonDataformatCsvVersion = "2.17.2"
 val kotlinStdlibJdk8Version = "2.0.0"
@@ -28,6 +28,7 @@ repositories {
 }
 
 dependencies {
+    implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonDataformatCsvVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinStdlibJdk8Version")
@@ -42,6 +43,8 @@ dependencies {
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationApiVersion")
     implementation("org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion")
     testImplementation(kotlin("test"))
+    testImplementation("com.h2database:h2:2.3.232")
+    testImplementation("org.springframework.data:spring-data-jpa:$springDataJpaVersion")
     testImplementation("org.mockito:mockito-core:$mockitoCoreVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion")
     testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")

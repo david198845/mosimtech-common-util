@@ -1,6 +1,6 @@
 package de.modulix.mosimtech.aware
-//
-import de.modulix.mosimtech.database.namespace.DefaultNamespace
+
+import de.modulix.mosimtech.database.namespace.UserNamespace
 import de.modulix.mosimtech.database.urn.Urn
 import org.springframework.data.domain.AuditorAware
 import java.util.*
@@ -24,6 +24,6 @@ open class SpringSecurityAuditorAware : AuditorAware<Urn> {
      * @return an Optional containing the Urn representing the system auditor.
      */
     override fun getCurrentAuditor(): Optional<Urn> {
-        return Optional.of(Urn(DefaultNamespace.Undefined, "SYSTEM"))
+        return Optional.of(Urn(UserNamespace, "SYSTEM"))
     }
 }

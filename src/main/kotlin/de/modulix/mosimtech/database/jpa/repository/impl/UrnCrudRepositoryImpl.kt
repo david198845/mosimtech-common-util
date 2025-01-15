@@ -4,11 +4,13 @@ import de.modulix.mosimtech.database.jpa.AbstractBaseEntity
 import de.modulix.mosimtech.database.jpa.repository.UrnCrudRepository
 import de.modulix.mosimtech.database.namespace.Namespace
 import de.modulix.mosimtech.database.urn.Urn
+import io.hypersistence.utils.spring.repository.BaseJpaRepositoryImpl
 import jakarta.persistence.EntityManager
 import jakarta.persistence.TypedQuery
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 
@@ -42,12 +44,11 @@ import java.util.*
  * and string manipulation functions, such as `split_part` and `LIKE`.
  * It extends Spring Data's capabilities to handle domain-specific entity identifiers.
  */
-class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
+open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
     entityInformation: JpaEntityInformation<T, String>,
     private val entityManager: EntityManager
-) : SimpleJpaRepository<T, String>(entityInformation, entityManager),
-    UrnCrudRepository<T>,
-    JpaRepositoryImplementation<T, String> {
+) : BaseJpaRepositoryImpl<T, String>(entityInformation, entityManager),
+    UrnCrudRepository<T>{
 
     /**
      * Finds an entity by its unique identifier.
@@ -56,6 +57,12 @@ class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
      * @return an Optional containing the entity if found, or an empty Optional if no entity matches the id.
      */
     override fun findById(id: Urn): Optional<T> = super.findById(id.toUrnString())
+
+    override fun findAll(): List<T> {
+        val jpql = "SELECT t FROM ${getEntityName()} t"
+        val query = entityManager.createQuery(jpql, getEntityClass())
+        return query.resultList
+    }
 
     /**
      * Checks whether an entity exists with the given unique identifier.

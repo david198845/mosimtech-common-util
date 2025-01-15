@@ -3,6 +3,7 @@ package de.modulix.mosimtech.database.jpa.repository
 import de.modulix.mosimtech.database.jpa.AbstractBaseEntity
 import de.modulix.mosimtech.database.namespace.Namespace
 import de.modulix.mosimtech.database.urn.Urn
+import io.hypersistence.utils.spring.repository.BaseJpaRepository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import java.util.*
@@ -34,10 +35,11 @@ import java.util.*
  * The `@NoRepositoryBean` annotation ensures that no instance of this interface is created directly.
  */
 @NoRepositoryBean
-interface UrnCrudRepository<T : AbstractBaseEntity> : JpaRepository<T, String> {
+interface UrnCrudRepository<T : AbstractBaseEntity> : BaseJpaRepository<T, String> {
     fun findById(id: Urn): Optional<T>
     fun existsById(id: Urn): Boolean
     fun deleteById(id: Urn)
+    fun findAll(): List<T>
     fun findByNamespace(namespace: String): List<T>
     fun findByNamespace(namespace: Namespace): List<T>
     fun findBySubNamespace(subNamespace: List<String>): List<T>

@@ -46,19 +46,19 @@ abstract class AbstractBaseEntity() : BaseModel {
 
     @Column(name = "creation_date", nullable = false)
     @CreatedDate
-    override lateinit var creationDate: ZonedDateTime
+    override var creationDate: ZonedDateTime? = null
 
     @Column(name = "created_by", nullable = false)
     @Convert(converter = UrnStringConverter::class)
     @CreatedBy
-    override lateinit var createdBy: Urn
+    override var createdBy: Urn? = null
 
-    @Column(name = "last_modified_by", nullable = false)
+    @Column(name = "last_modified_by", nullable = true)
     @Convert(converter = UrnStringConverter::class)
     @LastModifiedBy
     override var lastModifiedBy: Urn? = null
 
-    @Column(name = "last_modified_date", nullable = false)
+    @Column(name = "last_modified_date", nullable = true)
     @LastModifiedDate
     override var lastModifiedDate: ZonedDateTime? = null
 
@@ -67,7 +67,7 @@ abstract class AbstractBaseEntity() : BaseModel {
     override lateinit var userId: Urn
 
     @Version
-    @Column(name = "revision", nullable = true)
+    @Column(name = "revision", nullable = false)
     override var version: Long? = null
 
     @Column(name = "valid", nullable = false, columnDefinition = "boolean default true")
