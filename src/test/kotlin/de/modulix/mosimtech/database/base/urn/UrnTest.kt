@@ -1,6 +1,7 @@
 package de.modulix.mosimtech.database.base.urn
 
 import de.modulix.mosimtech.database.namespace.DefaultNamespace
+import de.modulix.mosimtech.database.urn.SystemUser
 import de.modulix.mosimtech.database.urn.Urn
 import de.modulix.mosimtech.database.urn.toUrn
 import de.modulix.mosimtech.namespace.TestNamespace
@@ -10,6 +11,11 @@ import kotlin.test.assertEquals
 
 class UrnTest {
 
+    @Test
+    fun `Test SystemUser` () {
+        val urn = SystemUser
+        assertEquals("urn:user:SYSTEM", urn.toUrnString())
+    }
 
     @Test
     fun `Test Urn creation and conversion to string without snid`() {
