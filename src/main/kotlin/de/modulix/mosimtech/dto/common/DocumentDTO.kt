@@ -2,13 +2,14 @@ package de.modulix.mosimtech.dto.common
 
 import java.io.Serializable
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 data class DocumentDTO(
     val id: String?,
-    val creationDate: LocalDateTime?,
+    val creationDate: ZonedDateTime?,
     val createdBy: String?,
     val lastModifiedBy: String? = null,
-    val lastModifiedDate: LocalDateTime? = null,
+    val lastModifiedDate: ZonedDateTime? = null,
     val userId: String,
     val version: Long,
     val valid: Boolean = true,
