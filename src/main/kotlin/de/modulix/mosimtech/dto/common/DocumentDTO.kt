@@ -18,6 +18,7 @@ data class DocumentDTO(
     val fileSize: Long,
     val content: ByteArray? = null,
     val contentBase64: String? = null,
+    val moduleName: String
 ): Serializable {
     // Sekundärer Konstruktor für optionale Felder
     constructor(
@@ -28,6 +29,7 @@ data class DocumentDTO(
         fileSize: Long,
         content: ByteArray? = null,
         contentBase64: String? = null,
+        moduleName: String
     ) : this(
         id = null,
         creationDate = null,
@@ -43,5 +45,6 @@ data class DocumentDTO(
         fileSize = fileSize,
         content = content,
         contentBase64 = contentBase64,
+        moduleName = moduleName
     )
 }
