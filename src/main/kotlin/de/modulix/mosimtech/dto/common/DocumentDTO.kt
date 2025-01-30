@@ -1,4 +1,4 @@
-package de.modulix.mosimtech.dto
+package de.modulix.mosimtech.dto.common
 
 import java.io.Serializable
 import java.time.LocalDateTime

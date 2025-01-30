@@ -1,24 +1,24 @@
 plugins {
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
     id("maven-publish")
     id("org.jetbrains.dokka") version "1.9.0"
 }
 
 group = "de.modulix.mosimtech"
-version = "2.4.15"
+version = "2.4.16"
 
 // Versions-Variablen-
-val jacksonDatabindVersion = "2.17.0"
-val jacksonDataformatCsvVersion = "2.17.2"
-val kotlinStdlibJdk8Version = "2.0.0"
+val jacksonDatabindVersion = "2.18.2"
+val jacksonDataformatCsvVersion = "2.18.2"
+val kotlinStdlibJdk8Version = "2.1.10"
 val slf4jApiVersion = "2.0.16"
-val mockitoCoreVersion = "5.0.0"
-val mockitoJunitJupiterVersion = "5.0.0"
-val mockitoKotlinVersion = "5.0.0"
-val kotlinReflectVersion = "2.0.20"
-val mongoDbBsonVersion = "5.2.0"
-val springDataJpaVersion = "3.4.1"
-val springDataMongoDbVersion = "4.4.1"
+val mockitoCoreVersion = "5.15.2"
+val mockitoJunitJupiterVersion = "5.15.2"
+val mockitoKotlinVersion = "5.4.0"
+val kotlinReflectVersion = "2.1.10"
+val mongoDbBsonVersion = "5.3.1"
+val springDataJpaVersion = "3.4.2"
+val springDataMongoDbVersion = "4.4.2"
 val jakartaPersistenceApiVersion = "3.2.0"
 val jakartaValidationApiVersion = "3.1.0"
 val hibernateValidatorVersion = "8.0.1.Final"
@@ -28,6 +28,11 @@ repositories {
 }
 
 dependencies {
+    implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
+    implementation("org.springframework.security:spring-security-core:6.4.2")
+    implementation("org.springframework.security:spring-security-oauth2-jose:6.4.2")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:6.4.2")
+    implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonDataformatCsvVersion")
