@@ -88,4 +88,20 @@ abstract class AbstractBaseEntity() : BaseModel {
         this.userId = userId
     }
 
+
+    override fun toString(): String {
+        return "AbstractBaseEntity(id=$id, creationDate=$creationDate, createdBy=$createdBy, " +
+                "lastModifiedBy=$lastModifiedBy, lastModifiedDate=$lastModifiedDate, " +
+                "userId=$userId, version=$version, valid=$valid)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is AbstractBaseEntity) return false
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
 }

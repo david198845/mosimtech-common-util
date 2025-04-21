@@ -1,26 +1,26 @@
 plugins {
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.1.20"
     id("maven-publish")
     id("org.jetbrains.dokka") version "1.9.0"
 }
 
 group = "de.modulix.mosimtech"
-version = "2.4.18"
+version = "2.4.27"
 
 // Versions-Variablen-
-val jacksonDatabindVersion = "2.18.2"
-val jacksonDataformatCsvVersion = "2.18.2"
-val kotlinStdlibJdk8Version = "2.1.10"
+val jacksonDatabindVersion = "2.18.3"
+val jacksonDataformatCsvVersion = "2.18.3"
+val kotlinStdlibJdk8Version = "2.1.20"
 val slf4jApiVersion = "2.0.16"
-val mockitoCoreVersion = "5.15.2"
-val mockitoJunitJupiterVersion = "5.15.2"
+val mockitoCoreVersion = "5.17.0"
+val mockitoJunitJupiterVersion = "5.17.0"
 val mockitoKotlinVersion = "5.4.0"
-val kotlinReflectVersion = "2.1.10"
-val mongoDbBsonVersion = "5.3.1"
-val springDataJpaVersion = "3.4.2"
-val springDataMongoDbVersion = "4.4.2"
+val kotlinReflectVersion = "2.1.20"
+val mongoDbBsonVersion = "5.4.0"
+val springDataJpaVersion = "3.4.4"
+val springDataMongoDbVersion = "4.4.4"
 val jakartaPersistenceApiVersion = "3.2.0"
-val jakartaValidationApiVersion = "3.1.0"
+val jakartaValidationApiVersion = "3.1.1"
 val hibernateValidatorVersion = "8.0.1.Final"
 
 repositories {
@@ -28,12 +28,13 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-amqp:3.4.4")
     implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
-    implementation("org.springframework.security:spring-security-core:6.4.2")
-    implementation("org.springframework.security:spring-security-oauth2-jose:6.4.2")
-    implementation("org.springframework.security:spring-security-oauth2-resource-server:6.4.2")
-    implementation("org.slf4j:slf4j-api:2.0.16")
-    implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.0")
+    implementation("org.springframework.security:spring-security-core:6.4.4")
+    implementation("org.springframework.security:spring-security-oauth2-jose:6.4.4")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:6.4.4")
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.9")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonDataformatCsvVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinStdlibJdk8Version")
@@ -42,7 +43,7 @@ dependencies {
     implementation("org.mongodb:bson:$mongoDbBsonVersion")
     implementation("org.springframework.data:spring-data-jpa:$springDataJpaVersion")
     implementation("org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion")
-    implementation("org.javamoney:moneta:1.4.4")
+    implementation("org.javamoney:moneta:1.4.5")
     implementation("org.zalando:jackson-datatype-money:1.3.0")
     implementation("jakarta.persistence:jakarta.persistence-api:$jakartaPersistenceApiVersion")
     implementation("jakarta.validation:jakarta.validation-api:$jakartaValidationApiVersion")
@@ -94,9 +95,9 @@ publishing {
     repositories {
         maven {
             url = if (version.toString().endsWith("SNAPSHOT")) {
-                uri("http://192.168.2.31:9000/repository/maven-local-snapshot/")
+                uri("https://192.168.2.33:9000/repository/maven-snapshots/")
             } else {
-                uri("http://192.168.2.31:9000/repository/maven-local-release/")
+                uri("https://192.168.2.33:9000/repository/maven-releases/")
             }
             isAllowInsecureProtocol = true
             credentials {
