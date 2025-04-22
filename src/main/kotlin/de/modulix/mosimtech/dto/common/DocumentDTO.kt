@@ -1,18 +1,53 @@
 package de.modulix.mosimtech.dto.common
 
-import java.io.Serializable
-import java.time.ZonedDateTime
+import de.modulix.mosimtech.dto.base.BaseDTO
+import java.time.LocalDateTime
 
+/**
+ * Data Transfer Object (DTO) that represents a document in the system.
+ * This class holds information about the document's metadata and content.
+ *
+ * Implements the `BaseDTO` interface to include common properties such as
+ * identifiers, creation and modification metadata, user information, and
+ * validity status.
+ *
+ * Primary constructor includes all properties necessary for full representation
+ * of the document, while a secondary constructor is provided for flexibility
+ * when initializing the object with optional metadata fields.
+ *
+ * Properties:
+ * - id: Unique identifier of the document.
+ * - creationDate: Timestamp when the document was created.
+ * - createdBy: Identifier of the user or process that created the document.
+ * - lastModifiedBy: Identifier of the user or process that last modified the document.
+ * - lastModifiedDate: Timestamp of the last modification.
+ * - userId: Identifier of the user associated with the document.
+ * - userToken: Optional token for user-level authorization or identification.
+ * - version: Versioning information for the document to support concurrency control.
+ * - valid: Boolean flag indicating whether the document is currently valid.
+ * - externalUrn: Uniform Resource Name (URN) serving as an external, unique reference for the document.
+ * - filename: Name of the file associated with the document.
+ * - contentType: MIME type representing the content type of the document.
+ * - fileSize: Size of the document's content in bytes.
+ * - content: Binary content of the document as a byte array.
+ * - contentBase64: Base64-encoded representation of the document content, optional.
+ * - moduleName: Application module or context name associated with this document.
+ *
+ * Functions:
+ * - toString: Returns a string representation of the document, including its metadata and properties.
+ * - equals: Compares two `DocumentDTO` objects based on their properties for equality.
+ * - hashCode: Generates a hash code for the document based on its properties.
+ */
 data class DocumentDTO(
-    val id: String?,
-    val creationDate: ZonedDateTime?,
-    val createdBy: String?,
-    val lastModifiedBy: String? = null,
-    val lastModifiedDate: ZonedDateTime? = null,
-    val userId: String,
+    override val id: String?,
+    override val creationDate: LocalDateTime?,
+    override val createdBy: String?,
+    override val lastModifiedBy: String? = null,
+    override val lastModifiedDate: LocalDateTime? = null,
+    override val userId: String,
     val userToken: String? = null,
-    val version: Long,
-    val valid: Boolean = true,
+    override val version: Long,
+    override val valid: Boolean = true,
     val externalUrn: String,
     val filename: String,
     val contentType: String,
@@ -20,7 +55,7 @@ data class DocumentDTO(
     val content: ByteArray? = null,
     val contentBase64: String? = null,
     val moduleName: String
-): Serializable {
+): BaseDTO {
     // Sekundärer Konstruktor für optionale Felder
     constructor(
         userId: String,

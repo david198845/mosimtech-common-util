@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 
 object SecurityContextAdapter {
-    val ADMIN_ROLE = mutableListOf("ROLE_ADMIN")
+    val ADMIN_ROLE_LIST = mutableListOf(ROLE_ADMIN)
     lateinit var REALM: String
 
     private val authentication: Authentication?
@@ -31,5 +31,5 @@ object SecurityContextAdapter {
 
     fun getRoles(): List<String> = authentication?.authorities?.map { it.authority } ?: emptyList()
 
-    fun isAdmin(): Boolean = hasAnyRole(ADMIN_ROLE)
+    fun isAdmin(): Boolean = hasAnyRole(ADMIN_ROLE_LIST)
 }

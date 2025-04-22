@@ -18,6 +18,8 @@ open class KeycloakUserUrnConverter {
      * @return A URN object representing the Keycloak user ID in the specified realm.
      */
     open fun convertToUrn(keycloakUserId: String, realm: String): Urn {
+        if(keycloakUserId.isEmpty() || realm.isEmpty()) throw IllegalArgumentException("keycloakUserId and realm must not be empty")
+        if(keycloakUserId.startsWith("urn:${UserNamespace.identifier}:")) return Urn.parse(keycloakUserId)!!
         return UrnBuilder()
             .withNamespace(UserNamespace)
             .withSubNamespaceIdentifier(realm)
