@@ -14,6 +14,9 @@ pipeline {
             steps {
                 // Code aus dem Repository auschecken
                 checkout scm
+
+                // Ausführungsrechte für das Gradle-Wrapper-Skript hinzufügen
+                sh 'chmod +x ./gradlew'
             }
         }
 
