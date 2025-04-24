@@ -1,10 +1,7 @@
 pipeline {
     agent any
 
-    tools {
-        // JDK-Installation, wie sie in Jenkins konfiguriert ist
-        jdk 'JDK 17'
-    }
+    // JDK wird über die Systemumgebung verwendet
 
     environment {
         // Umgebungsvariablen für das Projekt
@@ -80,6 +77,15 @@ pipeline {
             }
         }
 
+        stage('Publish') {
+            when {
+                branch 'main'  // Nur auf dem Hauptzweig ausführen
+            }
+            steps {
+                // Optional: Veröffentlichung der Artefakte in einem Repository
+                sh './gradlew publish'
+            }
+        }
     }
 
     post {
