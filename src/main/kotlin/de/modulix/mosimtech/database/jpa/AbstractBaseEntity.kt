@@ -88,6 +88,9 @@ abstract class AbstractBaseEntity() : BaseModel {
         this.userId = userId
     }
 
+    override fun isNew(): Boolean {
+        return id == null || (id != null && id!!.isDefault())
+    }
 
     override fun toString(): String {
         return "AbstractBaseEntity(id=$id, creationDate=$creationDate, createdBy=$createdBy, " +

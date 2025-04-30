@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.modulix.mosimtech"
-version = "2.4.30"
+version = "2.4.32"
 
 // Versions-Variablen-
 val jacksonDatabindVersion = "2.18.3"

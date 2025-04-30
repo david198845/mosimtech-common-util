@@ -32,4 +32,5 @@ interface BaseModel : Serializable {
     fun setInvalid() {
         this.valid = false
     }
+    fun isNew(): Boolean
 }

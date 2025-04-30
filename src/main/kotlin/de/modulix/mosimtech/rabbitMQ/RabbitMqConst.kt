@@ -19,6 +19,6 @@ const val DOCUMENT_EXCHANGE = "document"
 
 
 // Routing Keys
-const val DOCUMENT_CREATED_ROUTING_KEY = "document-created"
-const val DOCUMENT_UPDATED_ROUTING_KEY = "document-updated"
-const val DOCUMENT_DELETED_ROUTING_KEY = "document-deleted"
+const val DOCUMENT_CREATE_ROUTING_KEY = "document-create"
+const val DOCUMENT_UPDATE_ROUTING_KEY = "document-update"
+const val DOCUMENT_DELETE_ROUTING_KEY = "document-delete"
