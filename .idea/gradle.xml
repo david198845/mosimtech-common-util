@@ -9,6 +9,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/common-util-core" />
+            <option value="$PROJECT_DIR$/common-util-jpa" />
+            <option value="$PROJECT_DIR$/common-util-mongo" />
+            <option value="$PROJECT_DIR$/common-util-r2dbc" />
           </set>
         </option>
       </GradleProjectSettings>
