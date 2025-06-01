@@ -1,8 +1,8 @@
 package de.mosimtech.common.jpa.converter.jpa
 
-import de.mosimtech.common.core.namespace.TestNamespace
 import de.mosimtech.common.core.urn.Urn
 import de.mosimtech.common.jpa.converter.UrnStringConverter
+import de.mosimtech.common.jpa.converter.jpa.namespace.TestNamespace
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
