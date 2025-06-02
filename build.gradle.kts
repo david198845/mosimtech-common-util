@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "de.mosimtech"
-    version = "2.6.1"
+    version = "2.6.3"
 
     repositories {
         mavenCentral()
