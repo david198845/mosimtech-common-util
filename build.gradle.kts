@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "2.1.20"
     id("maven-publish")
     id("org.jetbrains.dokka") version "2.0.0"
+    id("org.sonarqube") version "6.2.0.5505"
 }
 
 allprojects {
@@ -12,6 +13,14 @@ allprojects {
 
     repositories {
         mavenCentral()
+    }
+    sonar {
+        properties {
+            property("sonar.projectKey", "Common-Util")
+            property("sonar.projectName", "Common-Util")
+
+
+        }
     }
 }
 

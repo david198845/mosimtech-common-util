@@ -47,15 +47,11 @@ pipeline {
             }
         }
 
-        stage('Static Code Analysis') {
-            steps {
-                // Statische Code-Analyse mit Detekt
-                sh './gradlew detekt'
-
-                // Optional: SonarQube-Integration
-                // sh './gradlew sonarqube'
-            }
-        }
+  stage('SonarQube Analysis') {
+    withSonarQubeEnv() {
+      sh "./gradlew sonar"
+    }
+  }
 
         stage('Build') {
             steps {
