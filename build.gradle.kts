@@ -18,7 +18,7 @@ allprojects {
         properties {
             property("sonar.projectKey", "Common-Util")
             property("sonar.projectName", "Common-Util")
-            property("sonar.token", "sqa_de9746d93ffa42296798ddcff35d578e729a46f7")
+            property("sonar.token", "sqa_f08873c38b872bd5a87d0de33f7d7ac76f13b985")
 
 
         }
