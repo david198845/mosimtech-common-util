@@ -16,8 +16,8 @@ allprojects {
     }
     sonar {
         properties {
-            property("sonar.projectKey", "Common-Util")
-            property("sonar.projectName", "Common-Util")
+            property("sonar.projectKey", "MMS-COMMON-UTIL")
+            property("sonar.projectName", "MoMaSoft-Common-Util")
             property("sonar.token", "sqa_f08873c38b872bd5a87d0de33f7d7ac76f13b985")
 
 
