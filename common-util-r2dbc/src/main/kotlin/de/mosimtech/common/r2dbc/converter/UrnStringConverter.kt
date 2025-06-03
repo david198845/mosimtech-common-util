@@ -1,10 +1,9 @@
 package de.mosimtech.common.r2dbc.converter
 
 import de.mosimtech.common.core.urn.Urn
-import org.springframework.data.r2dbc.convert.R2dbcConverter
+import org.springframework.core.convert.converter.Converter
 import org.springframework.data.convert.ReadingConverter
 import org.springframework.data.convert.WritingConverter
-import org.springframework.core.convert.converter.Converter
 
 /**
  * UrnReadingConverter converts a string from the database to a Urn object.

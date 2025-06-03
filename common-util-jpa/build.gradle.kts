@@ -1,9 +1,8 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.dokka") version "2.0.0"
+    alias(libs.plugins.dokka)
 }
 
-group = "de.modulix.mosimtech"
 
 repositories {
     mavenCentral()
@@ -14,16 +13,25 @@ dependencies {
     api(project(":common-util-core"))
 
     // JPA & Spring Data
-    api("org.springframework.boot:spring-boot-starter-data-jpa:3.4.5")
-    api("org.springframework.data:spring-data-jpa:3.4.5")
-    api("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    api("io.hypersistence:hypersistence-utils-hibernate-63:3.9.10")
-    api("org.hibernate.validator:hibernate-validator:9.0.0.Final")
-    api("org.springframework.data:spring-data-commons:3.4.5")
+    api(libs.spring.boot.starter.data.jpa)
+    api(libs.spring.data.jpa)
+    api(libs.jakarta.persistence.api)
+    api(libs.hypersistence.utils)
+    api(libs.hibernate.validator.jpa)
+    api(libs.spring.data.commons)
+
+    // Kotlin & Utilities
+    api(libs.kotlin.stdlib)
+    api(libs.kotlin.reflect)
+    api(libs.slf4j.api)
+    api(libs.jakarta.annotation.api)
 
     // Test Dependencies
-    testImplementation("com.h2database:h2:2.3.232")
-    testImplementation("org.springframework.boot:spring-boot-test:3.4.5")
+    testImplementation(libs.h2.database)
+    testImplementation(libs.spring.boot.test)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
 }
 
 tasks.test {

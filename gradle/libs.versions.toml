@@ -1,0 +1,112 @@
+[versions]
+
+# Kotlin
+kotlin = "2.1.21"
+kotlinReflect = "2.1.21"
+jvmTarget = "21"
+
+# Plugins
+dokka = "2.0.0"
+sonarqube = "6.2.0.5505"
+
+# Spring
+springContext = "6.2.7"
+springBoot = "3.5.0"
+springData = "3.5.0"
+springSecurity = "6.5.0"
+
+# Jakarta
+jakartaAnnotation = "3.0.0"
+jakartaValidation = "3.1.1"
+jakartaPersistence = "3.2.0"
+
+# Hibernate
+hibernateValidator = "9.0.0.Final"
+hibernateValidatorJpa = "9.0.0.Final"
+hypersistenceUtils = "3.9.10"
+
+# Jackson
+jackson = "2.19.0"
+
+# Logging
+slf4j = "2.0.17"
+
+# Testing
+mockitoCore = "5.18.0"
+mockitoKotlin = "5.4.0"
+h2 = "2.3.232"
+r2dbcH2 = "1.0.0.RELEASE"
+embedMongo = "4.20.0"
+
+# Money
+moneta = "1.4.5"
+jacksonMoney = "1.3.0"
+
+# Reactive
+reactor = "3.7.6"
+
+# MongoDB
+mongodb = "5.5.0"
+
+[libraries]
+# Kotlin
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+# Spring Framework
+spring-context = { module = "org.springframework:spring-context", version.ref = "springContext" }
+spring-security-core = { module = "org.springframework.security:spring-security-core", version.ref = "springSecurity" }
+spring-security-oauth2-jose = { module = "org.springframework.security:spring-security-oauth2-jose", version.ref = "springSecurity" }
+spring-security-oauth2-resource-server = { module = "org.springframework.security:spring-security-oauth2-resource-server", version.ref = "springSecurity" }
+spring-data-commons = { module = "org.springframework.data:spring-data-commons", version.ref = "springData" }
+spring-data-jpa = { module = "org.springframework.data:spring-data-jpa", version.ref = "springData" }
+spring-data-mongodb = { module = "org.springframework.data:spring-data-mongodb", version.ref = "springData" }
+spring-data-r2dbc = { module = "org.springframework.data:spring-data-r2dbc", version.ref = "springData" }
+
+# Spring Boot
+spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "springBoot" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
+spring-boot-starter-data-mongodb = { module = "org.springframework.boot:spring-boot-starter-data-mongodb", version.ref = "springBoot" }
+spring-boot-starter-data-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc", version.ref = "springBoot" }
+spring-boot-test = { module = "org.springframework.boot:spring-boot-test", version.ref = "springBoot" }
+
+# Jakarta
+jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotation" }
+jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakartaValidation" }
+jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistence" }
+
+# Hibernate
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernateValidator" }
+hibernate-validator-jpa = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernateValidatorJpa" }
+hypersistence-utils = { module = "io.hypersistence:hypersistence-utils-hibernate-63", version.ref = "hypersistenceUtils" }
+
+# Jackson
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-dataformat-csv = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv", version.ref = "jackson" }
+jackson-datatype-money = { module = "org.zalando:jackson-datatype-money", version.ref = "jacksonMoney" }
+
+# Logging
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+
+# Testing
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+h2-database = { module = "com.h2database:h2", version.ref = "h2" }
+r2dbc-h2 = { module = "io.r2dbc:r2dbc-h2", version.ref = "r2dbcH2" }
+embed-mongo = { module = "de.flapdoodle.embed:de.flapdoodle.embed.mongo", version.ref = "embedMongo" }
+
+# Money
+moneta = { module = "org.javamoney:moneta", version.ref = "moneta" }
+
+# Reactive
+reactor-core = { module = "io.projectreactor:reactor-core", version.ref = "reactor" }
+reactor-test = { module = "io.projectreactor:reactor-test", version.ref = "reactor" }
+
+# MongoDB
+mongodb-bson = { module = "org.mongodb:bson", version.ref = "mongodb" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }

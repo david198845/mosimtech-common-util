@@ -1,9 +1,7 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.dokka") version "2.0.0"
+    alias(libs.plugins.dokka)
 }
-
-group = "de.modulix.mosimtech"
 
 repositories {
     mavenCentral()
@@ -13,15 +11,24 @@ dependencies {
     // Core Module
     api(project(":common-util-core"))
 
-
     // MongoDB
-    api("org.springframework.boot:spring-boot-starter-data-mongodb:3.4.5")
-    api("org.springframework.data:spring-data-mongodb:4.4.5")
-    api("org.mongodb:bson:5.4.0")
+    api(libs.spring.boot.starter.data.mongodb)
+    api(libs.spring.data.mongodb)
+    api(libs.mongodb.bson)
+
+    // Kotlin & Utilities
+    api(libs.kotlin.stdlib)
+    api(libs.kotlin.reflect)
+    api(libs.slf4j.api)
+    api(libs.jakarta.annotation.api)
 
     // Test Dependencies
-    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.16.2")
-    testImplementation("org.springframework.boot:spring-boot-test:3.4.5")
+    testImplementation(libs.embed.mongo)
+    testImplementation(libs.spring.boot.test)
+
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
 }
 tasks.test {
     useJUnitPlatform()

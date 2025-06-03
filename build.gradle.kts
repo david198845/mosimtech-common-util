@@ -1,50 +1,27 @@
 // Ultra-einfache Version - garantiert funktionierend
 
+
+
 plugins {
-    kotlin("jvm") version "2.1.20"
+    alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
-    id("org.jetbrains.dokka") version "2.0.0"
-    id("org.sonarqube") version "6.2.0.5505"
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.sonarqube)
 }
 
-allprojects {
-    group = "de.mosimtech"
-    version = "2.6.3"
-
-    repositories {
-        mavenCentral()
-    }
-    sonar {
-        properties {
-            property("sonar.projectKey", "MMS-COMMON-UTIL")
-            property("sonar.projectName", "MoMaSoft-Common-Util")
-            property("sonar.token", "sqa_f08873c38b872bd5a87d0de33f7d7ac76f13b985")
-
-
-        }
-    }
+repositories {
+    mavenCentral()
 }
 
-subprojects {
-    apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-    apply ( plugin = "org.jetbrains.dokka" )
-    
-    dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.21")
-        implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
-        implementation("org.slf4j:slf4j-api:2.0.17")
-        implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
+sonar {
+    properties {
+        property("sonar.projectKey", "MMS-COMMON-UTIL")
+        property("sonar.projectName", "MoMaSoft-Common-Util")
+        property("sonar.token", "sqa_f08873c38b872bd5a87d0de33f7d7ac76f13b985")
 
-        testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.21")
-        testImplementation("org.mockito:mockito-core:5.18.0")
-        testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
-    }
 
-    tasks.dokkaJavadoc.configure {
-        outputDirectory.set(layout.buildDirectory.dir("dokka"))
     }
+}
 
     tasks.register<Jar>("dokkaJavadocJar") {
         group = JavaBasePlugin.DOCUMENTATION_GROUP
@@ -57,10 +34,9 @@ subprojects {
         from(sourceSets["main"].allSource)
     }
 
-
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "21"
+            jvmTarget = libs.versions.jvmTarget.get()
             freeCompilerArgs = listOf("-Xjsr305=strict")
         }
     }
@@ -95,4 +71,4 @@ subprojects {
             }
         }
     }
-}
+//}

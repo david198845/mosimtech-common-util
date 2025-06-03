@@ -1,24 +1,36 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.dokka") version "2.0.0"
+    alias(libs.plugins.dokka)
 }
 
-group = "de.modulix.mosimtech"
 
+repositories {
+    mavenCentral()
+}
 
 dependencies {
     // Core Module
     api(project(":common-util-core"))
 
     // R2DBC
-    api("org.springframework.boot:spring-boot-starter-data-r2dbc:3.4.5")
-    api("org.springframework.data:spring-data-r2dbc:3.4.5")
-    api("io.projectreactor:reactor-core:3.7.5")
+    api(libs.spring.boot.starter.data.r2dbc)
+    api(libs.spring.data.r2dbc)
+    api(libs.reactor.core)
+
+    // Kotlin & Utilities
+    api(libs.kotlin.stdlib)
+    api(libs.kotlin.reflect)
+    api(libs.slf4j.api)
+    api(libs.jakarta.annotation.api)
 
     // Test Dependencies
-    testImplementation("io.r2dbc:r2dbc-h2:1.0.0.RELEASE")
-    testImplementation("io.projectreactor:reactor-test:3.7.5")
-    testImplementation("org.springframework.boot:spring-boot-test:3.4.5")
+    testImplementation(libs.r2dbc.h2)
+    testImplementation(libs.reactor.test)
+    testImplementation(libs.spring.boot.test)
+
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
 }
 
 tasks.test {

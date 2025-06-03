@@ -77,16 +77,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Publish') {
-            when {
-                branch 'main'  // Nur auf dem Hauptzweig ausführen
-            }
-            steps {
-                // Optional: Veröffentlichung der Artefakte in einem Repository
-                sh './gradlew publish'
-            }
-        }
     }
 
     post {
