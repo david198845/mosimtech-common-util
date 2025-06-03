@@ -19,7 +19,7 @@ class UrnConverterTest {
         
         // Then
         assertEquals("mosimtech", urn.namespace)
-        assertEquals(listOf("example"), urn.subNamespaceIdentifier)
+        assertEquals(setOf("example"), urn.subNamespaceIdentifier)
     }
 
 
