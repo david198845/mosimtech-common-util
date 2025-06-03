@@ -24,20 +24,20 @@ open class UrnDeserializer : StdDeserializer<Urn>(Urn::class.java) {
     override fun deserialize(parser: JsonParser?, context: DeserializationContext?): Urn? {
         val rootNode: JsonNode = parser?.codec?.readTree(parser) ?: return null
 
-        if (rootNode.isTextual) {
-            return Urn.parse(rootNode.asText())
+        return if (rootNode.isTextual) {
+            Urn.parse(rootNode.asText())
         } else if (rootNode.isObject && rootNode.has("namespace")) {
             val namespace = rootNode["namespace"].asText()
             val nss = rootNode["nss"].asText()
             val snid = extractNid(rootNode["snid"])
 
-            return if (snid.isEmpty()) {
+            if (snid.isEmpty()) {
                 Urn(namespace = namespace, nss = nss)
             } else {
                 Urn(namespace = namespace, nss = nss, snid = snid)
             }
         } else {
-            return null
+            null
         }
     }
 
