@@ -5,9 +5,13 @@ pipeline {
 
     environment {
         // Umgebungsvariablen für das Projekt
-        KOTLIN_VERSION = '1.9.0'
+        KOTLIN_VERSION = '2.1.21'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
     }
+        tools {
+            // Java 21 Tool (Name anpassen an Ihre Jenkins Tool-Konfiguration)
+            jdk 'JDK21'
+        }
 
     stages {
         stage('Checkout') {
