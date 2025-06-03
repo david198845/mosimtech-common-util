@@ -46,12 +46,14 @@ pipeline {
                 }
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv() {
+                    sh "./gradlew sonar"
+                }
+            }
+        }
 
-  stage('SonarQube Analysis') {
-    withSonarQubeEnv() {
-      sh "./gradlew sonar"
-    }
-  }
 
         stage('Build') {
             steps {
