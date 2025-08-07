@@ -12,13 +12,13 @@ import de.mosimtech.common.core.urn.Urn
  *
  * @property message The content of the notification message.
  * @property routingKey The key used for routing the notification to the appropriate destination.
- * @property notificationType The notificationType of the notification, indicating its level of importance or severity.
+ * @property type The notificationType of the notification, indicating its level of importance or severity.
  * @property userId The unique identifier of the user to whom the notification is intended.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class NotificationRequestDTO(
     val message: String,
     val routingKey: String,
-    val notificationType: NotificationType,
+    val type: NotificationType,
     val userId: Urn
 )

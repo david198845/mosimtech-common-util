@@ -3,12 +3,14 @@ package de.mosimtech.common.jpa.repository.impl
 import de.mosimtech.common.core.namespace.Namespace
 import de.mosimtech.common.core.urn.Urn
 import de.mosimtech.common.jpa.entity.AbstractBaseEntity
+import de.mosimtech.common.jpa.repository.AuditableRepository
+import de.mosimtech.common.jpa.repository.IdentifiableRepository
 import de.mosimtech.common.jpa.repository.UrnCrudRepository
 import io.hypersistence.utils.spring.repository.BaseJpaRepositoryImpl
 import jakarta.persistence.EntityManager
 import jakarta.persistence.TypedQuery
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
-
+import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation
 
 /**
  * Implementation of the `UrnCrudRepository` interface, extending `SimpleJpaRepository<T, String>`.
@@ -25,7 +27,10 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
     private val entityInformation: JpaEntityInformation<T, String>,
     private val entityManager: EntityManager
 ) : BaseJpaRepositoryImpl<T, String>(entityInformation, entityManager),
-    UrnCrudRepository<T> {
+    UrnCrudRepository<T>,
+    AuditableRepository<T>,
+    IdentifiableRepository<T>,
+    JpaRepositoryImplementation<T, String> {
 
     /**
      * Finds an entity by its unique identifier.
@@ -33,7 +38,57 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
      * @param id the unique identifier of the entity in the form of Urn.
      * @return an Optional containing the entity if found, or an empty Optional if no entity matches the id.
      */
-    override fun findById(id: Urn):T? = super.findById(id.toUrnString()).orElse(null)
+    override fun findById(id: Urn): T? = super.findById(id.toUrnString()).orElse(null)
+
+    override fun findByIdAndUserId(id: Urn, userId: Urn): T? {
+        val jpql = "SELECT t FROM ${getEntityName()} t WHERE :id = t.id AND :userId = t.userId"
+        val query = entityManager.createQuery(jpql, entityInformation.javaType)
+        query.setParameter("id", id.toUrnString())
+        query.setParameter("userId", userId)
+        return try {
+            query.singleResult
+        } catch (e: jakarta.persistence.NoResultException) {
+            null
+        }
+
+    }
+
+    override fun findByIdAndUserIdAndValidTrue(id: Urn, userId: Urn): T? {
+        val jpql = "SELECT t FROM ${getEntityName()} t WHERE t.id = :id AND t.userId = :userId AND t.valid = true"
+        val query = entityManager.createQuery(jpql, entityInformation.javaType)
+        query.setParameter("id", id.toUrnString())
+        query.setParameter("userId", userId)
+        return try {
+            query.singleResult
+        } catch (e: jakarta.persistence.NoResultException) {
+            null
+        }
+    }
+
+    override fun findByIdAndUserIdAndValidFalse(id: Urn, userId: Urn): T? {
+        val jpql = "SELECT t FROM ${getEntityName()} t WHERE t.id = :id AND t.userId = :userId AND t.valid = false"
+        val query = entityManager.createQuery(jpql, entityInformation.javaType)
+        query.setParameter("id", id.toUrnString())
+        query.setParameter("userId", userId)
+        return try {
+            query.singleResult
+        } catch (e: jakarta.persistence.NoResultException) {
+            null
+        }
+    }
+
+    override fun findByIdAndUserIdAndValid(id: Urn, userId: Urn, valid: Boolean): T? {
+        val jpql = "SELECT t FROM ${getEntityName()} t WHERE t.id = :id AND t.userId = :userId AND t.valid = :valid"
+        val query = entityManager.createQuery(jpql, entityInformation.javaType)
+        query.setParameter("id", id.toUrnString())
+        query.setParameter("userId", userId.toUrnString())
+        query.setParameter("valid", valid)
+        return try {
+            query.singleResult
+        } catch (e: jakarta.persistence.NoResultException) {
+            null
+        }
+    }
 
     /**
      * Retrieves all entities managed by this repository.
@@ -84,7 +139,7 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
      * @param namespace the `Namespace` object containing the identifier used to filter entities.
      * @return a list of entities matching the given namespace, or an empty list if no matching entities are found.
      */
-    override fun findByNamespace(namespace: Namespace): List<T> = findBySubNamespace(namespace.identifier)
+    override fun findByNamespace(namespace: Namespace): List<T> = findByNamespace(namespace.identifier)
 
     /**
      * Finds and returns a list of entities whose IDs contain the specified sub-namespace.
@@ -150,3 +205,4 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
         return entityManager.metamodel.entity(entityInformation.javaType).name
     }
 }
+

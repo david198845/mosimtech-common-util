@@ -1,38 +1,17 @@
 package de.mosimtech.common.core.domain
 
 import de.mosimtech.common.core.urn.Urn
-import java.io.Serializable
-import java.time.ZonedDateTime
 
 /**
- * Interface representing a base model in the system.
+ * BaseModel is an interface that represents the foundational structure
+ * for domain model objects within the system. It extends the Auditable
+ * interface, inheriting properties related to the creation and modification
+ * audit information. This structure ensures that all implementing classes
+ * contain audit information and a unique identifier for the associated user.
  *
- * This interface defines common properties like id, creationDate, lastModifiedDate, lastModifiedBy,
- * and createdBy that are typically present in entities managed by the persistence layer.
- * It also includes a `prePersist` method that is meant to be called before the object is persisted.
- *
- * Properties:
- * @property id The unique identifier for the object, represented as a URN (Uniform Resource Name).
- * @property creationDate The date and time when the object was created.
- * @property lastModifiedDate The date and time when the object was last modified.
- * @property lastModifiedBy The identifier (URN) of the user or system that last modified the object.
- * @property createdBy The identifier (URN) of the user or system that created the object.
+ * @property userId Represents the unique identifier associated with a user
+ *                  in the form of a URN (Uniform Resource Name).
  */
-interface BaseModel : Serializable {
-    var id: Urn?
-    val creationDate: ZonedDateTime?
-    val lastModifiedDate: ZonedDateTime?
-    val lastModifiedBy: Urn?
-    val createdBy: Urn?
+interface BaseModel : Auditable {
     val userId: Urn?
-    val version: Long?
-    var valid: Boolean?
-
-    fun setInvalid() {
-        this.valid = false
-    }
-
-    fun isNew(): Boolean {
-        return id == null || (id != null && id!!.isDefault())
-    }
 }

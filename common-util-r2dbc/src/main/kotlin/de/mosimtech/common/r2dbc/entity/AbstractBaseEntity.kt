@@ -1,16 +1,9 @@
 package de.mosimtech.common.r2dbc.entity
 
-import de.mosimtech.common.core.domain.BaseModel
 import de.mosimtech.common.core.urn.Urn
 import de.mosimtech.common.core.util.toUrn
-import org.springframework.data.annotation.CreatedBy
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.LastModifiedBy
-import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Persistent
 import org.springframework.data.annotation.Transient
-import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Column
 import java.time.ZonedDateTime
 
@@ -28,61 +21,16 @@ import java.time.ZonedDateTime
  * @property lastModifiedDate The date and time when the object was last modified.
  */
 @Persistent
-abstract class AbstractBaseEntity() : BaseModel {
-
-    @Id
-    @Column("id")
-    private var _id: String? = null
-
-    override var id: Urn?
-        get() = _id?.toUrn()
-        set(value) {
-            _id = value?.toUrnString()
-        }
-
-    @Column("creation_date")
-    @CreatedDate
-    override var creationDate: ZonedDateTime? = null
-
-    @Column("created_by")
-    @CreatedBy
-    private var _createdBy: String? = null
-
-    override var createdBy: Urn?
-        get() = _createdBy?.toUrn()
-        set(value) {
-            _createdBy = value?.toUrnString()
-        }
-
-    @Column("last_modified_by")
-    @LastModifiedBy
-    private var _lastModifiedBy: String? = null
-
-    override var lastModifiedBy: Urn?
-        get() = _lastModifiedBy?.toUrn()
-        set(value) {
-            _lastModifiedBy = value?.toUrnString()
-        }
-
-    @Column("last_modified_date")
-    @LastModifiedDate
-    override var lastModifiedDate: ZonedDateTime? = null
+abstract class AbstractBaseEntity() : AbstractAuditableEntity() {
 
     @Column("user_id")
     private var _userId: String? = null
 
-    override var userId: Urn
+    var userId: Urn
         get() = _userId?.toUrn() ?: throw IllegalStateException("userId not set")
         set(value) {
             _userId = value.toUrnString()
         }
-
-    @Version
-    @Column("revision")
-    override var version: Long? = null
-
-    @Column("valid")
-    override var valid: Boolean? = true
 
     constructor(
         creationDate: ZonedDateTime,
@@ -112,7 +60,7 @@ abstract class AbstractBaseEntity() : BaseModel {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is AbstractBaseEntity) return false
-        return id == other.id
+        return super.equals(other)
     }
 
     override fun hashCode(): Int {

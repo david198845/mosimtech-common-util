@@ -1,20 +1,14 @@
 package de.mosimtech.common.jpa.entity
 
-import de.mosimtech.common.jpa.converter.UrnStringConverter
 import de.mosimtech.common.core.domain.BaseModel
-import de.mosimtech.common.jpa.listener.UrnEntityListener
 import de.mosimtech.common.core.urn.Urn
-import de.mosimtech.common.core.util.toUrn
+import de.mosimtech.common.jpa.converter.UrnStringConverter
+import de.mosimtech.common.jpa.listener.UrnEntityListener
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.EntityListeners
-import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
-import jakarta.persistence.Version
-import org.springframework.data.annotation.CreatedBy
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedBy
-import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.domain.Persistable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.ZonedDateTime
 
@@ -36,48 +30,11 @@ import java.time.ZonedDateTime
  */
 @MappedSuperclass
 @EntityListeners(value = [AuditingEntityListener::class, UrnEntityListener::class])
-abstract class AbstractBaseEntity() : BaseModel {
-
-    @Id
-    @Column(name = "id", updatable = false, nullable = false)
-    @Convert(converter = UrnStringConverter::class)
-    private var _id: String? = null
-
-    override var id: Urn?
-        get() = _id?.toUrn()
-        set(value) {
-            _id = value?.toUrnString()
-        }
-
-    @Column(name = "creation_date", nullable = false)
-    @CreatedDate
-    override var creationDate: ZonedDateTime? = null
-
-    @Column(name = "created_by", nullable = false)
-    @Convert(converter = UrnStringConverter::class)
-    @CreatedBy
-    override var createdBy: Urn? = null
-
-    @Column(name = "last_modified_by", nullable = true)
-    @Convert(converter = UrnStringConverter::class)
-    @LastModifiedBy
-    override var lastModifiedBy: Urn? = null
-
-    @Column(name = "last_modified_date", nullable = true)
-    @LastModifiedDate
-    override var lastModifiedDate: ZonedDateTime? = null
+abstract class AbstractBaseEntity() : AbstractAuditableEntity(), BaseModel, Persistable<Urn> {
 
     @Column(name = "user_id", nullable = false)
     @Convert(converter = UrnStringConverter::class)
     override lateinit var userId: Urn
-
-    @Version
-    @Column(name = "revision", nullable = false)
-    override var version: Long? = null
-
-    @Column(name = "valid", nullable = false, columnDefinition = "boolean default true")
-    override var valid: Boolean? = true
-
 
     constructor(
         creationDate: ZonedDateTime,
@@ -93,10 +50,6 @@ abstract class AbstractBaseEntity() : BaseModel {
         this.userId = userId
     }
 
-    override fun isNew(): Boolean {
-        return id == null || (id != null && id!!.isDefault())
-    }
-
     override fun toString(): String {
         return "AbstractBaseEntity(id=$id, creationDate=$creationDate, createdBy=$createdBy, " +
                 "lastModifiedBy=$lastModifiedBy, lastModifiedDate=$lastModifiedDate, " +
@@ -106,10 +59,10 @@ abstract class AbstractBaseEntity() : BaseModel {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is AbstractBaseEntity) return false
-        return id == other.id
+        return super.equals(other)
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
+        return id.hashCode()
     }
 }

@@ -34,5 +34,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 // Retention annotation for runtime
 @Retention(AnnotationRetention.RUNTIME)
 // Annotation to enable JPA repositories with a custom base class
-@EnableJpaRepositories(repositoryBaseClass = UrnCrudRepositoryImpl::class)
-annotation class EnableUrnRepositories
+@EnableJpaRepositories(
+    repositoryBaseClass = UrnCrudRepositoryImpl::class,
+    basePackages = ["de.mosimtech.common.jpa.repository"]
+)
+annotation class EnableUrnRepositories(
+    val basePackages: Array<String> = [],
+    val value: Array<String> = []
+)
+

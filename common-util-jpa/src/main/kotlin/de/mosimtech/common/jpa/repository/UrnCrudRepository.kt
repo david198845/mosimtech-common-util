@@ -1,11 +1,8 @@
 package de.mosimtech.common.jpa.repository
 
-import de.mosimtech.common.core.namespace.Namespace
 import de.mosimtech.common.core.urn.Urn
 import de.mosimtech.common.jpa.entity.AbstractBaseEntity
-import io.hypersistence.utils.spring.repository.BaseJpaRepository
 import org.springframework.data.repository.NoRepositoryBean
-import java.util.*
 
 /**
  * Repository interface for performing CRUD operations on entities identified by URN.
@@ -34,14 +31,9 @@ import java.util.*
  * The `@NoRepositoryBean` annotation ensures that no instance of this interface is created directly.
  */
 @NoRepositoryBean
-interface UrnCrudRepository<T : AbstractBaseEntity> : BaseJpaRepository<T, String> {
-    fun findById(id: Urn): T?
-    fun existsById(id: Urn): Boolean
-    fun deleteById(id: Urn)
-    fun findAll(): List<T>
-    fun findByNamespace(namespace: String): List<T>
-    fun findByNamespace(namespace: Namespace): List<T>
-    fun findBySubNamespace(subNamespace: List<String>): List<T>
-    fun findBySubNamespace(subNamespace: String): List<T>
-    fun findByNamespaceAndSubNamespace(namespace: String, subNamespace: String): List<T>
+interface UrnCrudRepository<T : AbstractBaseEntity> : AuditableRepository<T> {
+    fun findByIdAndUserId(id: Urn, userId: Urn): T?
+    fun findByIdAndUserIdAndValidTrue(id: Urn, userId: Urn): T?
+    fun findByIdAndUserIdAndValidFalse(id: Urn, userId: Urn): T?
+    fun findByIdAndUserIdAndValid(id: Urn, userId: Urn, valid: Boolean): T?
 }

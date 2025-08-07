@@ -237,7 +237,57 @@ open class Urn : UrnDefinition, Serializable {
         private const val NID_START_INDEX = 2
         private const val NID_END_INDEX_OFFSET = 1
 
+        /**
+         * Checks if the given URN is considered the default value.
+         *
+         * @param urn The `Urn` instance to be checked.
+         * @return `true` if the provided URN matches the default conditions, `false` otherwise.
+         */
         fun isDefault(urn: Urn) = urn.isDefault()
+
+        /**
+         * Creates an instance of `Urn` using the specified namespace and namespace-specific string (NSS).
+         *
+         * @param namespace The namespace component of the URN.
+         * @param nss The Namespace Specific String (NSS) component of the URN.
+         * @return A new `Urn` instance constructed using the given namespace and NSS.
+         */
+        fun of(namespace: String, nss: String): Urn = Urn(namespace, nss)
+
+        /**
+         * Creates a new instance of the `Urn` class using the specified namespace, namespace-specific string (NSS),
+         * and a set of sub-namespace identifiers (SNID).
+         *
+         * @param namespace The namespace component of the URN. This is a higher-level category or domain
+         *                  used to uniquely identify the resource.
+         * @param nss The namespace-specific string component of the URN. This is a specific string
+         *            used to identify a resource within the given namespace.
+         * @param snid The set of sub-namespace identifiers associated with the URN. This is used for
+         *             additional identification purposes or specific implementation distinctions.
+         * @return A new `Urn` instance constructed with the given parameters.
+         */
+        fun of(namespace: String, nss: String, snid: Set<String>): Urn = Urn(namespace, nss, snid)
+
+        /**
+         * Creates a new instance of the `Urn` class with the specified namespace, NSS, and SNIDs.
+         *
+         * @param namespace The namespace component of the URN.
+         * @param nss The Namespace Specific String (NSS) component of the URN.
+         * @param snid Optional sub namespace identifiers for additional identification or categorization.
+         * @return A new `Urn` instance representing the specified components.
+         */
+        fun of(namespace: String, nss: String, vararg snid: String): Urn = Urn(namespace, nss, snid.toSet())
+
+        /**
+         * Creates an `Urn` instance from the provided string representation.
+         *
+         * Parses the given `urnString` and attempts to convert it into an instance of the `Urn` class.
+         * If the string is invalid or cannot be parsed, the function returns null.
+         *
+         * @param urnString The string representation of the URN to be parsed.
+         * @return An `Urn` instance if the string can be successfully parsed, or null if the format is invalid.
+         */
+        fun of(urnString: String): Urn? = parse(urnString)
 
         /**
          * Parses a string representation of a URN (Uniform Resource Name) and returns an instance of the Urn class.

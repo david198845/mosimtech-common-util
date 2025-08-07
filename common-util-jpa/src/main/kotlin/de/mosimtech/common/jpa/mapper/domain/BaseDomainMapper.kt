@@ -1,9 +1,9 @@
 package de.mosimtech.common.jpa.mapper.domain
 
-import de.mosimtech.common.core.domain.BaseModel
-import de.mosimtech.common.jpa.entity.AbstractBaseEntity
+import de.mosimtech.common.core.domain.Identifiable
+import de.mosimtech.common.jpa.entity.AbstractEntity
 
-abstract class BaseDomainMapper<T : AbstractBaseEntity, D: BaseModel> {
+abstract class BaseDomainMapper<T : AbstractEntity, D : Identifiable> {
 
     abstract fun toDomain(entity: T): D
 

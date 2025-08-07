@@ -46,6 +46,11 @@ interface UrnDefinition : Serializable {
      */
     fun toUrnString(): String
 
+    /**
+     * Checks if the URN is the default representation.
+     *
+     * @return `true` if the URN represents a default state; `false` otherwise.
+     */
     fun isDefault(): Boolean
 
 }

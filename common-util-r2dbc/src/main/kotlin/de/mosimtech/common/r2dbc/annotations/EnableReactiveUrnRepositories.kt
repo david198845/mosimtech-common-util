@@ -24,4 +24,4 @@ import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @EnableR2dbcRepositories(repositoryBaseClass = UrnReactiveCrudRepositoryImpl::class)
-annotation class EnableUrnRepositories
+annotation class EnableReactiveUrnRepositories

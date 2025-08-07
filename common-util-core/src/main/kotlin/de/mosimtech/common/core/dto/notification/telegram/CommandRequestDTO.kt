@@ -1,5 +1,6 @@
 package de.mosimtech.common.core.dto.notification.telegram
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import de.mosimtech.common.core.urn.Urn
 
 
@@ -10,6 +11,7 @@ import de.mosimtech.common.core.urn.Urn
  * @param command the command name without '/'
  * @param arguments any arguments provided with the command
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class CommandRequestDTO(
     val botId: String,
     val userId: Urn,

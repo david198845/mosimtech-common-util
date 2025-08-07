@@ -35,7 +35,7 @@ abstract class AbstractBaseEntity() : BaseModel {
 
     @CreatedBy
     @NotNull
-    override var createdBy: Urn? = null
+    override lateinit var createdBy: Urn
 
     @LastModifiedBy
     override var lastModifiedBy: Urn? = null
@@ -47,10 +47,10 @@ abstract class AbstractBaseEntity() : BaseModel {
     override var userId: Urn? = null
 
     @NotNull
-    override var valid: Boolean? = true
+    override var valid: Boolean = true
 
     @Version
-    override val version: Long? = null
+    override var version: Long? = null
 
     constructor(
         creationDate: ZonedDateTime,

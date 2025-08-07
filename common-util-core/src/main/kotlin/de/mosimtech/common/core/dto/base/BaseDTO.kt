@@ -1,8 +1,5 @@
 package de.mosimtech.common.core.dto.base
 
-import java.io.Serializable
-import java.time.LocalDateTime
-
 /**
  * Represents a base Data Transfer Object (DTO) that defines common properties
  * and behavior for DTOs in the application.
@@ -25,13 +22,6 @@ import java.time.LocalDateTime
  * Functions:
  * - setInvalid(): Marks the entity or DTO as invalid by setting the `valid` property to false.
  */
-interface BaseDTO : Serializable {
-    val id: String?
-    val creationDate: LocalDateTime?
-    val lastModifiedDate: LocalDateTime?
-    val lastModifiedBy: String?
-    val createdBy: String?
+interface BaseDTO : AuditableDTO {
     val userId: String?
-    val version: Long?
-    val valid: Boolean
 }

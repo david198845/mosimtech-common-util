@@ -1,5 +1,6 @@
 package de.mosimtech.common.core.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import de.mosimtech.common.core.dto.base.BaseDTO
 import java.time.LocalDateTime
 
@@ -38,6 +39,7 @@ import java.time.LocalDateTime
  * - equals: Compares two `DocumentDTO` objects based on their properties for equality.
  * - hashCode: Generates a hash code for the document based on its properties.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class DocumentDTO(
     override val id: String?,
     override val creationDate: LocalDateTime?,

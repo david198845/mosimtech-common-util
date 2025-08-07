@@ -1,5 +1,6 @@
 package de.mosimtech.common.core.dto.momasoft
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import de.mosimtech.common.core.dto.base.BaseDTO
 import java.time.LocalDateTime
 
@@ -20,6 +21,7 @@ import java.time.LocalDateTime
  * - Represents the profile of a user by including a `userId` property
  *   to associate the profile with a specific user entity.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class UserProfileDTO(
     override val id: String?,
     override val creationDate: LocalDateTime?,

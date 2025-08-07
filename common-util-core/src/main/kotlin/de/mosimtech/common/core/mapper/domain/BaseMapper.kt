@@ -1,6 +1,6 @@
 package de.mosimtech.common.core.mapper.domain
 
-import de.mosimtech.common.core.domain.BaseModel
+import de.mosimtech.common.core.domain.Identifiable
 
 
 /**
@@ -10,10 +10,10 @@ import de.mosimtech.common.core.domain.BaseModel
  * individual objects, collections, and mutable collections.
  *
  * The generic parameters are:
- * - [D]: Type of the domain model, which must extend [BaseModel].
+ * - [D]: Type of the domain model, which must extend [Identifiable].
  * - [T]: Type of the data transfer object (DTO).
  */
-abstract class BaseMapper<D : BaseModel, T> {
+abstract class BaseMapper<D : Identifiable, T> {
 
     /**
      * Converts a given data transfer object (DTO) of type [T] into its corresponding domain model of type [D].
