@@ -8,7 +8,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
-import org.springframework.data.domain.Persistable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.ZonedDateTime
 
@@ -30,7 +29,7 @@ import java.time.ZonedDateTime
  */
 @MappedSuperclass
 @EntityListeners(value = [AuditingEntityListener::class, UrnEntityListener::class])
-abstract class AbstractBaseEntity() : AbstractAuditableEntity(), BaseModel, Persistable<Urn> {
+abstract class AbstractBaseEntity() : AbstractAuditableEntity(), BaseModel {
 
     @Column(name = "user_id", nullable = false)
     @Convert(converter = UrnStringConverter::class)

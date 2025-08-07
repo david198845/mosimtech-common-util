@@ -6,10 +6,11 @@ import de.mosimtech.common.core.util.toUrn
 import de.mosimtech.common.jpa.converter.UrnStringConverter
 import de.mosimtech.common.jpa.listener.UrnEntityListener
 import jakarta.persistence.*
+import org.springframework.data.domain.Persistable
 
 @MappedSuperclass
 @EntityListeners(value = [UrnEntityListener::class])
-abstract class AbstractEntity : Identifiable {
+abstract class AbstractEntity : Identifiable, Persistable<Urn> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false)
