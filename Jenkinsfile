@@ -81,6 +81,16 @@ pipeline {
                 }
             }
         }
+
+                stage('Publish to Nexus') {
+                    steps {
+                        script {
+                            // Artefakte in Nexus veröffentlichen
+                            sh './gradlew publish'
+                        }
+                    }
+                }
+
     }
 
     post {

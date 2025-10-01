@@ -47,4 +47,8 @@ abstract class AbstractEntity : Identifiable, Persistable<Urn> {
     override fun hashCode(): Int {
         return id?.hashCode() ?: 0
     }
+
+    override fun getId(): Urn? {
+        return id
+    }
 }
