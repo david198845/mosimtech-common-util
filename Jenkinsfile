@@ -31,10 +31,10 @@ pipeline {
             }
         }
 
-        stage('Compile') {
+        stage('Build') {
             steps {
-                // Kompilierung des Kotlin-Codes
-                sh './gradlew compileKotlin'
+                // Haupt-Build-Prozess
+                sh './gradlew build -x test'
             }
         }
 
@@ -55,14 +55,6 @@ pipeline {
                 withSonarQubeEnv('Sonar') {
                     sh "./gradlew sonar"
                 }
-            }
-        }
-
-
-        stage('Build') {
-            steps {
-                // Haupt-Build-Prozess
-                sh './gradlew build -x test'
             }
         }
 
