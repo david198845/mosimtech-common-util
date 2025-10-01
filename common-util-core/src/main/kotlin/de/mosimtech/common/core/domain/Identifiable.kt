@@ -1,5 +1,6 @@
 package de.mosimtech.common.core.domain
 
+import de.mosimtech.common.core.urn.Urn
 import java.io.Serializable
 
 /**
@@ -10,7 +11,7 @@ import java.io.Serializable
  * It extends the Serializable interface, enabling its instances to be serialized.
  */
 interface Identifiable : Serializable {
-    //    var id: Urn?
+    var id: Urn?
     var version: Long?
     var valid: Boolean
 
@@ -18,4 +19,6 @@ interface Identifiable : Serializable {
     fun setInvalid() {
         this.valid = false
     }
+
+
 }

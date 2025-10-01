@@ -1,19 +1,23 @@
-package de.mosimtech.common.jpa.entity
+package de.mosimtech.common.mongo.entity
 
 import de.mosimtech.common.core.domain.Identifiable
 import de.mosimtech.common.core.urn.Urn
 import de.mosimtech.common.core.util.toUrn
-import de.mosimtech.common.jpa.converter.UrnStringConverter
-import de.mosimtech.common.jpa.listener.UrnEntityListener
-import jakarta.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.Persistent
+import org.springframework.data.annotation.Transient
+import org.springframework.data.annotation.Version
+import org.springframework.data.mongodb.core.mapping.Field
 
-@MappedSuperclass
-@EntityListeners(value = [UrnEntityListener::class])
-open class AbstractEntity : Identifiable {
+/**
+ * Mongo base entity providing id, version and valid fields consistent with JPA/R2DBC modules.
+ * Uses a backing String field for MongoDB @Id while exposing Urn as the public id type.
+ */
+@Persistent
+abstract class AbstractEntity() : Identifiable {
 
     @Id
-    @Column(name = "id", updatable = false, nullable = false)
-    @Convert(converter = UrnStringConverter::class)
+    @Field("id")
     private var _id: String? = null
 
     @get:Transient
@@ -24,18 +28,17 @@ open class AbstractEntity : Identifiable {
             _id = value?.toUrnString()
         }
 
-
     @Version
-    @Column(name = "revision", nullable = false)
+    @Field("revision")
     override var version: Long? = null
 
-    @Column(name = "valid", nullable = false, columnDefinition = "boolean default true")
+    @Field("valid")
     override var valid: Boolean = true
 
-    fun isNew(): Boolean {
+    @Transient
+    open fun isNew(): Boolean {
         return id == null || (id != null && id!!.isDefault())
     }
-
 
     override fun toString(): String {
         return "AbstractEntity(id=$id, version=$version, valid=$valid)"
@@ -50,6 +53,4 @@ open class AbstractEntity : Identifiable {
     override fun hashCode(): Int {
         return id?.hashCode() ?: 0
     }
-
-
 }

@@ -3,54 +3,20 @@ package de.mosimtech.common.mongo.entity
 import de.mosimtech.common.core.domain.BaseModel
 import de.mosimtech.common.core.urn.Urn
 import jakarta.validation.constraints.NotNull
-import org.springframework.data.annotation.*
+import org.springframework.data.annotation.Persistent
 import java.time.ZonedDateTime
 
 /**
- * Abstract base class for entities that provides common properties for tracking creation and
- * modification metadata.
+ * Abstract base class for Mongo entities aligning with the JPA structure.
  *
- * This class extends the `BaseModel` interface, implementing properties that store information
- * about the creation and modification timestamps, as well as the users or systems responsible
- * for these actions.
- *
- * Properties:
- * @property creationDate The date and time when the entity was created. This property is marked
- * with the `@CreatedDate` annotation to automatically handle the persistence of creation
- * timestamps.
- * @property createdBy The identifier (URN) of the user or system that created the entity. This property
- * is marked with the `@CreatedBy` annotation to automatically handle the persistence of the creator's
- * information.
- * @property lastModifiedBy The identifier (URN) of the user or system that last modified the entity.
- * This property is marked with the `@LastModifiedBy` annotation to automatically handle the
- * persistence of modification details.
- * @property lastModifiedDate The date and time when the entity was last modified. This property
- * is marked with the `@LastModifiedDate` annotation to automatically handle the persistence of
- * modification timestamps.
+ * Extends AbstractAuditableEntity and adds the userId field. Version and valid are provided by
+ * AbstractEntity; auditing fields are provided by AbstractAuditableEntity.
  */
-abstract class AbstractBaseEntity() : BaseModel {
-    @CreatedDate
-    @NotNull
-    override var creationDate: ZonedDateTime? = null
-
-    @CreatedBy
-    @NotNull
-    override lateinit var createdBy: Urn
-
-    @LastModifiedBy
-    override var lastModifiedBy: Urn? = null
-
-    @LastModifiedDate
-    override var lastModifiedDate: ZonedDateTime? = null
+@Persistent
+abstract class AbstractBaseEntity() : AbstractAuditableEntity(), BaseModel {
 
     @NotNull
-    override var userId: Urn? = null
-
-    @NotNull
-    override var valid: Boolean = true
-
-    @Version
-    override var version: Long? = null
+    override lateinit var userId: Urn
 
     constructor(
         creationDate: ZonedDateTime,
@@ -64,5 +30,19 @@ abstract class AbstractBaseEntity() : BaseModel {
         this.lastModifiedBy = lastModifiedBy
         this.lastModifiedDate = lastModifiedDate
         this.userId = userId
+    }
+
+    override fun toString(): String {
+        return "AbstractBaseEntity(id=$id, creationDate=$creationDate, createdBy=$createdBy, lastModifiedBy=$lastModifiedBy, lastModifiedDate=$lastModifiedDate, userId=$userId, version=$version, valid=$valid)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is AbstractBaseEntity) return false
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
     }
 }
