@@ -17,11 +17,13 @@ abstract class AbstractEntity : Identifiable, Persistable<Urn> {
     @Convert(converter = UrnStringConverter::class)
     private var _id: String? = null
 
-    override var id: Urn?
-        get() = _id?.toUrn()
-        set(value) {
-            _id = value?.toUrnString()
-        }
+    fun setId(id: Urn) {
+        this._id = id.toUrnString()
+    }
+
+    override fun getId(): Urn? {
+        return this._id?.toUrn()
+    }
 
     @Version
     @Column(name = "revision", nullable = false)
@@ -31,24 +33,22 @@ abstract class AbstractEntity : Identifiable, Persistable<Urn> {
     override var valid: Boolean = true
 
     override fun isNew(): Boolean {
-        return id == null || (id != null && id!!.isDefault())
+        return getId() == null || (getId() != null && getId()!!.isDefault())
     }
 
     override fun toString(): String {
-        return "AbstractEntity(id=$id, version=$version, valid=$valid)"
+        return "AbstractEntity(getId()=$id, version=$version, valid=$valid)"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is AbstractEntity) return false
-        return id == other.id
+        return getId() == other.getId()
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
+        return getId()?.hashCode() ?: 0
     }
 
-    override fun getId(): Urn? {
-        return id
-    }
+
 }
