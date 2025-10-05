@@ -14,8 +14,10 @@ interface Identifiable : Serializable {
     var id: Urn?
     var version: Long?
     var valid: Boolean
-    fun isNew(): Boolean
 
+    fun isNew(): Boolean {
+        return id == null || (id != null && id!!.isDefault())
+    }
 
     fun setInvalid() {
         this.valid = false
