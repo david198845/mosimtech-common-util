@@ -80,9 +80,9 @@ publishing {
     repositories {
         maven {
             url = if (version.toString().endsWith("SNAPSHOT")) {
-                uri("https://192.168.2.33:9000/repository/maven-snapshots/")
+                uri("https://dev.momasoft.de/nexus/repository/maven-snapshots/")
             } else {
-                uri("https://192.168.2.33:9000/repository/maven-releases/")
+                uri("https://dev.momasoft.de/nexus/repository/maven-releases/")
             }
             isAllowInsecureProtocol = true
             credentials {

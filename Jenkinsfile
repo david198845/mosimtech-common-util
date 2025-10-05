@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         // Umgebungsvariablen für das Projekt
-        KOTLIN_VERSION = '2.1.21'
+        KOTLIN_VERSION = '2.2.20'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
     }
         tools {
