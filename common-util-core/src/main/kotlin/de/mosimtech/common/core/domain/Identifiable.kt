@@ -14,6 +14,7 @@ interface Identifiable : Serializable {
     var id: Urn?
     var version: Long?
     var valid: Boolean
+    fun isNew(): Boolean
 
 
     fun setInvalid() {

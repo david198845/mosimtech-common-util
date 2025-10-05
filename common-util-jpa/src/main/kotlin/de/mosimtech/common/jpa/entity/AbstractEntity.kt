@@ -32,7 +32,7 @@ open class AbstractEntity : Identifiable {
     @Column(name = "valid", nullable = false, columnDefinition = "boolean default true")
     override var valid: Boolean = true
 
-    fun isNew(): Boolean {
+    override fun isNew(): Boolean {
         return id == null || (id != null && id!!.isDefault())
     }
 
