@@ -36,7 +36,7 @@ abstract class AbstractEntity() : Identifiable {
     override var valid: Boolean = true
 
     @Transient
-    open fun isNew(): Boolean {
+    override fun isNew(): Boolean {
         return id == null || (id != null && id!!.isDefault())
     }
 
