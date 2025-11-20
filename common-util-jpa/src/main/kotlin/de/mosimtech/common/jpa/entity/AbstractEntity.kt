@@ -3,7 +3,6 @@ package de.mosimtech.common.jpa.entity
 import de.mosimtech.common.core.domain.Identifiable
 import de.mosimtech.common.core.urn.Urn
 import de.mosimtech.common.core.util.toUrn
-import de.mosimtech.common.jpa.converter.UrnStringConverter
 import de.mosimtech.common.jpa.listener.UrnEntityListener
 import jakarta.persistence.*
 
@@ -13,7 +12,6 @@ open class AbstractEntity : Identifiable {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false)
-    @Convert(converter = UrnStringConverter::class)
     private var _id: String? = null
 
     @get:Transient
