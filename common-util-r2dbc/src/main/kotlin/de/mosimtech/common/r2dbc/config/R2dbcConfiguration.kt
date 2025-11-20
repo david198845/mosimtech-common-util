@@ -35,8 +35,8 @@ open class R2dbcConfiguration {
         return ReactiveAuditorAware {
             // Aktueller User aus SecurityContext
             ReactiveSecurityContextHolder.getContext()
-                .map { it.authentication.principal as UserDetails }
-                .map { it.username.toUrn() }
+                .map { it.authentication?.principal as UserDetails }
+                .map { it.username.toUrn()!! }
         }
     }
 }

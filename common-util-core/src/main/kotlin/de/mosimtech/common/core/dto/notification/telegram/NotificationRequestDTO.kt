@@ -1,5 +1,6 @@
 package de.mosimtech.common.core.dto.notification.telegram
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import de.mosimtech.common.core.dto.notification.common.NotificationType
 import de.mosimtech.common.core.urn.Urn
 
 /**
@@ -18,7 +19,11 @@ import de.mosimtech.common.core.urn.Urn
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class NotificationRequestDTO(
     val message: String,
+    val subject: String,
     val routingKey: String,
     val type: NotificationType,
-    val userId: Urn
+    val userId: Urn,
+    val channels: List<String> = emptyList()
+
+
 )

@@ -1,4 +1,4 @@
-package de.mosimtech.common.core.dto.notification.telegram
+package de.mosimtech.common.core.dto.notification.common
 
 /**
  * Represents the notificationType of a notification, indicating its level of importance or severity.

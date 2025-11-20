@@ -29,7 +29,7 @@ object SecurityContextAdapter {
 
     fun hasAnyRoleOrIsAdmin(roles: List<String>): Boolean = hasAnyRole(roles) || isAdmin()
 
-    fun getRoles(): List<String> = authentication?.authorities?.map { it.authority } ?: emptyList()
+    fun getRoles(): List<String?> = authentication?.authorities?.map { it.authority } ?: emptyList()
 
     fun isAdmin(): Boolean = hasAnyRole(ADMIN_ROLE_LIST)
 }

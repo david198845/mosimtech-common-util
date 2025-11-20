@@ -96,7 +96,7 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
      * @return a list of all entities, or an empty list if no entities exist.
      */
     override fun findAll(): List<T> {
-        return super.findAll()
+        return super<BaseJpaRepositoryImpl>.findAll()
     }
 
     /**
