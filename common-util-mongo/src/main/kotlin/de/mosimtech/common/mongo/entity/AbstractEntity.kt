@@ -17,7 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Field
 abstract class AbstractEntity() : Identifiable {
 
     @Id
-    @Field("id")
+    @Field("_id")
     private var _id: String? = null
 
     @get:Transient
