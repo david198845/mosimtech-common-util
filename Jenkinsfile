@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+      tools {
+        jdk 'JDK25'
+      }
     // JDK wird über die Systemumgebung verwendet
 
     environment {
@@ -99,6 +101,21 @@ pipeline {
         failure {
             // Benachrichtigung bei Fehlern
             echo 'Build fehlgeschlagen!'
+            script {
+                emailext(
+                    to: 'momasoft.notification@gmail.com',
+                    subject: "[Jenkins] ${env.BRANCH_NAME} branch Build Failure: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    body: """<p><b>Build Failure</b></p>
+                            <p>Job: ${env.JOB_NAME}<br>
+                            Build Number: ${env.BUILD_NUMBER}<br>
+                            Branch: ${env.BRANCH_NAME}<br>
+                            Status: FAILURE</p>
+                            <p>Console Output: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
+                            <p>Please check the Jenkins console for details and take appropriate action.</p>""",
+                    mimeType: 'text/html'
+                )
+            }
+
             // Optional: E-Mail- oder Slack-Benachrichtigung
             // mail to: 'team@example.com', subject: 'Build fehlgeschlagen', body: 'Der Build ist fehlgeschlagen. Bitte überprüfen Sie die Logs.'
         }
