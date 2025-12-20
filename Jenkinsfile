@@ -1,18 +1,13 @@
 pipeline {
     agent any
-      tools {
-        jdk 'JDK25'
-      }
-    // JDK wird über die Systemumgebung verwendet
-
     environment {
         // Umgebungsvariablen für das Projekt
-        KOTLIN_VERSION = '2.2.20'
+        KOTLIN_VERSION = '2.3.0'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
     }
         tools {
             // Java 21 Tool (Name anpassen an Ihre Jenkins Tool-Konfiguration)
-            jdk 'JDK21'
+            jdk 'JDK25'
         }
 
     stages {
