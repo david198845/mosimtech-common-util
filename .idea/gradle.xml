@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/common-util-jpa" />
             <option value="$PROJECT_DIR$/common-util-mongo" />
             <option value="$PROJECT_DIR$/common-util-r2dbc" />
+            <option value="$PROJECT_DIR$/common-util-rabbitmq" />
           </set>
         </option>
       </GradleProjectSettings>

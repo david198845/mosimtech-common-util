@@ -2,8 +2,7 @@ package de.mosimtech.common.jpa.repository.impl
 
 import de.mosimtech.common.core.namespace.Namespace
 import de.mosimtech.common.core.urn.Urn
-import de.mosimtech.common.jpa.entity.AbstractBaseEntity
-import de.mosimtech.common.jpa.repository.AuditableRepository
+import de.mosimtech.common.jpa.entity.AbstractEntity
 import de.mosimtech.common.jpa.repository.IdentifiableRepository
 import de.mosimtech.common.jpa.repository.UrnCrudRepository
 import io.hypersistence.utils.spring.repository.BaseJpaRepositoryImpl
@@ -17,18 +16,17 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryImplementati
  * This class provides additional functionalities for managing entities identified by URN.
  *
  * Generic NotificationType:
- * @param T The notificationType of the entity, which must extend `AbstractBaseEntity`.
+ * @param T The notificationType of the entity, which must extend `AbstractEntity`.
  *
  * Constructor:
  * @param entityInformation Metadata information about the JPA entity.
  * @param entityManager JPA EntityManager used for executing database operations.
  */
-open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
+open class UrnCrudRepositoryImpl<T : AbstractEntity>(
     private val entityInformation: JpaEntityInformation<T, String>,
     private val entityManager: EntityManager
 ) : BaseJpaRepositoryImpl<T, String>(entityInformation, entityManager),
     UrnCrudRepository<T>,
-    AuditableRepository<T>,
     IdentifiableRepository<T>,
     JpaRepositoryImplementation<T, String> {
 
@@ -40,7 +38,7 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
      */
     override fun findById(id: Urn): T? = super.findById(id.toUrnString()).orElse(null)
 
-    override fun findByIdAndUserId(id: Urn, userId: Urn): T? {
+    fun findByIdAndUserId(id: Urn, userId: Urn): T? {
         val jpql = "SELECT t FROM ${getEntityName()} t WHERE :id = t.id AND :userId = t.userId"
         val query = entityManager.createQuery(jpql, entityInformation.javaType)
         query.setParameter("id", id.toUrnString())
@@ -53,7 +51,7 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
 
     }
 
-    override fun findByIdAndUserIdAndValidTrue(id: Urn, userId: Urn): T? {
+    fun findByIdAndUserIdAndValidTrue(id: Urn, userId: Urn): T? {
         val jpql = "SELECT t FROM ${getEntityName()} t WHERE t.id = :id AND t.userId = :userId AND t.valid = true"
         val query = entityManager.createQuery(jpql, entityInformation.javaType)
         query.setParameter("id", id.toUrnString())
@@ -65,7 +63,7 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
         }
     }
 
-    override fun findByIdAndUserIdAndValidFalse(id: Urn, userId: Urn): T? {
+    fun findByIdAndUserIdAndValidFalse(id: Urn, userId: Urn): T? {
         val jpql = "SELECT t FROM ${getEntityName()} t WHERE t.id = :id AND t.userId = :userId AND t.valid = false"
         val query = entityManager.createQuery(jpql, entityInformation.javaType)
         query.setParameter("id", id.toUrnString())
@@ -77,7 +75,7 @@ open class UrnCrudRepositoryImpl<T : AbstractBaseEntity>(
         }
     }
 
-    override fun findByIdAndUserIdAndValid(id: Urn, userId: Urn, valid: Boolean): T? {
+    fun findByIdAndUserIdAndValid(id: Urn, userId: Urn, valid: Boolean): T? {
         val jpql = "SELECT t FROM ${getEntityName()} t WHERE t.id = :id AND t.userId = :userId AND t.valid = :valid"
         val query = entityManager.createQuery(jpql, entityInformation.javaType)
         query.setParameter("id", id.toUrnString())

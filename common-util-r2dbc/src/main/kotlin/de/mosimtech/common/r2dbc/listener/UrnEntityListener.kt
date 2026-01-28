@@ -1,12 +1,11 @@
 package de.mosimtech.common.r2dbc.listener
 
+import de.mosimtech.common.core.annotations.UrnNamespace
 import de.mosimtech.common.core.builder.UrnBuilder
-import de.mosimtech.common.jpa.repository.annotations.UrnNamespace
 import de.mosimtech.common.r2dbc.entity.AbstractBaseEntity
 import org.springframework.data.r2dbc.mapping.event.BeforeConvertCallback
 import org.springframework.data.relational.core.sql.SqlIdentifier
 import reactor.core.publisher.Mono
-import kotlin.jvm.javaClass
 
 /**
  * Reactive entity listener that handles the generation of URN identifiers for entities before they are saved.

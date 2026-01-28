@@ -1,4 +1,4 @@
-package de.mosimtech.common.core.rabbitMQ
+package de.mosimtech.common.rabbitmq.template
 
 import org.springframework.amqp.support.AmqpHeaders
 import org.springframework.messaging.handler.annotation.Header

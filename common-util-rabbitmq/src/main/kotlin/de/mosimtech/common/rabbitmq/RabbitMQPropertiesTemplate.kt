@@ -1,4 +1,4 @@
-package de.mosimtech.common.core.rabbitMQ
+package de.mosimtech.common.rabbitmq
 
 abstract class RabbitMQPropertiesTemplate {
     open var vhosts: Map<String, RabbitMQConfigPropertyItem> = mutableMapOf()

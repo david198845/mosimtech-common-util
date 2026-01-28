@@ -1,4 +1,4 @@
-package de.mosimtech.common.jpa.repository.annotations
+package de.mosimtech.common.core.annotations
 
 /**
  * Annotation used to define a URN (Uniform Resource Name) namespace for an entity.

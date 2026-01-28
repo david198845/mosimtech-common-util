@@ -1,7 +1,7 @@
 package de.mosimtech.common.mongo.listener
 
+import de.mosimtech.common.core.annotations.UrnNamespace
 import de.mosimtech.common.core.builder.UrnBuilder
-import de.mosimtech.common.jpa.repository.annotations.UrnNamespace
 import de.mosimtech.common.mongo.entity.AbstractEntity
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent

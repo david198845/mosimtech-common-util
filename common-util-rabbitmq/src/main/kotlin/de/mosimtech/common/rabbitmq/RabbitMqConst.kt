@@ -1,4 +1,4 @@
-package de.mosimtech.common.core.rabbitMQ
+package de.mosimtech.common.rabbitmq
 
 // All public and general constants for RabbitMQ are declared here
 

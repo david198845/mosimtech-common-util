@@ -10,10 +10,10 @@ dokka = "2.0.0"
 sonarqube = "6.2.0.5505"
 
 # Spring
-springContext = "7.0.2"
-springBoot = "4.0.1"
-springData = "4.0.1"
-springMongodb = "5.0.0"
+springContext = "7.0.3"
+springBoot = "4.0.2"
+springData = "4.0.2"
+springMongodb = "5.0.2"
 springSecurity = "7.0.2"
 
 # Jakarta
@@ -24,7 +24,7 @@ jakartaPersistence = "3.2.0"
 # Hibernate
 hibernateValidator = "9.1.0.Final"
 hibernateValidatorJpa = "9.1.0.Final"
-hypersistenceUtils = "3.14.1"
+hypersistenceUtils = "3.15.1"
 
 # Jackson
 jackson = "2.20.1"

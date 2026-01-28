@@ -1,6 +1,5 @@
-package de.mosimtech.common.core.rabbitmq
+package de.mosimtech.common.rabbitmq.mapper
 
-import de.mosimtech.common.core.mapper.rabbitmq.PropertyKeyMapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test

@@ -1,7 +1,5 @@
-package de.mosimtech.common.core.rabbitmq.telegram
+package de.mosimtech.common.rabbitmq.mapper.telegram
 
-import de.mosimtech.common.core.mapper.rabbitmq.telegram.RoutingKeyBotIdMapper
-import de.mosimtech.common.core.mapper.rabbitmq.telegram.RoutingKeyType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -24,6 +22,7 @@ class RoutingKeyBotIdMapperTest {
 
         assertEquals("bot123", result)
     }
+
     @Test
     fun `mapToBotId should return botId when routingKey matches expected pattern for command`() {
         val mapper = RoutingKeyBotIdMapper()

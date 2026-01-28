@@ -1,8 +1,8 @@
 package de.mosimtech.common.jpa.listener
 
+import de.mosimtech.common.core.annotations.UrnNamespace
 import de.mosimtech.common.core.builder.UrnBuilder
 import de.mosimtech.common.jpa.entity.AbstractEntity
-import de.mosimtech.common.jpa.repository.annotations.UrnNamespace
 import jakarta.persistence.PrePersist
 
 class UrnEntityListener {

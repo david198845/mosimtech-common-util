@@ -1,4 +1,4 @@
-package de.mosimtech.common.core.mapper.rabbitmq.telegram
+package de.mosimtech.common.rabbitmq.mapper.telegram
 
 enum class RoutingKeyType(val value: String) {
 

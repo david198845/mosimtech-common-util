@@ -1,20 +1,19 @@
 package de.mosimtech.common.jpa.repository
 
-import de.mosimtech.common.core.urn.Urn
-import de.mosimtech.common.jpa.entity.AbstractBaseEntity
+import de.mosimtech.common.jpa.entity.AbstractEntity
 import org.springframework.data.repository.NoRepositoryBean
 
 /**
  * Repository interface for performing CRUD operations on entities identified by URN.
  *
  * This interface extends `JpaRepository` and provides additional methods for
- * working with entities of notificationType `AbstractBaseEntity`, using URN as the identifier notificationType.
+ * working with entities of notificationType `AbstractEntity`, using URN as the identifier notificationType.
  *
  * The implementation of this interface is automatically provided by Spring Data JPA, except for
  * cases where custom specifications or behaviors are defined.
  *
  * Generic NotificationType:
- * @param T The notificationType of the entity, which must extend `AbstractBaseEntity`.
+ * @param T The notificationType of the entity, which must extend `AbstractEntity`.
  *
  * Methods:
  * - `findById(id: Urn): Optional<T>`: Retrieves an entity by its URN identifier.
@@ -29,11 +28,8 @@ import org.springframework.data.repository.NoRepositoryBean
  * Note:
  * This is a Spring Data repository interface and should be used with Spring's JPA repository mechanism.
  * The `@NoRepositoryBean` annotation ensures that no instance of this interface is created directly.
+ * Use `UserUrnRepository` for user-scoped queries that depend on `userId`.
  */
 @NoRepositoryBean
-interface UrnCrudRepository<T : AbstractBaseEntity> : AuditableRepository<T> {
-    fun findByIdAndUserId(id: Urn, userId: Urn): T?
-    fun findByIdAndUserIdAndValidTrue(id: Urn, userId: Urn): T?
-    fun findByIdAndUserIdAndValidFalse(id: Urn, userId: Urn): T?
-    fun findByIdAndUserIdAndValid(id: Urn, userId: Urn, valid: Boolean): T?
+interface UrnCrudRepository<T : AbstractEntity> : IdentifiableRepository<T> {
 }

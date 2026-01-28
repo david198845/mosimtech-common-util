@@ -1,4 +1,4 @@
-package de.mosimtech.common.core.mapper.rabbitmq
+package de.mosimtech.common.rabbitmq.mapper
 
 /**
  * A utility class for mapping property keys to a specific format.
@@ -17,7 +17,7 @@ class PropertyKeyMapper {
     fun map(value: String): String? {
         val parts = value.split(".")
         // Wir nehmen die ersten beiden Teile (falls vorhanden) und verbinden sie mit einem Bindestrich
-        if(parts.any(String::isBlank)) return null
+        if (parts.any(String::isBlank)) return null
         return if (parts.size >= 2) {
             "${parts[0]}-${parts[1]}"
         } else {
