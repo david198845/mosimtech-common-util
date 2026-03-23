@@ -1,6 +1,7 @@
 package de.mosimtech.common.core.dto.notification.common
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import de.mosimtech.common.core.urn.Urn
 
 /**
  * Unified notification request DTO for all notification channels.
@@ -11,12 +12,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
  *
  * Broadcast vs. targeted:
  *   - userId = null → broadcast to all subscribers of the application topic
- *   - userId = URN  → targeted notification to a specific user
+ *   - userId = Urn  → targeted notification to a specific user
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class NotificationRequestDTO(
     val application: String,
-    val userId: String? = null,
+    val userId: Urn? = null,
     val title: String,
     val body: String,
     val type: NotificationType = NotificationType.INFO,
