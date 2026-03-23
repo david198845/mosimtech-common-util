@@ -6,7 +6,7 @@ package de.mosimtech.common.rabbitmq.mapper.telegram
  */
 class RoutingKeyBotIdMapper {
 
-    private val pattern = Regex("""^telegram\.(notification|command)\.(.+?)\.routingkey$""")
+    private val pattern = Regex("""^(notification|command)\.telegram\.(.+)$""")
 
     /**
      * Extracts the bot ID from the given routing key if it matches the expected pattern.
@@ -25,5 +25,5 @@ class RoutingKeyBotIdMapper {
      * @return the constructed routing key string in the format "telegram.notification.<botId>.routingkey"
      */
     fun mapToRoutingKey(botId: String, routingKeyType: RoutingKeyType = RoutingKeyType.NOTIFICATION): String =
-        "telegram.${routingKeyType.value}.$botId.routingkey"
+        "${routingKeyType.value.lowercase()}.telegram.$botId"
 }
