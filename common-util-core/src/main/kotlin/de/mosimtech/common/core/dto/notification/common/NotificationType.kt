@@ -11,5 +11,6 @@ package de.mosimtech.common.core.dto.notification.common
 enum class NotificationType {
     INFO,
     WARNING,
-    ERROR
+    ERROR,
+    SUCCESS,
 }
