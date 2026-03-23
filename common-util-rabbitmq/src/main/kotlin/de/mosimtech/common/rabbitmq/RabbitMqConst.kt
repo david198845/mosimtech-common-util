@@ -52,10 +52,10 @@ const val NOTIFICATION_ALL_WILDCARD = "notification.#"
 const val NOTIFICATION_TELEGRAM_ALL_WILDCARD = "notification.telegram.#"
 
 // Commands
-const val COMMAND_TELEGRAM_SC_ROUTING_KEY = "command.telegram.stripchat"
-const val COMMAND_TELEGRAM_CB_ROUTING_KEY = "command.telegram.chaturbate"
-const val COMMAND_TELEGRAM_CS_ROUTING_KEY = "command.telegram.stripchat"
-const val COMMAND_TELEGRAM_MFC_ROUTING_KEY = "command.telegram.myfreecams"
+const val COMMAND_TELEGRAM_SC_ROUTING_KEY = "command.telegram.cammonitor..stripchat"
+const val COMMAND_TELEGRAM_CB_ROUTING_KEY = "command.telegram.cammonitor.chaturbate"
+const val COMMAND_TELEGRAM_CS_ROUTING_KEY = "command.telegram.cammonitor.stripchat"
+const val COMMAND_TELEGRAM_MFC_ROUTING_KEY = "command.telegram.cammonitor.myfreecams"
 const val COMMAND_TELEGRAM_ALL_WILDCARD = "command.telegram.#"
 
 // Deprecated Routing Keys (altes Schema: [channel].[domain].[subchannel].routingkey)

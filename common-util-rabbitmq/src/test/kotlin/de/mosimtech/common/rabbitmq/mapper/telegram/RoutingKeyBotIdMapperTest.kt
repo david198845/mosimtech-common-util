@@ -9,93 +9,54 @@ class RoutingKeyBotIdMapperTest {
     /**
      * Tests for [RoutingKeyBotIdMapper.mapToBotId]
      *
-     * This method maps a routing key string in the format "notification.telegram.<botId>"
-     * to the corresponding botId. If the format of the routing key does not match the expected pattern,
-     * the method returns null.
+     * Supports two formats:
+     * - Notification: "notification.telegram.<botId>"
+     * - Command:      "command.telegram.cammonitor.<botId>"
      */
     @Test
-    fun `mapToBotId should return botId when routingKey matches expected pattern for notification`() {
+    fun `mapToBotId should return botId for notification routing key`() {
         val mapper = RoutingKeyBotIdMapper()
-        val routingKey = "notification.telegram.bot123"
 
-        val result = mapper.mapToBotId(routingKey)
-
-        assertEquals("bot123", result)
+        assertEquals("stripchat", mapper.mapToBotId("notification.telegram.stripchat"))
+        assertEquals("chaturbate", mapper.mapToBotId("notification.telegram.chaturbate"))
+        assertEquals("myfreecams", mapper.mapToBotId("notification.telegram.myfreecams"))
     }
 
     @Test
-    fun `mapToBotId should return botId when routingKey matches expected pattern for command`() {
+    fun `mapToBotId should return botId for command routing key with cammonitor segment`() {
         val mapper = RoutingKeyBotIdMapper()
-        val routingKey = "command.telegram.bot123"
 
-        val result = mapper.mapToBotId(routingKey)
-
-        assertEquals("bot123", result)
-    }
-
-    @Test
-    fun `mapToBotId should return botId for real routing key like stripchat`() {
-        val mapper = RoutingKeyBotIdMapper()
-        val routingKey = "notification.telegram.stripchat"
-
-        val result = mapper.mapToBotId(routingKey)
-
-        assertEquals("stripchat", result)
+        assertEquals("stripchat", mapper.mapToBotId("command.telegram.cammonitor.stripchat"))
+        assertEquals("chaturbate", mapper.mapToBotId("command.telegram.cammonitor.chaturbate"))
+        assertEquals("myfreecams", mapper.mapToBotId("command.telegram.cammonitor.myfreecams"))
     }
 
     @Test
     fun `mapToBotId should return null when routingKey does not match expected pattern`() {
         val mapper = RoutingKeyBotIdMapper()
-        val routingKey = "invalid.routing.key.format"
 
-        val result = mapper.mapToBotId(routingKey)
-
-        assertNull(result)
-    }
-
-    @Test
-    fun `mapToBotId should return null when routingKey is an empty string`() {
-        val mapper = RoutingKeyBotIdMapper()
-        val routingKey = ""
-
-        val result = mapper.mapToBotId(routingKey)
-
-        assertNull(result)
-    }
-
-    @Test
-    fun `mapToBotId should return null when type segment is missing`() {
-        val mapper = RoutingKeyBotIdMapper()
-        val routingKey = "telegram.bot123"
-
-        val result = mapper.mapToBotId(routingKey)
-
-        assertNull(result)
+        assertNull(mapper.mapToBotId("invalid.routing.key"))
+        assertNull(mapper.mapToBotId("telegram.bot123"))
+        assertNull(mapper.mapToBotId(""))
     }
 
     /**
      * Tests for [RoutingKeyBotIdMapper.mapToRoutingKey]
      *
-     * This method generates a routing key string in the format "notification.telegram.<botId>"
-     * for a given botId.
+     * - NOTIFICATION → "notification.telegram.<botId>"
+     * - COMMAND      → "command.telegram.<botId>"
      */
     @Test
     fun `mapToRoutingKey should return correctly formatted routingKey for NOTIFICATION type`() {
         val mapper = RoutingKeyBotIdMapper()
-        val botId = "bot123"
 
-        val result = mapper.mapToRoutingKey(botId, RoutingKeyType.NOTIFICATION)
-
-        assertEquals("notification.telegram.bot123", result)
+        assertEquals("notification.telegram.bot123", mapper.mapToRoutingKey("bot123", RoutingKeyType.NOTIFICATION))
     }
 
     @Test
     fun `mapToRoutingKey should return correctly formatted routingKey for COMMAND type`() {
         val mapper = RoutingKeyBotIdMapper()
-        val botId = "bot123"
 
-        val result = mapper.mapToRoutingKey(botId, RoutingKeyType.COMMAND)
-
-        assertEquals("command.telegram.bot123", result)
+        assertEquals("command.telegram.bot123", mapper.mapToRoutingKey("bot123", RoutingKeyType.COMMAND))
     }
 }
