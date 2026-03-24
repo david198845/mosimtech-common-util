@@ -22,4 +22,7 @@ data class NotificationRequestDTO(
     val body: String,
     val type: NotificationType = NotificationType.INFO,
     val data: Map<String, String> = emptyMap(),
+    val channelId: String? = null,
+    val collapseKey: String? = null,
+    val priority: String? = null
 )
