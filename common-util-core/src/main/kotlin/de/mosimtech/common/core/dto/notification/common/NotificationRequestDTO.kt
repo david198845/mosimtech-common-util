@@ -24,5 +24,8 @@ data class NotificationRequestDTO(
     val data: Map<String, String> = emptyMap(),
     val channelId: String? = null,
     val collapseKey: String? = null,
-    val priority: String? = null
+    val priority: String? = null,
+    val dataOnly: Boolean = false,
+    val icon: String? = null,
+    val color: String? = null
 )
