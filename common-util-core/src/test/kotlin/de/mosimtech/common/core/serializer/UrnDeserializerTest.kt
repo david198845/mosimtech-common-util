@@ -1,29 +1,20 @@
 package de.mosimtech.common.core.serializer
 
-import com.fasterxml.jackson.core.JsonFactory
-import com.fasterxml.jackson.databind.ObjectMapper
+import de.mosimtech.common.core.urn.Urn
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import tools.jackson.databind.json.JsonMapper
 import kotlin.test.assertNull
 
 internal class UrnDeserializerTest {
 
-    private val jsonFactory = JsonFactory(ObjectMapper())
+    private val objectMapper = JsonMapper.builder().build()
 
     @Test
     fun testDeserialize_Urn_object() {
-        val input = "{ \"urn\" : {\n" +
-                "    \"namespace\": \"user\",\n" +
-                "    \"nss\": \"0bfad384-1e92-4395-b7ad-022192fc46cd\",\n" +
-                "    \"snid\": [\"momasoft\"]\n" +
-                "  } }"
-        val parser = jsonFactory.createParser(input)
-        parser.nextToken()
-        parser.nextToken()
-        parser.nextToken()
-        val deserializer = UrnDeserializer()
-        val result = deserializer.deserialize(parser, null)
+        val input = """{"namespace":"user","nss":"0bfad384-1e92-4395-b7ad-022192fc46cd","snid":["momasoft"]}"""
+        val result = objectMapper.readValue(input, Urn::class.java)
         assertNotNull(result)
         assertEquals("user", result?.namespace)
         assertEquals("0bfad384-1e92-4395-b7ad-022192fc46cd", result?.nameSpecificString)
@@ -31,13 +22,7 @@ internal class UrnDeserializerTest {
 
     @Test
     fun testDeserialize_withValidUrnString() {
-        val input = "{ \"urn\" : \"urn:test:nss\" }"
-        val parser = jsonFactory.createParser(input)
-        parser.nextToken()
-        parser.nextToken()
-        parser.nextToken()
-        val deserializer = UrnDeserializer()
-        val result = deserializer.deserialize(parser, null)
+        val result = objectMapper.readValue("\"urn:test:nss\"", Urn::class.java)
 
         assertNotNull(result)
         assertEquals("test", result?.namespace)
@@ -46,28 +31,13 @@ internal class UrnDeserializerTest {
 
     @Test
     fun testDeserialize_withIncompleteUrnString() {
-        val input = "{ \"urn\" : \"urn:test:\" }"
-
-        val parser = jsonFactory.createParser(input)
-        parser.nextToken()
-        parser.nextToken()
-        parser.nextToken()
-        val deserializer = UrnDeserializer()
-        val result = deserializer.deserialize(parser, null)
+        val result = objectMapper.readValue<Urn?>("\"urn:test:\"", Urn::class.java)
         assertNull(result)
     }
 
     @Test
     fun testDeserialize_withEmptyUrnString() {
-        val input = "{ \"urn\" : \"\" }"
-
-        val parser = jsonFactory.createParser(input)
-        parser.nextToken()
-        parser.nextToken()
-        parser.nextToken()
-        val deserializer = UrnDeserializer()
-        val nullResult = runCatching { deserializer.deserialize(parser, null) }.getOrNull()
-
+        val nullResult = runCatching { objectMapper.readValue<Urn?>("\"\"", Urn::class.java) }.getOrNull()
         assertNull(nullResult)
     }
 }

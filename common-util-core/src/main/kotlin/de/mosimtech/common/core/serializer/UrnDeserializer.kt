@@ -1,10 +1,10 @@
 package de.mosimtech.common.core.serializer
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import de.mosimtech.common.core.urn.Urn
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.deser.std.StdDeserializer
 
 /**
  * A custom deserializer for parsing `Urn` objects from JSON strings.
@@ -21,14 +21,14 @@ open class UrnDeserializer : StdDeserializer<Urn>(Urn::class.java) {
      * @param context the `DeserializationContext` that can be used to access additional deserialization context.
      * @return an `Urn` object parsed from the JSON content, or null if the content is invalid or cannot be parsed.
      */
-    override fun deserialize(parser: JsonParser?, context: DeserializationContext?): Urn? {
-        val rootNode: JsonNode = parser?.codec?.readTree(parser) ?: return null
+    override fun deserialize(parser: JsonParser, context: DeserializationContext): Urn? {
+        val rootNode: JsonNode = context.readTree(parser)
 
-        return if (rootNode.isTextual) {
-            Urn.parse(rootNode.asText())
+        return if (rootNode.isString) {
+            Urn.parse(rootNode.stringValue() ?: "")
         } else if (rootNode.isObject && rootNode.has("namespace")) {
-            val namespace = rootNode["namespace"].asText()
-            val nss = rootNode["nss"].asText()
+            val namespace = rootNode["namespace"].stringValue() ?: ""
+            val nss = rootNode["nss"].stringValue() ?: ""
             val snid = extractNid(rootNode["snid"])
 
             if (snid.isEmpty()) {
@@ -45,7 +45,7 @@ open class UrnDeserializer : StdDeserializer<Urn>(Urn::class.java) {
         val valuesSet = mutableSetOf<String>()
         node?.takeIf { it.isArray }?.let {
             for (arrayNode in it) {
-                valuesSet.add(arrayNode.asText())
+                valuesSet.add(arrayNode.stringValue() ?: "")
             }
         }
         return valuesSet

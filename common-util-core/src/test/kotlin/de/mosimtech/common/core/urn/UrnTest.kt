@@ -130,7 +130,7 @@ class UrnTest {
         Assertions.assertNotNull(urn)
         assertEquals(TestNamespace.Test.identifier, urn?.namespace)
         Assertions.assertTrue(urn?.subNamespaceIdentifier!!.isEmpty())
-        assertEquals("nss", urn?.nameSpecificString)
+        assertEquals("nss", urn.nameSpecificString)
     }
 
     @Test

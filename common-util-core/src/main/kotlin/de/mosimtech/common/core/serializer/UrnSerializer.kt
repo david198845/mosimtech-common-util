@@ -1,9 +1,9 @@
 package de.mosimtech.common.core.serializer
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import de.mosimtech.common.core.urn.Urn
+import tools.jackson.core.JsonGenerator
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ser.std.StdSerializer
 
 
 /**
@@ -24,10 +24,10 @@ open class UrnSerializer : StdSerializer<Urn>(Urn::class.java) {
      *           the object's properties. This parameter is currently not used in this method.
      * @throws Exception If the given `Urn` object is null.
      */
-    override fun serialize(p0: Urn?, p1: JsonGenerator?, p2: SerializerProvider?) {
+    override fun serialize(p0: Urn?, p1: JsonGenerator, p2: SerializationContext) {
         if (p0 == null) {
             throw Exception("given urn is null")
         }
-        p1!!.writeString(p0.toUrnString())
+        p1.writeString(p0.toUrnString())
     }
 }

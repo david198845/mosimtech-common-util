@@ -1,12 +1,12 @@
 package de.mosimtech.common.core.urn
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import de.mosimtech.common.core.namespace.DefaultNamespace
 import de.mosimtech.common.core.namespace.Namespace
 import de.mosimtech.common.core.serializer.UrnDeserializer
 import de.mosimtech.common.core.serializer.UrnSerializer
+import tools.jackson.databind.annotation.JsonDeserialize
+import tools.jackson.databind.annotation.JsonSerialize
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serial
