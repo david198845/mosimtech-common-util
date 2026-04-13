@@ -10,5 +10,6 @@ class CurrentUserProvider {
     fun getEffectiveUserId(): Urn =
         DelegationContextHolder.get()
             ?.let { Urn.parse(it) }
-            ?: SecurityContextAdapter.getCurrentUserID()!!
+            ?: SecurityContextAdapter.getCurrentUserID()
+            ?: throw IllegalStateException("No authenticated user found in SecurityContext")
 }
