@@ -40,5 +40,5 @@ object SecurityContextAdapter {
             ?: emptyList()
 
     fun isSystemInvocation(client: String): Boolean =
-        hasClientRole(client, SYSTEM_INVOKE)
+        hasClientRole(client, DelegationConstants.SYSTEM_INVOKE)
 }
