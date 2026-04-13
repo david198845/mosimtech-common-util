@@ -17,6 +17,9 @@ dependencies {
     api(libs.spring.data.r2dbc)
     api(libs.reactor.core)
 
+    // Spring Security (für ReactiveSecurityContextHolder / UserDetails in R2DBC-Auditing)
+    api(libs.spring.security.core)
+
     // Kotlin & Utilities
     api(libs.kotlin.stdlib)
     api(libs.kotlin.reflect)

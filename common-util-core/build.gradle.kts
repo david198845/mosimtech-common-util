@@ -19,9 +19,6 @@ dependencies {
 
     // Spring Framework Basics
     api(libs.spring.context)
-    api(libs.spring.security.core)
-    api(libs.spring.security.oauth2.jose)
-    api(libs.spring.security.oauth2.resource.server)
     api(libs.spring.data.commons)
 
     // Jackson für Serialisierung
