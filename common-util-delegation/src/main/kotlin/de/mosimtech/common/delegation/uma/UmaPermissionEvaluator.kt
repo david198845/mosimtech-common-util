@@ -19,6 +19,7 @@ class UmaPermissionEvaluator : PermissionEvaluator {
         val jwt = (authentication as? JwtAuthenticationToken)?.token ?: return false
         val grantorId = targetId.toString()
         val requiredScope = permission.toString()
+        val moduleIdentifier = targetType.substringAfterLast(':')
 
         val authorization = jwt.getClaim<Map<String, Any>>("authorization") ?: return false
         val permissions = authorization["permissions"] as? List<Map<String, Any>> ?: return false
@@ -26,7 +27,7 @@ class UmaPermissionEvaluator : PermissionEvaluator {
         return permissions.any { perm ->
             val rsName = perm["rsname"] as? String ?: ""
             val scopes = perm["scopes"] as? List<*> ?: emptyList<Any>()
-            rsName.contains(grantorId) && scopes.contains(requiredScope)
+            rsName.contains(grantorId) && rsName.contains(moduleIdentifier) && scopes.contains(requiredScope)
         }
     }
 }

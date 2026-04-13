@@ -80,4 +80,16 @@ class UmaPermissionEvaluatorTest {
 
         assertFalse(result)
     }
+
+    @Test
+    fun `returns false when targetType does not match resource name`() {
+        val auth = buildAuth(listOf(
+            mapOf("rsname" to "res_shift_user_grantor-uuid", "scopes" to listOf("shift:view"))
+        ))
+
+        // Finance targetType but resource is shift — should be rejected
+        val result = evaluator.hasPermission(auth, "grantor-uuid", "urn:momasoft:finance", "shift:view")
+
+        assertFalse(result)
+    }
 }
