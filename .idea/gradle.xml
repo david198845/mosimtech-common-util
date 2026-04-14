@@ -5,15 +5,16 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../Gradle/gradle-8.4" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/common-util-core" />
+            <option value="$PROJECT_DIR$/common-util-delegation" />
             <option value="$PROJECT_DIR$/common-util-jpa" />
             <option value="$PROJECT_DIR$/common-util-mongo" />
             <option value="$PROJECT_DIR$/common-util-r2dbc" />
             <option value="$PROJECT_DIR$/common-util-rabbitmq" />
+            <option value="$PROJECT_DIR$/common-util-security" />
           </set>
         </option>
       </GradleProjectSettings>
