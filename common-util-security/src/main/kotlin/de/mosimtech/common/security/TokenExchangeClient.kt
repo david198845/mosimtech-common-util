@@ -22,24 +22,27 @@ class TokenExchangeClient(
         .build()
 ) {
 
-    fun exchangeTokenFor(targetAudience: String): String {
-        // 1. Spring Security JWT aus deinem Adapter holen
+    fun exchangeTokenFor(targetAudience: String): String =
+        exchangeTokenFor(targetAudience, buildScopeName(targetAudience, async = false))
+
+    fun exchangeAsyncTokenFor(targetAudience: String): String =
+        exchangeTokenFor(targetAudience, buildScopeName(targetAudience, async = true))
+
+    fun exchangeTokenFor(targetAudience: String, scope: String): String {
         val currentToken = SecurityContextAdapter.getCurrentToken()?.tokenValue
             ?: throw IllegalStateException("Kein aktives User-Token im SecurityContext gefunden!")
 
-        // 2. Den Body nach RFC 8693 zusammenbauen
-        val formParams = mapOf(
+        val formParams = linkedMapOf(
             "client_id" to config.clientId,
             "client_secret" to config.clientSecret,
             "grant_type" to "urn:ietf:params:oauth:grant-type:token-exchange",
             "subject_token" to currentToken,
             "subject_token_type" to "urn:ietf:params:oauth:token-type:access_token",
             "audience" to targetAudience,
-            "scope" to "exchange-to-${targetAudience.substringAfterLast("-")}",
+            "scope" to scope,
             "requested_token_type" to "urn:ietf:params:oauth:token-type:access_token"
         )
 
-        // Map url-encodieren
         val formData = formParams.entries.joinToString("&") {
             "${URLEncoder.encode(it.key, StandardCharsets.UTF_8)}=${
                 URLEncoder.encode(
@@ -49,9 +52,8 @@ class TokenExchangeClient(
             }"
         }
 
-        // 3. Request bauen und senden
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("${config.issuerUri}/protocol/openid-connect/token"))
+            .uri(URI.create(resolveTokenUri()))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .POST(HttpRequest.BodyPublishers.ofString(formData))
             .build()
@@ -62,9 +64,28 @@ class TokenExchangeClient(
             throw RuntimeException("Token Exchange fehlgeschlagen. Status: ${response.statusCode()}, Body: ${response.body()}")
         }
 
-        // 4. JSON mit Jackson 3 parsen
         val tokenResponse = objectMapper.readValue(response.body(), TokenExchangeResponse::class.java)
 
         return tokenResponse.accessToken
+    }
+
+    private fun resolveTokenUri(): String =
+        config.tokenUri
+            ?.takeIf { it.isNotBlank() }
+            ?: config.issuerUri
+                ?.takeIf { it.isNotBlank() }
+                ?.let { "${it.trimEnd('/')}/protocol/openid-connect/token" }
+            ?: throw IllegalStateException("Weder tokenUri noch issuerUri fuer den Token Exchange konfiguriert")
+
+    private fun buildScopeName(targetAudience: String, async: Boolean): String {
+        val serviceName = targetAudience
+            .removeSuffix("-api")
+            .substringAfterLast('-')
+            .takeIf { it.isNotBlank() && it != targetAudience }
+            ?: throw IllegalStateException(
+                "Die Audience '$targetAudience' folgt nicht dem erwarteten Muster '<tenant>-<service>-api'"
+            )
+
+        return if (async) "async-exchange-to-$serviceName" else "exchange-to-$serviceName"
     }
 }
