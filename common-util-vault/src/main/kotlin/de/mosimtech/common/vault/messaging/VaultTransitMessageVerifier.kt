@@ -14,7 +14,7 @@ class VaultTransitMessageVerifier(
     fun <T> verify(envelope: SignedMessageEnvelope<T>, jwtIat: Instant, jwtExp: Instant): Boolean =
         isSignatureValid(envelope)
             && isMessageNotExpired(envelope)
-            && wasTokenValidAtSendTime(envelope.issuedAt, jwtIat, jwtExp)
+
 
     private fun <T> isSignatureValid(envelope: SignedMessageEnvelope<T>): Boolean {
         val input = buildSigningInput(objectMapper, envelope.payload, envelope.issuedAt, envelope.exp)
@@ -29,6 +29,6 @@ class VaultTransitMessageVerifier(
         envelope.exp == null || Instant.now().isBefore(envelope.exp)
 
     // jwt.iat <= envelope.issuedAt < jwt.exp (exp ist exklusiv gemäß JWT RFC 7519 §4.1.4)
-    private fun wasTokenValidAtSendTime(issuedAt: Instant, jwtIat: Instant, jwtExp: Instant): Boolean =
-        !issuedAt.isBefore(jwtIat) && issuedAt.isBefore(jwtExp)
+    fun <T> isTokenValidAtIssuance(envelope: SignedMessageEnvelope<T>, jwtIat: Instant, jwtExp: Instant): Boolean =
+        !envelope.issuedAt.isBefore(jwtIat) && envelope.issuedAt.isBefore(jwtExp)
 }
