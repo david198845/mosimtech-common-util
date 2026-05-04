@@ -44,7 +44,7 @@ class VaultTransitMessageVerifierTest {
     fun `verify returns true when all checks pass (exp null)`() {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
 
-        assertThat(verifier.verify(envelope(), jwtIat, jwtExp)).isTrue()
+        assertThat(verifier.verify(envelope())).isTrue()
     }
 
     @Test
@@ -52,14 +52,14 @@ class VaultTransitMessageVerifierTest {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
         val exp = Instant.now().plusSeconds(3600)
 
-        assertThat(verifier.verify(envelope(exp), jwtIat, jwtExp)).isTrue()
+        assertThat(verifier.verify(envelope(exp))).isTrue()
     }
 
     @Test
     fun `verify returns false when vault signature is invalid`() {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(false)
 
-        assertThat(verifier.verify(envelope(), jwtIat, jwtExp)).isFalse()
+        assertThat(verifier.verify(envelope())).isFalse()
     }
 
     @Test
@@ -67,32 +67,28 @@ class VaultTransitMessageVerifierTest {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
         val expiredExp = Instant.now().minusSeconds(60)
 
-        assertThat(verifier.verify(envelope(expiredExp), jwtIat, jwtExp)).isFalse()
+        assertThat(verifier.verify(envelope(expiredExp))).isFalse()
     }
 
     @Test
-    fun `verify returns false when token was not yet issued at issuedAt`() {
-        whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
+    fun `isTokenValidAtIssuance returns false when token was not yet issued at issuedAt`() {
         val lateJwtIat = issuedAt.plusSeconds(10)
         val lateJwtExp = issuedAt.plusSeconds(3610)
 
-        assertThat(verifier.verify(envelope(), lateJwtIat, lateJwtExp)).isFalse()
+        assertThat(verifier.isTokenValidAtIssuance(envelope(), lateJwtIat, lateJwtExp)).isFalse()
     }
 
     @Test
-    fun `verify returns false when token was already expired at issuedAt`() {
-        whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
+    fun `isTokenValidAtIssuance returns false when token was already expired at issuedAt`() {
         val earlyJwtIat = issuedAt.minusSeconds(3610)
         val earlyJwtExp = issuedAt.minusSeconds(10)
 
-        assertThat(verifier.verify(envelope(), earlyJwtIat, earlyJwtExp)).isFalse()
+        assertThat(verifier.isTokenValidAtIssuance(envelope(), earlyJwtIat, earlyJwtExp)).isFalse()
     }
 
     @Test
-    fun `verify returns false when issuedAt equals jwtExp (exp ist exklusiv per JWT RFC 7519)`() {
-        whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
-
-        assertThat(verifier.verify(envelope(), jwtIat, issuedAt)).isFalse()
+    fun `isTokenValidAtIssuance returns false when issuedAt equals jwtExp (exp ist exklusiv per JWT RFC 7519)`() {
+        assertThat(verifier.isTokenValidAtIssuance(envelope(), jwtIat, issuedAt)).isFalse()
     }
 
     @Test
@@ -100,7 +96,7 @@ class VaultTransitMessageVerifierTest {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>()))
             .thenThrow(VaultException("connection refused"))
 
-        assertThatThrownBy { verifier.verify(envelope(), jwtIat, jwtExp) }
+        assertThatThrownBy { verifier.verify(envelope()) }
             .isInstanceOf(VaultException::class.java)
     }
 }

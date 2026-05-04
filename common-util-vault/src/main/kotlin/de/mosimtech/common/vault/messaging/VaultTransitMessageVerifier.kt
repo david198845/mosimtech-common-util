@@ -11,10 +11,9 @@ class VaultTransitMessageVerifier(
     private val objectMapper: ObjectMapper,
     private val keyName: String,
 ) {
-    fun <T> verify(envelope: SignedMessageEnvelope<T>, jwtIat: Instant, jwtExp: Instant): Boolean =
+    fun <T> verify(envelope: SignedMessageEnvelope<T>): Boolean =
         isSignatureValid(envelope)
             && isMessageNotExpired(envelope)
-                && isTokenValidAtIssuance(envelope, jwtIat, jwtExp)
 
 
     private fun <T> isSignatureValid(envelope: SignedMessageEnvelope<T>): Boolean {
