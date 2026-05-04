@@ -1,7 +1,7 @@
 [versions]
 
 # Kotlin
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 kotlinReflect = "2.2.0"
 jvmTarget = "25"
 
@@ -10,8 +10,8 @@ dokka = "2.0.0"
 sonarqube = "6.2.0.5505"
 
 # Spring
-springContext = "7.0.6"
-springBoot = "4.0.5"
+springContext = "7.0.7"
+springBoot = "4.0.6"
 springData = "4.0.4"
 springMongodb = "5.0.2"
 springSecurity = "7.0.4"
@@ -49,6 +49,12 @@ reactor = "3.8.0"
 
 # MongoDB
 mongodb = "5.6.2"
+
+# Spring Vault
+springVault = "4.0.2"
+
+# AssertJ
+assertj = "3.27.3"
 
 [libraries]
 # Kotlin
@@ -109,6 +115,15 @@ reactor-test = { module = "io.projectreactor:reactor-test", version.ref = "react
 
 # MongoDB
 mongodb-bson = { module = "org.mongodb:bson", version.ref = "mongodb" }
+
+# Spring Vault
+spring-vault-core = { module = "org.springframework.vault:spring-vault-core", version.ref = "springVault" }
+
+# Jackson Kotlin Module
+jackson-module-kotlin = { module = "tools.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+
+# AssertJ
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
