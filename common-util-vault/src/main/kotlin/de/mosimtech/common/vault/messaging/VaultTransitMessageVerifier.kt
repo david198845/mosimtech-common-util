@@ -14,6 +14,7 @@ class VaultTransitMessageVerifier(
     fun <T> verify(envelope: SignedMessageEnvelope<T>, jwtIat: Instant, jwtExp: Instant): Boolean =
         isSignatureValid(envelope)
             && isMessageNotExpired(envelope)
+                && isTokenValidAtIssuance(envelope, jwtIat, jwtExp)
 
 
     private fun <T> isSignatureValid(envelope: SignedMessageEnvelope<T>): Boolean {
