@@ -15,6 +15,7 @@ import org.springframework.vault.support.Plaintext
 import org.springframework.vault.support.Signature
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.time.Instant
+import java.util.*
 
 class VaultTransitMessageVerifierTest {
 
@@ -38,6 +39,7 @@ class VaultTransitMessageVerifierTest {
         issuedAt = issuedAt,
         exp = exp,
         signature = "vault:v1:sig",
+        messageId = "urn:rabbitmq:mosimtech:${UUID.randomUUID()}",
     )
 
     @Test
