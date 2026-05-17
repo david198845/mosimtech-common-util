@@ -35,7 +35,6 @@ class MessageIdempotencyGuardTest {
     @Test
     fun `checkOrReject passes when messageId is new`() {
         val env = envelope()
-        whenever(store.storeIfAbsent(eq(env.messageId), eq(Duration.ofDays(10)))).thenReturn(true)
 
         assertThatCode { guard.checkOrReject(env) }.doesNotThrowAnyException()
     }
