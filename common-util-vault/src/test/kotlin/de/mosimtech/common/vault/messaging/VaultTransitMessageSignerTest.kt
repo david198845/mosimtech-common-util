@@ -4,11 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.vault.VaultException
 import org.springframework.vault.core.VaultOperations
 import org.springframework.vault.core.VaultTransitOperations
@@ -34,7 +30,7 @@ class VaultTransitMessageSignerTest {
     fun `sign creates envelope with correct signature and issuedAt`() {
         whenever(transitOperations.sign(eq("test-key"), any<Plaintext>())).thenReturn(Signature.of("vault:v1:abc123"))
 
-        val result = signer.sign("hello")
+        val result = signer.sign("hello", serviceAccountToken = "svc-token")
 
         assertThat(result.payload).isEqualTo("hello")
         assertThat(result.signature).isEqualTo("vault:v1:abc123")
@@ -48,7 +44,7 @@ class VaultTransitMessageSignerTest {
         val exp = Instant.now().plusSeconds(3600)
         whenever(transitOperations.sign(any(), any<Plaintext>())).thenReturn(Signature.of("vault:v1:xyz"))
 
-        val result = signer.sign("payload", exp = exp)
+        val result = signer.sign("payload", serviceAccountToken = "svc-token", exp = exp)
 
         assertThat(result.exp).isEqualTo(exp)
     }
@@ -58,7 +54,7 @@ class VaultTransitMessageSignerTest {
         val keyCaptor = argumentCaptor<String>()
         whenever(transitOperations.sign(keyCaptor.capture(), any<Plaintext>())).thenReturn(Signature.of("vault:v1:sig"))
 
-        signer.sign("data")
+        signer.sign("data", serviceAccountToken = "svc-token")
 
         assertThat(keyCaptor.firstValue).isEqualTo("test-key")
     }
@@ -68,14 +64,16 @@ class VaultTransitMessageSignerTest {
         val plaintextCaptor = argumentCaptor<Plaintext>()
         whenever(transitOperations.sign(any(), plaintextCaptor.capture())).thenReturn(Signature.of("vault:v1:ok"))
 
-        signer.sign(mapOf("amount" to 42), exp = null)
+        signer.sign(mapOf("amount" to 42), serviceAccountToken = "svc-token", exp = null)
 
         val capturedString = String(plaintextCaptor.firstValue.plaintext, Charsets.UTF_8)
         val parts = capturedString.split("|")
-        assertThat(parts).hasSize(3)
+        assertThat(parts).hasSize(6)
         // erstes Segment ist Base64 (kein | im Base64-Alphabet)
         assertThat(parts[0]).matches("[A-Za-z0-9+/=]+")
         assertThat(parts[2]).isEqualTo("∞")
+        assertThat(parts[4]).isEqualTo("svc-token")
+        assertThat(parts[5]).isEqualTo("")
     }
 
     @Test
@@ -83,7 +81,7 @@ class VaultTransitMessageSignerTest {
         whenever(transitOperations.sign(any(), any<Plaintext>()))
             .thenThrow(VaultException("connection refused"))
 
-        assertThatThrownBy { signer.sign("data") }
+        assertThatThrownBy { signer.sign("data", serviceAccountToken = "svc-token") }
             .isInstanceOf(VaultException::class.java)
     }
 }

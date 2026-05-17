@@ -17,7 +17,15 @@ class VaultTransitMessageVerifier(
 
 
     private fun <T> isSignatureValid(envelope: SignedMessageEnvelope<T>): Boolean {
-        val input = buildSigningInput(objectMapper, envelope.payload, envelope.issuedAt, envelope.exp)
+        val input = buildSigningInput(
+            objectMapper,
+            envelope.payload,
+            envelope.issuedAt,
+            envelope.exp,
+            envelope.messageId,
+            envelope.serviceAccountToken,
+            envelope.userToken
+        )
         return vaultOperations.opsForTransit().verify(
             keyName,
             Plaintext.of(input),

@@ -40,6 +40,7 @@ class VaultTransitMessageVerifierTest {
         exp = exp,
         signature = "vault:v1:sig",
         messageId = "urn:rabbitmq:mosimtech:${UUID.randomUUID()}",
+        serviceAccountToken = "svc-token",
     )
 
     @Test
