@@ -10,7 +10,12 @@ class VaultTransitMessageSigner(
     private val objectMapper: ObjectMapper,
     private val keyName: String,
 ) {
-    fun <T> sign(payload: T, exp: Instant? = null, issuedAt: Instant = Instant.now()): SignedMessageEnvelope<T> {
+    fun <T> sign(
+        payload: T,
+        exp: Instant? = null,
+        issuedAt: Instant = Instant.now(),
+        context: String? = null
+    ): SignedMessageEnvelope<T> {
         val input = buildSigningInput(objectMapper, payload, issuedAt, exp)
         val vaultSignature = vaultOperations.opsForTransit()
             .sign(keyName, Plaintext.of(input))
@@ -19,6 +24,7 @@ class VaultTransitMessageSigner(
             issuedAt = issuedAt,
             exp = exp,
             signature = vaultSignature.signature,
+            messageId = generateMessageId(context),
         )
     }
 }

@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/common-util-r2dbc" />
             <option value="$PROJECT_DIR$/common-util-rabbitmq" />
             <option value="$PROJECT_DIR$/common-util-security" />
+            <option value="$PROJECT_DIR$/common-util-vault" />
           </set>
         </option>
       </GradleProjectSettings>

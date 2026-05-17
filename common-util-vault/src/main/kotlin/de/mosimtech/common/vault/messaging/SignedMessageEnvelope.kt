@@ -19,6 +19,7 @@ data class SignedMessageEnvelope<T>(
     val issuedAt: Instant,
     val exp: Instant? = null,
     val signature: String,
+    val messageId: String,
 ) {
     /** Aus dem Vault-Signatur-Prefix abgeleitet (z.B. vault:v1:... → 1). Vault validiert die Version eigenständig über den Signature-String. */
     val keyVersion: Int
