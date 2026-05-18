@@ -11,20 +11,28 @@ class VaultTransitMessageVerifier(
     private val objectMapper: ObjectMapper,
     private val keyName: String,
 ) {
-    fun <T> verify(envelope: SignedMessageEnvelope<T>): Boolean =
-        isSignatureValid(envelope)
+    fun <T> verify(
+        envelope: SignedMessageEnvelope<T>,
+        serviceAccountToken: String,
+        userToken: String? = null
+    ): Boolean =
+        isSignatureValid(envelope, serviceAccountToken, userToken)
             && isMessageNotExpired(envelope)
 
 
-    private fun <T> isSignatureValid(envelope: SignedMessageEnvelope<T>): Boolean {
+    private fun <T> isSignatureValid(
+        envelope: SignedMessageEnvelope<T>,
+        serviceAccountToken: String,
+        userToken: String? = null
+    ): Boolean {
         val input = buildSigningInput(
             objectMapper,
             envelope.payload,
             envelope.issuedAt,
             envelope.exp,
             envelope.messageId,
-            envelope.serviceAccountToken,
-            envelope.userToken
+            serviceAccountToken,
+            userToken
         )
         return vaultOperations.opsForTransit().verify(
             keyName,

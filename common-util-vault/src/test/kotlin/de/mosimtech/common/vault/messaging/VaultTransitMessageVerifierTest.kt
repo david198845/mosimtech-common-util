@@ -39,15 +39,14 @@ class VaultTransitMessageVerifierTest {
         issuedAt = issuedAt,
         exp = exp,
         signature = "vault:v1:sig",
-        messageId = "urn:rabbitmq:mosimtech:${UUID.randomUUID()}",
-        serviceAccountToken = "svc-token",
+        messageId = "urn:rabbitmq:mosimtech:${UUID.randomUUID()}"
     )
 
     @Test
     fun `verify returns true when all checks pass (exp null)`() {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
 
-        assertThat(verifier.verify(envelope())).isTrue()
+        assertThat(verifier.verify(envelope(), "svc-token")).isTrue()
     }
 
     @Test
@@ -55,14 +54,14 @@ class VaultTransitMessageVerifierTest {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
         val exp = Instant.now().plusSeconds(3600)
 
-        assertThat(verifier.verify(envelope(exp))).isTrue()
+        assertThat(verifier.verify(envelope(exp), "svc-token")).isTrue()
     }
 
     @Test
     fun `verify returns false when vault signature is invalid`() {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(false)
 
-        assertThat(verifier.verify(envelope())).isFalse()
+        assertThat(verifier.verify(envelope(), "svc-token")).isFalse()
     }
 
     @Test
@@ -70,7 +69,7 @@ class VaultTransitMessageVerifierTest {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>())).thenReturn(true)
         val expiredExp = Instant.now().minusSeconds(60)
 
-        assertThat(verifier.verify(envelope(expiredExp))).isFalse()
+        assertThat(verifier.verify(envelope(expiredExp), "svc-token")).isFalse()
     }
 
     @Test
@@ -99,7 +98,7 @@ class VaultTransitMessageVerifierTest {
         whenever(transitOperations.verify(eq("test-key"), any<Plaintext>(), any<Signature>()))
             .thenThrow(VaultException("connection refused"))
 
-        assertThatThrownBy { verifier.verify(envelope()) }
+        assertThatThrownBy { verifier.verify(envelope(), "svc-token") }
             .isInstanceOf(VaultException::class.java)
     }
 }

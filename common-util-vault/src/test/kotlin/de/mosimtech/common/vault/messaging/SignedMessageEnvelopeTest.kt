@@ -10,7 +10,7 @@ class SignedMessageEnvelopeTest {
     fun `envelope stores all fields correctly`() {
         val now = Instant.now()
         val exp = now.plusSeconds(3600)
-        val envelope = SignedMessageEnvelope("payload", now, exp, "vault:v1:sig", "urn:rabbitmq:test:1", "svc-token")
+        val envelope = SignedMessageEnvelope("payload", now, exp, "vault:v1:sig", "urn:rabbitmq:test:1")
 
         assertThat(envelope.payload).isEqualTo("payload")
         assertThat(envelope.issuedAt).isEqualTo(now)
@@ -21,7 +21,7 @@ class SignedMessageEnvelopeTest {
     @Test
     fun `keyVersion is derived from signature`() {
         val envelope =
-            SignedMessageEnvelope("data", Instant.now(), null, "vault:v3:abc", "urn:rabbitmq:test:2", "svc-token")
+            SignedMessageEnvelope("data", Instant.now(), null, "vault:v3:abc", "urn:rabbitmq:test:2")
 
         assertThat(envelope.keyVersion).isEqualTo(3)
     }
@@ -29,7 +29,7 @@ class SignedMessageEnvelopeTest {
     @Test
     fun `envelope exp defaults to null`() {
         val envelope =
-            SignedMessageEnvelope("data", Instant.now(), null, "vault:v1:sig", "urn:rabbitmq:test:3", "svc-token")
+            SignedMessageEnvelope("data", Instant.now(), null, "vault:v1:sig", "urn:rabbitmq:test:3")
 
         assertThat(envelope.exp).isNull()
     }
@@ -37,7 +37,7 @@ class SignedMessageEnvelopeTest {
     @Test
     fun `envelope copy creates independent copy with changed field`() {
         val original =
-            SignedMessageEnvelope("data", Instant.now(), null, "vault:v1:sig", "urn:rabbitmq:test:4", "svc-token")
+            SignedMessageEnvelope("data", Instant.now(), null, "vault:v1:sig", "urn:rabbitmq:test:4")
         val copy = original.copy(payload = "changed")
 
         assertThat(copy.payload).isEqualTo("changed")

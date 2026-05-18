@@ -27,9 +27,7 @@ class VaultTransitMessageSigner(
             issuedAt = issuedAt,
             exp = exp,
             signature = vaultSignature.signature,
-            messageId = messageId,
-            serviceAccountToken = serviceAccountToken,
-            userToken = userToken,
+            messageId = messageId
         )
     }
 }

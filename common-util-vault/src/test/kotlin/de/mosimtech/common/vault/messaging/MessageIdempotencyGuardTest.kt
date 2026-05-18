@@ -4,14 +4,10 @@ import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import java.time.Duration
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 class MessageIdempotencyGuardTest {
 
@@ -23,8 +19,7 @@ class MessageIdempotencyGuardTest {
             payload = "payload",
             issuedAt = Instant.now(),
             signature = "vault:v1:sig",
-            messageId = messageId,
-            serviceAccountToken = "svc",
+            messageId = messageId
         )
 
     @BeforeEach
