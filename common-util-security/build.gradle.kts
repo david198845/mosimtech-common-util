@@ -21,6 +21,8 @@ dependencies {
     api(libs.kotlin.reflect)
     api(libs.slf4j.api)
 
+    compileOnly(libs.spring.boot)
+
     testImplementation(libs.kotlin.test)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)

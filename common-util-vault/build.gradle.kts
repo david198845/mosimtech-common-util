@@ -11,12 +11,15 @@ repositories {
 }
 
 dependencies {
+    api(project(":common-util-core"))
     api(libs.spring.vault.core)
     api(libs.jackson.databind)
 
     api(libs.kotlin.stdlib)
     api(libs.kotlin.reflect)
     api(libs.slf4j.api)
+
+    compileOnly(libs.spring.boot)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.mockito.core)
