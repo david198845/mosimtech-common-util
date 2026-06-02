@@ -12,7 +12,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 @MappedSuperclass
 @EntityListeners(value = [AuditingEntityListener::class])
@@ -20,7 +20,7 @@ abstract class AbstractAuditableEntity : AbstractEntity(), Auditable {
 
     @Column(name = "creation_date", nullable = false)
     @CreatedDate
-    override var creationDate: ZonedDateTime? = null
+    override var creationDate: OffsetDateTime? = null
 
     @Column(name = "created_by", nullable = false)
     @Convert(converter = UrnStringConverter::class)
@@ -34,7 +34,7 @@ abstract class AbstractAuditableEntity : AbstractEntity(), Auditable {
 
     @Column(name = "last_modified_date", nullable = true)
     @LastModifiedDate
-    override var lastModifiedDate: ZonedDateTime? = null
+    override var lastModifiedDate: OffsetDateTime? = null
 
 
     override fun toString(): String {

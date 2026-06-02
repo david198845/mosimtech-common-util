@@ -3,7 +3,7 @@ package de.mosimtech.common.mongo.entity
 import de.mosimtech.common.core.domain.Auditable
 import de.mosimtech.common.core.urn.Urn
 import org.springframework.data.annotation.*
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 /**
  * Mongo Auditable base entity mirroring the JPA AbstractAuditableEntity structure.
@@ -12,7 +12,7 @@ import java.time.ZonedDateTime
 abstract class AbstractAuditableEntity() : AbstractEntity(), Auditable {
 
     @CreatedDate
-    override var creationDate: ZonedDateTime? = null
+    override var creationDate: OffsetDateTime? = null
 
     @CreatedBy
     override var createdBy: Urn? = null
@@ -21,7 +21,7 @@ abstract class AbstractAuditableEntity() : AbstractEntity(), Auditable {
     override var lastModifiedBy: Urn? = null
 
     @LastModifiedDate
-    override var lastModifiedDate: ZonedDateTime? = null
+    override var lastModifiedDate: OffsetDateTime? = null
 
     override fun toString(): String {
         return "AbstractAuditableEntity(id=$id, creationDate=$creationDate, createdBy=$createdBy, lastModifiedBy=$lastModifiedBy, lastModifiedDate=$lastModifiedDate, version=$version, valid=$valid)"

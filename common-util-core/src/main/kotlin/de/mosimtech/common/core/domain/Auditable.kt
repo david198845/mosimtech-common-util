@@ -1,7 +1,7 @@
 package de.mosimtech.common.core.domain
 
 import de.mosimtech.common.core.urn.Urn
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 /**
  * Represents an entity capable of maintaining audit information such as creation and
@@ -18,8 +18,8 @@ import java.time.ZonedDateTime
  * @property createdBy The identifier of the user who created the entity.
  */
 interface Auditable : Identifiable {
-    val creationDate: ZonedDateTime?
-    var lastModifiedDate: ZonedDateTime?
+    val creationDate: OffsetDateTime?
+    var lastModifiedDate: OffsetDateTime?
     var lastModifiedBy: Urn?
     val createdBy: Urn?
 }

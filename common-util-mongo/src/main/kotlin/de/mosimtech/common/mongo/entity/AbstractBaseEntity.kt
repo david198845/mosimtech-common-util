@@ -4,7 +4,7 @@ import de.mosimtech.common.core.domain.BaseModel
 import de.mosimtech.common.core.urn.Urn
 import jakarta.validation.constraints.NotNull
 import org.springframework.data.annotation.Persistent
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 /**
  * Abstract base class for Mongo entities aligning with the JPA structure.
@@ -19,10 +19,10 @@ abstract class AbstractBaseEntity() : AbstractAuditableEntity(), BaseModel {
     override lateinit var userId: Urn
 
     constructor(
-        creationDate: ZonedDateTime,
+        creationDate: OffsetDateTime,
         createdBy: Urn,
         lastModifiedBy: Urn?,
-        lastModifiedDate: ZonedDateTime?,
+        lastModifiedDate: OffsetDateTime?,
         userId: Urn
     ) : this() {
         this.creationDate = creationDate

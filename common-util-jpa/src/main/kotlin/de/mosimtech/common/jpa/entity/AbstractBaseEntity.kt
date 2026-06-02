@@ -9,7 +9,7 @@ import jakarta.persistence.Convert
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 /**
  * Abstract base class representing a base entity in the system.
@@ -36,10 +36,10 @@ abstract class AbstractBaseEntity() : AbstractAuditableEntity(), BaseModel {
     override lateinit var userId: Urn
 
     constructor(
-        creationDate: ZonedDateTime,
+        creationDate: OffsetDateTime,
         createdBy: Urn,
         lastModifiedBy: Urn?,
-        lastModifiedDate: ZonedDateTime?,
+        lastModifiedDate: OffsetDateTime?,
         userId: Urn
     ) : this() {
         this.creationDate = creationDate
