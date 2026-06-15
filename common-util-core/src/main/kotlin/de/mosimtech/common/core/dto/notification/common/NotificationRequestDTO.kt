@@ -27,5 +27,6 @@ data class NotificationRequestDTO(
     val priority: String? = null,
     val dataOnly: Boolean = false,
     val icon: String? = null,
-    val color: String? = null
+    val color: String? = null,
+    val androidId: String? = null,
 )
