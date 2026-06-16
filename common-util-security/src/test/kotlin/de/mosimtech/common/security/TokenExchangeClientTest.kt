@@ -117,6 +117,40 @@ class TokenExchangeClientTest {
     }
 
     @Test
+    fun `should combine primary scope with additional scopes`() {
+        val client = TokenExchangeClient(
+            TokenExchangeConfig(
+                tokenUri = tokenUri,
+                clientId = "momasoft-shiftcalc-api",
+                clientSecret = "super-secret"
+            ),
+            HttpClient.newHttpClient()
+        )
+
+        val token = client.exchangeTokenFor("mosimtech-document-api", listOf("openid", "profile"))
+
+        assertEquals("exchanged-token", token)
+        assertTrue(capturedBody.get().contains("scope=exchange-to-document+openid+profile"))
+        assertTrue(capturedBody.get().contains("audience=mosimtech-document-api"))
+    }
+
+    @Test
+    fun `should use only primary scope when additional scopes list is empty`() {
+        val client = TokenExchangeClient(
+            TokenExchangeConfig(
+                tokenUri = tokenUri,
+                clientId = "momasoft-shiftcalc-api",
+                clientSecret = "super-secret"
+            ),
+            HttpClient.newHttpClient()
+        )
+
+        client.exchangeTokenFor("mosimtech-document-api", emptyList())
+
+        assertTrue(capturedBody.get().contains("scope=exchange-to-document"))
+    }
+
+    @Test
     fun `should fail for invalid audience naming convention`() {
         val client = TokenExchangeClient(
             TokenExchangeConfig(
