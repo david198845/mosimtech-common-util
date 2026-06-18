@@ -5,9 +5,11 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import org.springframework.vault.support.SignatureValidation
 import org.springframework.vault.VaultException
 import org.springframework.vault.core.VaultOperations
 import org.springframework.vault.core.VaultTransitOperations
@@ -31,7 +33,7 @@ class VaultTransitMessageVerifierTest {
     @BeforeEach
     fun setUp() {
         whenever(vaultOperations.opsForTransit()).thenReturn(transitOperations)
-        verifier = VaultTransitMessageVerifier(vaultOperations, objectMapper, "test-key")
+        verifier = VaultTransitMessageVerifier(vaultOperations, "test-key")
     }
 
     private fun envelope(exp: Instant? = null) = SignedMessageEnvelope(
@@ -100,5 +102,25 @@ class VaultTransitMessageVerifierTest {
 
         assertThatThrownBy { verifier.verify(envelope(), "svc-token") }
             .isInstanceOf(VaultException::class.java)
+    }
+
+    data class SenderPayload(val application: String, val title: String)
+    data class ReceiverPayload(val application: String, val title: String, val androidId: String? = null)
+
+    @Test
+    fun `signing input is identical when receiver has an extra optional null field (version skew)`() {
+        // Sender-Bytes
+        val senderInput = buildSigningInput(
+            CanonicalMessageMapper.create(),
+            SenderPayload("shiftcalc", "Schicht morgen"),
+            issuedAt, null, "urn:rabbitmq:mosimtech:fixed", "svc-token", null
+        )
+        // Empfänger-Bytes (DTO um optionales null-Feld erweitert)
+        val receiverInput = buildSigningInput(
+            CanonicalMessageMapper.create(),
+            ReceiverPayload("shiftcalc", "Schicht morgen", null),
+            issuedAt, null, "urn:rabbitmq:mosimtech:fixed", "svc-token", null
+        )
+        assertThat(receiverInput).isEqualTo(senderInput)
     }
 }

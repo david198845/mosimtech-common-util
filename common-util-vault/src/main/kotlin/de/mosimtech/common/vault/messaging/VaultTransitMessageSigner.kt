@@ -2,14 +2,14 @@ package de.mosimtech.common.vault.messaging
 
 import org.springframework.vault.core.VaultOperations
 import org.springframework.vault.support.Plaintext
-import tools.jackson.databind.ObjectMapper
 import java.time.Instant
 
 class VaultTransitMessageSigner(
     private val vaultOperations: VaultOperations,
-    private val objectMapper: ObjectMapper,
     private val keyName: String,
 ) {
+    private val objectMapper = CanonicalMessageMapper.mapper
+
     fun <T> sign(
         payload: T,
         serviceAccountToken: String,

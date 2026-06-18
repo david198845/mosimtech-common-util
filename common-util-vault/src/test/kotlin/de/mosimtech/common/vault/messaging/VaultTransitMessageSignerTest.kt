@@ -23,7 +23,7 @@ class VaultTransitMessageSignerTest {
     @BeforeEach
     fun setUp() {
         whenever(vaultOperations.opsForTransit()).thenReturn(transitOperations)
-        signer = VaultTransitMessageSigner(vaultOperations, objectMapper, "test-key")
+        signer = VaultTransitMessageSigner(vaultOperations, "test-key")
     }
 
     @Test

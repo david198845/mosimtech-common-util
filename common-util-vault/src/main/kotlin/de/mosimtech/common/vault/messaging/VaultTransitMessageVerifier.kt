@@ -3,14 +3,14 @@ package de.mosimtech.common.vault.messaging
 import org.springframework.vault.core.VaultOperations
 import org.springframework.vault.support.Plaintext
 import org.springframework.vault.support.Signature
-import tools.jackson.databind.ObjectMapper
 import java.time.Instant
 
 class VaultTransitMessageVerifier(
     private val vaultOperations: VaultOperations,
-    private val objectMapper: ObjectMapper,
     private val keyName: String,
 ) {
+    private val objectMapper = CanonicalMessageMapper.mapper
+
     fun <T> verify(
         envelope: SignedMessageEnvelope<T>,
         serviceAccountToken: String,
@@ -18,7 +18,6 @@ class VaultTransitMessageVerifier(
     ): Boolean =
         isSignatureValid(envelope, serviceAccountToken, userToken)
             && isMessageNotExpired(envelope)
-
 
     private fun <T> isSignatureValid(
         envelope: SignedMessageEnvelope<T>,
