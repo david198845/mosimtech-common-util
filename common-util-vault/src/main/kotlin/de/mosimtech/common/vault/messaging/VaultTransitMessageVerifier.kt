@@ -9,8 +9,6 @@ class VaultTransitMessageVerifier(
     private val vaultOperations: VaultOperations,
     private val keyName: String,
 ) {
-    private val objectMapper = CanonicalMessageMapper.mapper
-
     fun <T> verify(
         envelope: SignedMessageEnvelope<T>,
         serviceAccountToken: String,
@@ -19,10 +17,25 @@ class VaultTransitMessageVerifier(
         isSignatureValid(envelope, serviceAccountToken, userToken)
             && isMessageNotExpired(envelope)
 
+    /**
+     * Prueft gegen die aktuelle Serialisierung und, falls das fehlschlaegt, gegen die bis 3.3.7
+     * gueltige. So kann jeder Service einzeln aktualisiert werden, statt dass Sender und
+     * Empfaenger gleichzeitig umgestellt werden muessen. Die Signatur muss in beiden Faellen
+     * stimmen — akzeptiert werden nur diese zwei fest definierten Serialisierungen.
+     */
     private fun <T> isSignatureValid(
         envelope: SignedMessageEnvelope<T>,
         serviceAccountToken: String,
         userToken: String? = null
+    ): Boolean =
+        matchesSignature(CanonicalMessageMapper.mapper, envelope, serviceAccountToken, userToken)
+            || matchesSignature(CanonicalMessageMapper.legacyMapper, envelope, serviceAccountToken, userToken)
+
+    private fun <T> matchesSignature(
+        objectMapper: tools.jackson.databind.ObjectMapper,
+        envelope: SignedMessageEnvelope<T>,
+        serviceAccountToken: String,
+        userToken: String?,
     ): Boolean {
         val input = buildSigningInput(
             objectMapper,
