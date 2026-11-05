@@ -18,25 +18,36 @@ class VaultTransitMessageVerifier(
             && isMessageNotExpired(envelope)
 
     /**
-     * Prueft gegen die aktuelle Serialisierung und, falls das fehlschlaegt, gegen die bis 3.3.7
-     * gueltige. So kann jeder Service einzeln aktualisiert werden, statt dass Sender und
-     * Empfaenger gleichzeitig umgestellt werden muessen. Die Signatur muss in beiden Faellen
-     * stimmen — akzeptiert werden nur diese zwei fest definierten Serialisierungen.
+     * Der Modus kommt aus der Envelope; fehlt er, wurde vollständig signiert.
+     *
+     * Bei vollständiger Signatur wird gegen die aktuelle Serialisierung und, falls das fehlschlaegt,
+     * gegen die bis 3.3.7 gueltige geprueft. So kann jeder Service einzeln aktualisiert werden, statt
+     * dass Sender und Empfaenger gleichzeitig umgestellt werden muessen. Die Signatur muss in beiden
+     * Faellen stimmen — akzeptiert werden nur diese zwei fest definierten Serialisierungen.
+     *
+     * Der Hash-Modus kam erst nach der UTC-Festlegung und kennt deshalb nur die aktuelle.
      */
     private fun <T> isSignatureValid(
         envelope: SignedMessageEnvelope<T>,
         serviceAccountToken: String,
         userToken: String? = null
-    ): Boolean =
-        matchesSignature(CanonicalMessageMapper.mapper, envelope, serviceAccountToken, userToken)
-            || matchesSignature(CanonicalMessageMapper.legacyMapper, envelope, serviceAccountToken, userToken)
+    ): Boolean = when (envelope.payloadSigning ?: PayloadSigningMode.FULL) {
+        PayloadSigningMode.FULL ->
+            matchesSignature(CanonicalMessageMapper.mapper, envelope, serviceAccountToken, userToken, PayloadSigningMode.FULL)
+                || matchesSignature(CanonicalMessageMapper.legacyMapper, envelope, serviceAccountToken, userToken, PayloadSigningMode.FULL)
+
+        PayloadSigningMode.DIGEST ->
+            matchesSignature(CanonicalMessageMapper.mapper, envelope, serviceAccountToken, userToken, PayloadSigningMode.DIGEST)
+    }
 
     private fun <T> matchesSignature(
         objectMapper: tools.jackson.databind.ObjectMapper,
         envelope: SignedMessageEnvelope<T>,
         serviceAccountToken: String,
         userToken: String?,
+        mode: PayloadSigningMode,
     ): Boolean {
+        // Der Hash wird hier aus dem empfangenen Payload berechnet — nie aus einem mitgeschickten Wert.
         val input = buildSigningInput(
             objectMapper,
             envelope.payload,
@@ -44,7 +55,8 @@ class VaultTransitMessageVerifier(
             envelope.exp,
             envelope.messageId,
             serviceAccountToken,
-            userToken
+            userToken,
+            mode,
         )
         return vaultOperations.opsForTransit().verify(
             keyName,
