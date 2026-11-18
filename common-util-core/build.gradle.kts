@@ -38,6 +38,7 @@ dependencies {
     api(libs.moneta)
     api(libs.jackson.datatype.money)
 
+    testImplementation(libs.jackson.module.kotlin)
     testApi(libs.kotlin.test)
     testApi(libs.mockito.core)
     testApi(libs.mockito.kotlin)

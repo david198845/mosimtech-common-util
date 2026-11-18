@@ -17,6 +17,13 @@ const val SHARED_VHOST = "shared"
 // 2. EXCHANGES / POSTÄMTER (Global)
 // ==========================================
 const val DOCUMENT_EXCHANGE = "document.upload.exchange"
+
+/** Topic-Exchange fuer Ereignisse des Dokumentdienstes (z. B. Belegzahl je Item). */
+const val DOCUMENT_EVENTS_EXCHANGE = "document.events.exchange"
+
+/** Routing-Key fuer die Belegzahl-Ereignisse eines Namensraums, z. B. `momasoft.financial`. */
+fun documentCountRoutingKey(namespace: String): String = "document.count.$namespace"
+
 const val NOTIFICATION_EXCHANGE = "notification.exchange"
 const val COMMAND_TELEGRAM_EXCHANGE = "command.telegram.exchange"
 
