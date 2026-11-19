@@ -9,6 +9,7 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.content
 import org.springframework.test.web.client.match.MockRestRequestMatchers.header
 import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
+import org.springframework.test.web.client.response.MockRestResponseCreators.withException
 import org.springframework.test.web.client.response.MockRestResponseCreators.withStatus
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestClient
@@ -90,6 +91,58 @@ class HaApiKeyVerifierTest {
         expectVerify(HttpStatus.NOT_FOUND)
         assertEquals(HaApiKeyVerification.Unknown, verifier.verify(rawKey))
         server.verify()
+    }
+
+    @Test
+    fun `a 404 with a body is a misconfiguration and is not remembered`() {
+        repeat(2) {
+            expectVerify(HttpStatus.NOT_FOUND, """{"status":404,"error":"Not Found","path":"/v1/ha-api-key/verify"}""")
+        }
+        val verifier = verifier()
+
+        val first = assertIs<HaApiKeyVerification.Unavailable>(verifier.verify(rawKey))
+        assertIs<HaApiKeyVerification.Unavailable>(verifier.verify(rawKey))
+
+        assertEquals("verify endpoint not found", first.reason)
+        server.verify()
+    }
+
+    @Test
+    fun `a 403 reason carries the error code of the auth service`() {
+        expectVerify(HttpStatus.FORBIDDEN, """{"code":"HA_API_KEY_CALLER_NOT_ACCEPTED","message":"caller x"}""")
+
+        val unavailable = assertIs<HaApiKeyVerification.Unavailable>(verifier().verify(rawKey))
+
+        assertEquals("auth service rejected caller: 403 HA_API_KEY_CALLER_NOT_ACCEPTED", unavailable.reason)
+    }
+
+    @Test
+    fun `a 403 with a body that is not json yields the plain reason`() {
+        server.expect(once(), requestTo("http://auth.test/api/v1/ha-api-key/verify"))
+            .andRespond(withStatus(HttpStatus.FORBIDDEN).contentType(MediaType.TEXT_HTML).body("<html>$rawKey</html>"))
+
+        val unavailable = assertIs<HaApiKeyVerification.Unavailable>(verifier().verify(rawKey))
+
+        assertEquals("auth service rejected caller: 403", unavailable.reason)
+    }
+
+    @Test
+    fun `a 403 code that is not a plain constant is not passed on`() {
+        expectVerify(HttpStatus.FORBIDDEN, """{"code":"$rawKey"}""")
+
+        val unavailable = assertIs<HaApiKeyVerification.Unavailable>(verifier().verify(rawKey))
+
+        assertEquals("auth service rejected caller: 403", unavailable.reason)
+    }
+
+    @Test
+    fun `a transport failure names the type of its cause`() {
+        server.expect(once(), requestTo("http://auth.test/api/v1/ha-api-key/verify"))
+            .andRespond(withException(java.net.SocketTimeoutException("read timed out $rawKey")))
+
+        val unavailable = assertIs<HaApiKeyVerification.Unavailable>(verifier().verify(rawKey))
+
+        assertEquals("verification failed: ResourceAccessException/SocketTimeoutException", unavailable.reason)
     }
 
     @Test

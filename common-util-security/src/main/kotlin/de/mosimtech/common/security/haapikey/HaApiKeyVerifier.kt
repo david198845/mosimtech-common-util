@@ -43,9 +43,11 @@ class HaApiKeyVerifier(
         return try {
             call(rawKey, keyHash, now)
         } catch (e: Exception) {
-            // Nur der Typ: Nachrichten von Transportfehlern sollen nicht ungeprüft ins Log
-            log.warn("Verification of Home Assistant API key failed: {}", e.javaClass.simpleName)
-            HaApiKeyVerification.Unavailable("verification failed: ${e.javaClass.simpleName}")
+            // Nur Typen, keine Nachrichten: Texte von Transportfehlern sollen nicht ungeprüft ins Log.
+            // Der Typ der Ursache trennt z. B. Zeitüberschreitung von abgewiesener Verbindung.
+            val failure = listOfNotNull(e.javaClass.simpleName, e.cause?.javaClass?.simpleName).joinToString("/")
+            log.warn("Verification of Home Assistant API key failed: {}", failure)
+            HaApiKeyVerification.Unavailable("verification failed: $failure")
         }
     }
 
@@ -60,13 +62,11 @@ class HaApiKeyVerifier(
                 val status = response.statusCode
                 when {
                     status.value() == 200 -> accepted(response.bodyTo(HaApiKeyVerifyResponse::class.java))
-                    status.value() == 404 -> {
-                        unknownUntil[keyHash] = now.plus(unknownTtl)
-                        HaApiKeyVerification.Unknown
-                    }
+                    status.value() == 404 -> notFound(response.body.readNBytes(1).isEmpty(), keyHash, now)
                     status.value() == 401 || status.value() == 403 -> {
-                        log.error("Auth service rejected this service as caller of the key verification: {}", status.value())
-                        HaApiKeyVerification.Unavailable("auth service rejected caller: ${status.value()}")
+                        val rejection = listOfNotNull(status.value().toString(), errorCode(response)).joinToString(" ")
+                        log.error("Auth service rejected this service as caller of the key verification: {}", rejection)
+                        HaApiKeyVerification.Unavailable("auth service rejected caller: $rejection")
                     }
                     else -> {
                         log.warn("Auth service answered the key verification with status {}", status.value())
@@ -74,6 +74,34 @@ class HaApiKeyVerifier(
                     }
                 }
             }!!
+    }
+
+    /**
+     * Der Prüfaufruf meldet einen unbekannten Schlüssel mit 404 **ohne** Antwortkörper. Ein 404 mit
+     * Körper stammt von anderswo (Fehlerseite, Gateway, falsche Basis-URL) und darf nicht als
+     * unbekannter Schlüssel gemerkt werden, sonst wiese der Dienst jeden Schlüssel ab.
+     */
+    private fun notFound(emptyBody: Boolean, keyHash: String, now: Instant): HaApiKeyVerification {
+        if (!emptyBody) {
+            log.error("Verify endpoint not found - check app.ha-api-key.auth-service-url")
+            return HaApiKeyVerification.Unavailable("verify endpoint not found")
+        }
+        unknownUntil[keyHash] = now.plus(unknownTtl)
+        return HaApiKeyVerification.Unknown
+    }
+
+    /**
+     * Liest den Fehlercode aus der Antwort, sofern sie JSON mit einem `code` ist. Übernommen wird nur
+     * ein Code aus Großbuchstaben, Ziffern und Unterstrichen, damit nichts anderes aus dem Körper ins
+     * Log oder in den Grund gelangt.
+     */
+    private fun errorCode(response: RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse): String? {
+        val code = try {
+            response.bodyTo(HaApiKeyErrorResponse::class.java)?.code
+        } catch (_: Exception) {
+            null
+        }
+        return code?.takeIf { ERROR_CODE.matches(it) }
     }
 
     private fun accepted(body: HaApiKeyVerifyResponse?): HaApiKeyVerification {
@@ -102,6 +130,7 @@ class HaApiKeyVerifier(
         const val VERIFY_PATH = "/v1/ha-api-key/verify"
 
         private const val SECONDS_PER_MINUTE = 60L
+        private val ERROR_CODE = Regex("[A-Z0-9_]{1,64}")
         private val log = LoggerFactory.getLogger(HaApiKeyVerifier::class.java)
     }
 }
