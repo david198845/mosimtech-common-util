@@ -11,7 +11,10 @@ class UserServiceLanguageAutoConfigurationTest {
 
     @Test
     fun `stays away without a service token supplier`() {
-        runner.run { context -> assertThat(context).doesNotHaveBean(RecipientLanguageResolver::class.java) }
+        runner.run { context ->
+            assertThat(context).doesNotHaveBean(RecipientLanguageResolver::class.java)
+            assertThat(context).doesNotHaveBean(RecipientFormatResolver::class.java)
+        }
     }
 
     @Test
@@ -19,6 +22,7 @@ class UserServiceLanguageAutoConfigurationTest {
         runner.withBean(ServiceAccessTokenSupplier::class.java, { ServiceAccessTokenSupplier { "token" } })
             .run { context ->
                 assertThat(context).hasSingleBean(RecipientLanguageResolver::class.java)
+                assertThat(context).hasSingleBean(RecipientFormatResolver::class.java)
                 assertThat(context).hasSingleBean(UserLocaleClient::class.java)
             }
     }

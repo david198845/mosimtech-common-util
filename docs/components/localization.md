@@ -11,11 +11,16 @@ und stellt, falls er Benachrichtigungen ohne Anfrage verschickt, sein Dienstkont
 | --- | --- | --- |
 | `common-util-core` | `AccountLanguage`, `PluralCategory` | Sprachcodes, CLDR-Pluralregeln |
 | | `LocalizedTexts`, `LocalizedTextCatalog` | Textkatalog aus `.properties`, `text()` und `plural()` |
-| | `LocalizedFormats` | Beträge, Zahlen, Daten in der Schreibweise der Sprache |
+| | `LocalizedFormats` | Beträge, Zahlen, Daten, Uhrzeiten und Größen in der Schreibweise der Sprache bzw. des Profils |
+| | `FormatPreferences`, `RegionFormatDefaults` | Formatvorgaben aus dem Profil, Auflösung von `AUTO` (Abschnitt 5) |
+| | `MeasureUnits`, `DisplayUnits` | Einheiten (JSR 385 / Indriya), Umrechnung in die Profileinheit (Abschnitt 6) |
 | | `LocalizedCatalogCheck` | Prüft Schlüssel, Platzhalter und Pluralformen aller Sprachen |
+| `common-util-jpa` | `QuantityConverter`, `MassQuantityConverter`, `TemperatureQuantityConverter` | Größe als „50 kg“ in einer `VARCHAR`-Spalte |
 | `common-util-security` | `RequestLanguage`, `RequestTexts` | Sprache einer REST-Anfrage: Token-Claim `locale` → `Accept-Language` → Deutsch |
+| | `RequestFormats`, `FormatPreferenceClaims` | Formatvorgaben einer REST-Anfrage aus den Token-Claims |
 | | `ContentLanguageResponseAdvice` (Auto-Config) | Setzt `Content-Language`, sobald eine übersetzte Meldung in der Antwort steckt |
 | `common-util-user-service` | `RecipientLanguageResolver` (Auto-Config) | Kontosprache eines Empfängers beim User Service, mit Cache |
+| | `RecipientFormatResolver` (Auto-Config) | Alle Formatvorgaben eines Empfängers (inkl. Währung, Zeitzone), mit Cache |
 
 ## 1. Textdateien anlegen
 
@@ -105,3 +110,89 @@ fun `message catalog is complete in every language`() {
 
 Gemeldet werden fehlende Sprachdateien, fehlende oder überzählige Schlüssel, abweichende
 Platzhalter und fehlende Pluralformen.
+
+## 5. Formatvorgaben aus dem Profil
+
+Der User Service (ab 0.6.0) führt je Nutzer Datum, Uhrzeit, Einheiten, Wochenbeginn, Währung und
+Zeitzone. `FormatPreferences` bündelt sie:
+
+| Feld | Token-Claim | REST `GET /v1/users/{id}/locale` | Werte |
+| --- | --- | --- | --- |
+| `dateFormat` | `date_format` | `dateFormat` | `AUTO`, `DMY_DOT` 31.12.2026, `DMY_SLASH` 31/12/2026, `MDY_SLASH` 12/31/2026, `ISO` 2026-12-31 |
+| `timeFormat` | `time_format` | `timeFormat` | `AUTO`, `H24` 15:05, `H12` 3:05 PM |
+| `unitSystem` | `unit_system` | `unitSystem` | `AUTO`, `METRIC` (kg, °C), `IMPERIAL` (lb, °F) |
+| `firstDayOfWeek` | `first_day_of_week` | `firstDayOfWeek` | `AUTO`, `MONDAY`, `SUNDAY` |
+| `timezone` | `zoneinfo` (sobald Keycloak ihn liefert) | `timezone` | IANA, unbekannt → `Europe/Berlin` |
+| `currency` | – (bewusst nicht im Token) | `currency` | ISO 4217, unbekannt → `EUR` |
+
+Ein fehlender oder unbekannter Wert ist `AUTO`. `AUTO` wird über das **Land der Sprache**
+aufgelöst (`RegionFormatDefaults`), mit denselben Tabellen wie `resolve-formats.ts` in ui-core —
+Änderungen immer an beiden Stellen:
+
+1. Land = Länderteil des Sprach-Tags (`de-AT` → AT, `en_CA` → CA, `es-419` → 419). Ohne Land das
+   Land der Sprache: de→DE, en→**GB**, es→ES, ru→RU, uk→UA, fr→FR, it→IT, pt→PT, nl→NL, pl→PL,
+   cs→CZ, sv→SE, lt→LT, tr→TR, ja→JP, ko→KR, he→IL. Ohne Sprache gilt `de`.
+2. Datum: `MDY_SLASH` für US; `ISO` für SE, LT, CA; `DMY_SLASH` für GB, IE, AU, NZ, IN, ES, FR,
+   BE, LU, IT, PT, BR, GR, MX, AR, CL, CO, PE, VE, UY, EC; sonst `DMY_DOT`.
+3. Uhrzeit: `H12` für US, CA, AU, NZ, IN, PH, PK, EG; sonst `H24`.
+4. Einheiten: `IMPERIAL` für US, LR, MM; sonst `METRIC`.
+5. Wochenbeginn: `SUNDAY` für US, CA, MX, BR, JP, KR, IL, PH, IN; sonst `MONDAY`.
+
+Englisch ohne Land ist also britisch; amerikanisch wird es erst mit `en-US` oder ausdrücklich
+gewählten Formaten. Ein gewählter Wert (≠ `AUTO`) gilt immer.
+
+```kotlin
+// REST-Anfrage: Claims des Tokens, Sprache wie RequestLanguage
+val formats = RequestFormats.formats()
+formats.date(LocalDate.of(2026, 12, 31))        // 31.12.2026 / 12/31/2026 / …
+formats.time(LocalTime.of(15, 5))               // 15:05 / 3:05 PM
+formats.dateTime(Instant.now())                 // "<Datum> <Uhrzeit>" in der Zeitzone
+
+// Währung (und Zeitzone ohne zoneinfo-Claim) stehen nicht im Token:
+val withProfile = RequestFormats.current(recipientFormats.resolve(userId))
+withProfile.currencyOrDefault()                 // Vorgabe für neue Einträge
+
+// Ohne Anfrage (Job, RabbitMQ): alles aus dem User Service, mit Cache, wirft nie
+val push = recipientFormats.formats(userId)
+```
+
+`LocalizedFormats(language)` (nur Sprache) behält bei `date()` das bisherige mittlere Format der
+Sprache („Nov 22, 2026“); erst `LocalizedFormats(preferences)` formatiert Daten nach dem Profil.
+
+Der `RecipientFormatResolver` entsteht wie der `RecipientLanguageResolver`, sobald eine
+`ServiceAccessTokenSupplier`-Bean da ist. Cache: `mosimtech.user-service.format-cache-minutes`
+(Vorgabe wie `language-cache-minutes`). Fällt der User Service aus, gilt `FormatPreferences()`
+(Deutsch, alles `AUTO`, Währung/Zeitzone unbekannt) für eine Minute.
+
+## 6. Größen und Einheiten (JSR 385)
+
+Größen sind `javax.measure.Quantity` (Implementierung Indriya), analog zu `MonetaryAmount`.
+`MeasureUnits` liefert die Einheiten der Plattform: `KILOGRAM`, `GRAM`, `POUND`
+(exakt 0,45359237 kg), `CELSIUS`, `FAHRENHEIT`, `KELVIN`.
+
+**Speichern** — in der Einheit der Eingabe, ohne Umrechnung:
+
+```kotlin
+@Convert(converter = MassQuantityConverter::class)
+@Column(name = "bag_weight", nullable = false)
+lateinit var bagWeight: Quantity<Mass>                 // Spalte: "15 kg" oder "33 lb"
+```
+
+- Spalte `VARCHAR(50)`, Wert immer mit Punkt: `50 kg`, `110 lb`, `21.5 °C`, `70.7 °F`.
+- Gelesen wird nur genau dieses Format. Eine nackte Zahl, `50,5 kg` oder eine unbekannte Einheit
+  sind ein `IllegalArgumentException`. Bestandsspalten mit reinen Zahlen bekommen ihre Einheit
+  per Migration (`UPDATE … SET bag_weight = bag_weight || ' kg'`).
+- `MassQuantityConverter` / `TemperatureQuantityConverter` lehnen Größen anderer Art ab;
+  `QuantityConverter` nimmt jede bekannte Einheit.
+
+**Anzeigen** — immer in der Einheit des Profils:
+
+```kotlin
+val shown = DisplayUnits.toDisplay(bagWeight, preferences)   // 15 kg → 33.069… lb bei IMPERIAL
+DisplayUnits.round(shown, 1)                                  // Runden ist Sache des Aufrufers
+formats.displayQuantity(bagWeight)                            // "33,1 lb" (de) / "33.1 lb" (en)
+DisplayUnits.toMetric(setpoint)                               // intern in kg / °C rechnen
+```
+
+Temperaturen werden als Messwerte umgerechnet (21,5 °C → 70,7 °F). Für Temperatur*differenzen*
+passt das nicht (1 K = 1,8 °F) — dafür nicht `DisplayUnits` verwenden.

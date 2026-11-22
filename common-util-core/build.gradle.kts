@@ -38,6 +38,10 @@ dependencies {
     api(libs.moneta)
     api(libs.jackson.datatype.money)
 
+    // Units of Measurement API (JSR 385)
+    api(libs.unit.api)
+    api(libs.indriya)
+
     testImplementation(libs.jackson.module.kotlin)
     testApi(libs.kotlin.test)
     testApi(libs.mockito.core)

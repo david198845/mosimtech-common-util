@@ -45,6 +45,10 @@ embedMongo = "4.21.0"
 moneta = "1.4.5"
 jacksonMoney = "3.1.0"
 
+# Units (JSR 385)
+unitApi = "2.2"
+indriya = "2.2.4"
+
 # Reactive
 reactor = "3.8.0"
 
@@ -117,6 +121,10 @@ embed-mongo = { module = "de.flapdoodle.embed:de.flapdoodle.embed.mongo", versio
 
 # Money
 moneta = { module = "org.javamoney:moneta", version.ref = "moneta" }
+
+# Units (JSR 385)
+unit-api = { module = "javax.measure:unit-api", version.ref = "unitApi" }
+indriya = { module = "tech.units:indriya", version.ref = "indriya" }
 
 # Reactive
 reactor-core = { module = "io.projectreactor:reactor-core", version.ref = "reactor" }
