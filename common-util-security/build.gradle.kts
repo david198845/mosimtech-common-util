@@ -22,10 +22,17 @@ dependencies {
     api(libs.slf4j.api)
 
     compileOnly(libs.spring.boot)
+    compileOnly(libs.spring.web)
+    compileOnly(libs.jakarta.servlet.api)
+    compileOnly(libs.spring.security.web)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.spring.web)
+    testImplementation(libs.spring.test)
+    testImplementation(libs.jakarta.servlet.api)
+    testImplementation(libs.spring.security.web)
 }
 
 tasks.test {
