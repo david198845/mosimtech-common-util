@@ -64,6 +64,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 
 # Spring Framework
 spring-context = { module = "org.springframework:spring-context", version.ref = "springContext" }
+spring-webflux = { module = "org.springframework:spring-webflux", version.ref = "springContext" }
 spring-web = { module = "org.springframework:spring-web", version.ref = "springContext" }
 spring-security-core = { module = "org.springframework.security:spring-security-core", version.ref = "springSecurity" }
 spring-security-oauth2-jose = { module = "org.springframework.security:spring-security-oauth2-jose", version.ref = "springSecurity" }
