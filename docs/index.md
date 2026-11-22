@@ -14,6 +14,7 @@ Willkommen zur Dokumentation der MoSimTech Common Utility Bibliothek. Diese Doku
 - [DTO-System](components/dto-system.md) - Dokumentation des Data Transfer Object Systems
 - [Datenbank-Integration](components/database-integration.md) - Dokumentation der Datenbankintegration (JPA, MongoDB)
 - [RabbitMQ-Integration](components/rabbitmq-integration.md) - Dokumentation der RabbitMQ-Messaging-Integration
+- [Mehrsprachigkeit](components/localization.md) - Texte, Formate und Kontosprache für REST-Meldungen und Benachrichtigungen
 
 ## Über die Bibliothek
 

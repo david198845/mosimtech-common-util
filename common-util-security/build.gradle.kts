@@ -22,6 +22,8 @@ dependencies {
     api(libs.slf4j.api)
 
     compileOnly(libs.spring.boot)
+    compileOnly(libs.spring.boot.autoconfigure)
+    compileOnly(libs.spring.webmvc)
     compileOnly(libs.spring.web)
     compileOnly(libs.jakarta.servlet.api)
     compileOnly(libs.spring.security.web)
@@ -30,6 +32,7 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.spring.web)
+    testImplementation(libs.spring.webmvc)
     testImplementation(libs.spring.test)
     testImplementation(libs.jakarta.servlet.api)
     testImplementation(libs.spring.security.web)

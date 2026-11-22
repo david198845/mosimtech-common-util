@@ -13,8 +13,16 @@ repositories {
 dependencies {
     api(project(":common-util-core"))
     api(libs.spring.webflux)
+    api(libs.slf4j.api)
+
+    compileOnly(libs.spring.boot)
+    compileOnly(libs.spring.boot.autoconfigure)
+    compileOnly(libs.spring.cloud.commons)
 
     testImplementation(kotlin("test-junit5"))
+    testImplementation(libs.spring.boot.autoconfigure)
+    testImplementation(libs.spring.boot.test)
+    testImplementation(libs.assertj.core)
 }
 
 tasks.test {

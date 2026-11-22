@@ -1,0 +1,36 @@
+package de.mosimtech.common.userservice.client
+
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.AutoConfiguration
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
+import java.time.Duration
+
+/**
+ * Richtet [UserLocaleClient] und [RecipientLanguageResolver] ein, sobald der Dienst eine
+ * [ServiceAccessTokenSupplier]-Bean bereitstellt.
+ *
+ * Eigenschaften (alle optional):
+ * - `mosimtech.user-service.base-url` — Vorgabe `https://mosimtech-user-service/api`; mit Spring
+ *   Cloud LoadBalancer wird der Name über Consul-Discovery aufgelöst
+ * - `mosimtech.user-service.language-cache-minutes` — Vorgabe 10
+ */
+@AutoConfiguration(afterName = ["org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerClientAutoConfiguration"])
+@ConditionalOnBean(ServiceAccessTokenSupplier::class)
+@Import(LoadBalancedUserLocaleClientConfiguration::class, PlainUserLocaleClientConfiguration::class)
+open class UserServiceLanguageAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun recipientLanguageResolver(
+        client: UserLocaleClient,
+        tokens: ServiceAccessTokenSupplier,
+        @Value("\${mosimtech.user-service.language-cache-minutes:10}") cacheMinutes: Long,
+    ): RecipientLanguageResolver = RecipientLanguageResolver(client, tokens, Duration.ofMinutes(cacheMinutes))
+
+    companion object {
+        const val DEFAULT_BASE_URL = "https://mosimtech-user-service/api"
+    }
+}
