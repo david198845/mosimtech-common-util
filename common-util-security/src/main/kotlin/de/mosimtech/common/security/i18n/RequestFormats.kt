@@ -5,10 +5,13 @@ import de.mosimtech.common.core.i18n.LocalizedFormats
 import de.mosimtech.common.security.FormatPreferenceClaims
 
 /**
- * Formatvorgaben der laufenden Anfrage aus den Token-Claims `date_format`, `time_format`,
- * `unit_system`, `first_day_of_week` und `zoneinfo`. Ein fehlender Claim oder `AUTO` wird später
- * aus der Sprache abgeleitet; die Sprache selbst kommt aus [RequestLanguage] (Token, dann
- * `Accept-Language`, sonst Deutsch).
+ * Formatvorgaben der laufenden Anfrage aus den Token-Claims `locale`, `date_format`,
+ * `time_format`, `unit_system`, `first_day_of_week` und `zoneinfo`. Ein fehlender Claim oder
+ * `AUTO` wird später aus dem Land der Sprache abgeleitet.
+ *
+ * Ohne `locale`-Claim gilt `de` — genau wie in ui-core, damit Backend und Oberfläche dieselben
+ * Formate zeigen. `Accept-Language` wird hier bewusst **nicht** ausgewertet (anders als bei
+ * [RequestLanguage] für Texte).
  *
  * Währung und — solange `zoneinfo` fehlt — Zeitzone sind hier unbekannt. Wer sie braucht, holt
  * das Profil über den User Service (`RecipientFormatResolver`) und gibt es als `profile` mit:
@@ -24,7 +27,7 @@ object RequestFormats {
      * hat: Währung immer, die Zeitzone nur ohne gültigen `zoneinfo`-Claim.
      */
     fun current(profile: FormatPreferences? = null): FormatPreferences {
-        val fromToken = FormatPreferenceClaims.fromToken(FormatPreferenceClaims.currentToken(), RequestLanguage.current())
+        val fromToken = FormatPreferenceClaims.fromToken(FormatPreferenceClaims.currentToken())
         return fromToken.copy(
             currency = fromToken.currency ?: profile?.currency,
             timezone = fromToken.timezone ?: profile?.timezone,

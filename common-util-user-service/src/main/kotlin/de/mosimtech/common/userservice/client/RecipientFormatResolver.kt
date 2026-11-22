@@ -16,7 +16,8 @@ import java.util.concurrent.ConcurrentHashMap
  * (Deutsch, alles `AUTO`, Währung und Zeitzone unbekannt) — der Aufruf wirft nie.
  *
  * Zwischengespeichert wie beim [RecipientLanguageResolver]; eine Änderung im Profil wirkt
- * spätestens nach [cacheTtl].
+ * spätestens nach [cacheTtl]. Abgelaufene Einträge werden beim nächsten Abruf eines anderen
+ * Nutzers entfernt, der Cache wächst also nicht über die aktiven Empfänger hinaus.
  */
 class RecipientFormatResolver(
     private val client: UserLocaleClient,
@@ -38,11 +39,15 @@ class RecipientFormatResolver(
             logger.warn("Could not read recipient format preferences, using defaults: {}", error.javaClass.simpleName)
             DEFAULT to failureTtl
         }
+        cache.entries.removeIf { (_, entry) -> !entry.second.isAfter(now) }
         cache[userId] = preferences to now.plus(ttl)
         return preferences
     }
 
     fun formats(userId: Urn): LocalizedFormats = LocalizedFormats(resolve(userId))
+
+    /** Anzahl der Einträge im Cache; abgelaufene werden bei jedem neuen Eintrag entfernt. */
+    internal fun cachedEntryCount(): Int = cache.size
 
     /** Verwirft den gespeicherten Wert, z. B. nach einer gemeldeten Profiländerung. */
     fun evict(userId: Urn) {

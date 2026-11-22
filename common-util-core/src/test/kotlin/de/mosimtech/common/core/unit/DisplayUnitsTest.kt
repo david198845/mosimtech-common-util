@@ -75,6 +75,24 @@ class DisplayUnitsTest {
         assertEquals(MeasureUnits.KILOGRAM, rounded.unit)
     }
 
+    @Test
+    fun `converts temperature differences without the zero offset`() {
+        val twoDegrees = Quantities.getQuantity(2, MeasureUnits.CELSIUS, Quantity.Scale.RELATIVE)
+
+        val fahrenheit = DisplayUnits.toDisplayDifference(twoDegrees, UnitSystem.IMPERIAL)
+        assertEquals(MeasureUnits.FAHRENHEIT, fahrenheit.unit)
+        assertEquals(Quantity.Scale.RELATIVE, fahrenheit.scale)
+        assertValue("3.6", fahrenheit)
+
+        assertValue("2", DisplayUnits.toDisplayDifference(twoDegrees, UnitSystem.METRIC))
+        assertValue("0", DisplayUnits.toDisplayDifference(0, UnitSystem.IMPERIAL))
+        assertValue("-5.4", DisplayUnits.toDisplayDifference(BigDecimal("-3"), UnitSystem.IMPERIAL))
+        assertValue("2", DisplayUnits.toDisplayDifference(Quantities.getQuantity(2, MeasureUnits.KELVIN), UnitSystem.METRIC))
+        assertValue("2", DisplayUnits.toDisplayDifference(Quantities.getQuantity(BigDecimal("3.6"), MeasureUnits.FAHRENHEIT), UnitSystem.METRIC))
+        assertValue("3.6", DisplayUnits.toDisplayDifference(Quantities.getQuantity(BigDecimal("3.6"), MeasureUnits.FAHRENHEIT), UnitSystem.IMPERIAL))
+        assertEquals(MeasureUnits.CELSIUS, DisplayUnits.toDisplayDifference(twoDegrees, FormatPreferences()).unit)
+    }
+
     private fun celsius(value: String) = Quantities.getQuantity(BigDecimal(value), MeasureUnits.CELSIUS)
 
     private fun assertValue(expected: String, quantity: Quantity<*>) =

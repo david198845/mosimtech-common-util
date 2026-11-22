@@ -16,7 +16,8 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Ergebnisse werden zwischengespeichert: Ein Lauf über viele Posten desselben Nutzers fragt nur
  * einmal, und ein ausgefallener User Service kostet nicht bei jedem Nutzer erneut den Timeout.
- * Ein Sprachwechsel wirkt spätestens nach [cacheTtl].
+ * Ein Sprachwechsel wirkt spätestens nach [cacheTtl]. Abgelaufene Einträge werden beim nächsten
+ * Abruf entfernt.
  */
 class RecipientLanguageResolver(
     private val client: UserLocaleClient,
@@ -38,11 +39,15 @@ class RecipientLanguageResolver(
             logger.warn("Could not read recipient language, using {}: {}", AccountLanguage.DEFAULT, error.javaClass.simpleName)
             AccountLanguage.DEFAULT to failureTtl
         }
+        cache.entries.removeIf { (_, entry) -> !entry.expiresAt.isAfter(now) }
         cache[userId] = CachedLanguage(language, now.plus(ttl))
         return language
     }
 
     fun formats(userId: Urn): LocalizedFormats = LocalizedFormats(resolve(userId))
+
+    /** Anzahl der Einträge im Cache; abgelaufene werden bei jedem neuen Eintrag entfernt. */
+    internal fun cachedEntryCount(): Int = cache.size
 
     /** Verwirft den gespeicherten Wert, z. B. nach einem gemeldeten Sprachwechsel. */
     fun evict(userId: Urn) {

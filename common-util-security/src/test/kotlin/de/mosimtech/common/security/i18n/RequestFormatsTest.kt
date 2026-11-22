@@ -63,14 +63,26 @@ class RequestFormatsTest {
     }
 
     @Test
-    fun `without a token the language of the browser decides`() {
-        request.addHeader("Accept-Language", "en")
+    fun `without a locale claim German applies like in ui-core, Accept-Language is ignored`() {
+        request.addHeader("Accept-Language", "en-US")
         RequestContextHolder.setRequestAttributes(ServletRequestAttributes(request))
+        authenticate("date_format" to "AUTO")
 
         val preferences = RequestFormats.current()
 
-        assertEquals(AccountLanguage.ENGLISH, preferences.language)
-        assertEquals(DateFormatPreference.DMY_SLASH, preferences.resolvedDateFormat())
+        assertEquals(AccountLanguage.GERMAN, preferences.language)
+        assertEquals(DateFormatPreference.DMY_DOT, preferences.resolvedDateFormat())
+        assertEquals(TimeFormatPreference.H24, preferences.resolvedTimeFormat())
+        assertEquals(UnitSystem.METRIC, preferences.resolvedUnitSystem())
+        assertEquals(DayOfWeek.MONDAY, preferences.resolvedFirstDayOfWeek())
+    }
+
+    @Test
+    fun `without any token German applies as well`() {
+        request.addHeader("Accept-Language", "en-US")
+        RequestContextHolder.setRequestAttributes(ServletRequestAttributes(request))
+
+        assertEquals(DateFormatPreference.DMY_DOT, RequestFormats.current().resolvedDateFormat())
     }
 
     @Test

@@ -60,6 +60,17 @@ class LocalizedFormatsTest {
     }
 
     @Test
+    fun `puts the localized day period after the time in 12 hours`() {
+        val h12 = TimeFormatPreference.H12
+        assertEquals("3:05 PM", formats(time = h12, tag = "de").time(afternoon))
+        assertEquals("9:05 AM", formats(time = h12, tag = "de").time(LocalTime.of(9, 5)))
+        assertEquals("3:05 PM", formats(time = h12, tag = "ru").time(afternoon))
+        assertEquals("3:05 пп", formats(time = h12, tag = "uk").time(afternoon))
+        assertEquals("9:05 дп", formats(time = h12, tag = "uk").time(LocalTime.of(9, 5)))
+        assertEquals("3:05 p. m.", formats(time = h12, tag = "es").time(afternoon).normalizeSpaces())
+    }
+
+    @Test
     fun `formats instants in the profile timezone, Berlin when unknown`() {
         val instant = Instant.parse("2026-12-31T14:05:00Z")
 

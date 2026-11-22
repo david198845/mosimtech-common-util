@@ -22,6 +22,11 @@ import javax.measure.Unit
  * Einheit sind ein [IllegalArgumentException] mit dem Spaltenwert — Bestandsdaten bekommen ihre
  * Einheit per Migration, nicht durch Raten.
  *
+ * Die Skala einer Größe (`Quantity.Scale.RELATIVE` für Temperatur*abstände*) wird **nicht**
+ * gespeichert: Gelesene Werte sind immer absolut (`Scale.ABSOLUTE`). Wer einen Abstand speichert
+ * (z. B. eine Hysterese), muss das beim Lesen selbst wissen und ihn mit
+ * `DisplayUnits.toDisplayDifference` statt `toDisplay` umrechnen.
+ *
  * [expectedUnit] prüft zusätzlich die Art der Größe (Masse, Temperatur); siehe
  * [MassQuantityConverter] und [TemperatureQuantityConverter].
  */

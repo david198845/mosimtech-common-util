@@ -76,6 +76,20 @@ class RecipientFormatResolverTest {
         assertEquals(FormatPreferences(), resolver.resolve(userId))
     }
 
+    @Test
+    fun `removes expired entries of other users when it stores a new one`() {
+        val clock = MutableClock()
+        val resolver = resolver(clock) { response("""{"data":{"language":"de"}}""") }
+        val other = requireNotNull(Urn.of("urn:user:momasoft:other"))
+
+        resolver.resolve(userId)
+        assertEquals(1, resolver.cachedEntryCount())
+        clock.advance(Duration.ofMinutes(11))
+        resolver.resolve(other)
+
+        assertEquals(1, resolver.cachedEntryCount())
+    }
+
     private fun resolver(clock: MutableClock, answer: () -> Mono<ClientResponse>): RecipientFormatResolver {
         val client = UserLocaleClient(WebClient.builder()
             .baseUrl("https://user-service/api")

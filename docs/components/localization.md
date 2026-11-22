@@ -141,6 +141,16 @@ aufgelöst (`RegionFormatDefaults`), mit denselben Tabellen wie `resolve-formats
 Englisch ohne Land ist also britisch; amerikanisch wird es erst mit `en-US` oder ausdrücklich
 gewählten Formaten. Ein gewählter Wert (≠ `AUTO`) gilt immer.
 
+**Ohne `locale`-Claim gilt `de`, wie in ui-core** (DMY_DOT, H24, METRIC, MONDAY).
+`RequestFormats` wertet `Accept-Language` bewusst nicht aus — sonst zeigten Backend und
+Oberfläche bei fehlendem Claim verschiedene Formate. Texte (`RequestTexts`) folgen weiterhin
+`RequestLanguage` mit `Accept-Language`.
+
+Bei `H12` steht die Tageszeit-Kennung der Sprache hinter der Uhrzeit. Das JDK nimmt sie aus
+CLDR: de und ru `3:05 PM`, uk `3:05 пп` / `9:05 дп`, es `3:05 p. m.` (mit geschütztem
+Leerzeichen). Browser nutzen über ICU dieselben CLDR-Daten; im Browser gegengeprüft ist das
+nicht. Weicht eine Kennung ab, gilt die Fassung von ui-core als Maßstab.
+
 ```kotlin
 // REST-Anfrage: Claims des Tokens, Sprache wie RequestLanguage
 val formats = RequestFormats.formats()
@@ -162,7 +172,8 @@ Sprache („Nov 22, 2026“); erst `LocalizedFormats(preferences)` formatiert Da
 Der `RecipientFormatResolver` entsteht wie der `RecipientLanguageResolver`, sobald eine
 `ServiceAccessTokenSupplier`-Bean da ist. Cache: `mosimtech.user-service.format-cache-minutes`
 (Vorgabe wie `language-cache-minutes`). Fällt der User Service aus, gilt `FormatPreferences()`
-(Deutsch, alles `AUTO`, Währung/Zeitzone unbekannt) für eine Minute.
+(Deutsch, alles `AUTO`, Währung/Zeitzone unbekannt) für eine Minute. Abgelaufene Einträge
+entfernt der Cache beim nächsten neuen Eintrag (beide Resolver).
 
 ## 6. Größen und Einheiten (JSR 385)
 
@@ -194,5 +205,18 @@ formats.displayQuantity(bagWeight)                            // "33,1 lb" (de) 
 DisplayUnits.toMetric(setpoint)                               // intern in kg / °C rechnen
 ```
 
-Temperaturen werden als Messwerte umgerechnet (21,5 °C → 70,7 °F). Für Temperatur*differenzen*
-passt das nicht (1 K = 1,8 °F) — dafür nicht `DisplayUnits` verwenden.
+**Messwert oder Abstand?** Eine Temperatur ist entweder ein Messwert (Ist-, Soll-, Außentemperatur)
+oder ein Abstand (Hysterese, Abweichung vom Soll, Anstieg pro Stunde):
+
+| Was | Funktion | 2 °C bei IMPERIAL |
+| --- | --- | --- |
+| Messwert | `DisplayUnits.toDisplay` (mit Nullpunkt) | 35,6 °F |
+| Abstand | `DisplayUnits.toDisplayDifference` (nur × 9/5) | 3,6 °F |
+
+```kotlin
+DisplayUnits.toDisplayDifference(hysteresisCelsius, UnitSystem.IMPERIAL)   // 2 → 3.6 °F
+```
+
+Der `QuantityConverter` speichert die Skala nicht: Gelesene Größen sind immer absolut
+(`Scale.ABSOLUTE`). Eine gespeicherte Hysterese muss der Dienst als Abstand kennen und mit
+`toDisplayDifference` umrechnen.
