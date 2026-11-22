@@ -20,12 +20,18 @@ dependencies {
     api(libs.slf4j.api)
 
     compileOnly(libs.spring.boot)
+    compileOnly(libs.spring.boot.autoconfigure)
+    compileOnly(libs.hikari)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.jackson.module.kotlin)
     testImplementation(libs.assertj.core)
+    testImplementation(libs.spring.boot)
+    testImplementation(libs.spring.boot.autoconfigure)
+    testImplementation(libs.spring.boot.test)
+    testImplementation(libs.hikari)
 }
 
 tasks.test {
