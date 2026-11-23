@@ -22,6 +22,7 @@ dependencies {
     compileOnly(libs.spring.boot)
     compileOnly(libs.spring.boot.autoconfigure)
     compileOnly(libs.hikari)
+    compileOnly(libs.spring.security.oauth2.jose)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.mockito.core)
@@ -32,6 +33,7 @@ dependencies {
     testImplementation(libs.spring.boot.autoconfigure)
     testImplementation(libs.spring.boot.test)
     testImplementation(libs.hikari)
+    testImplementation(libs.spring.security.oauth2.jose)
 }
 
 tasks.test {

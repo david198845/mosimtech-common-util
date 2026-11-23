@@ -25,8 +25,30 @@ object RequestLanguage {
         RequestLanguage::class.java.classLoader,
     )
 
+    private val fixed = ThreadLocal<AccountLanguage>()
+
+    /** Unter [using] die dort festgelegte Sprache, sonst wie oben beschrieben. */
     fun current(): AccountLanguage =
-        AccountLanguageClaims.current() ?: fromAcceptLanguage(acceptLanguageHeader()) ?: AccountLanguage.DEFAULT
+        fixed.get()
+            ?: AccountLanguageClaims.current()
+            ?: fromAcceptLanguage(acceptLanguageHeader())
+            ?: AccountLanguage.DEFAULT
+
+    /**
+     * Führt [block] mit [language] als Sprache dieses Threads aus – für Hintergrundläufe ohne
+     * Anfrage, die für einen bestimmten Empfänger rechnen (Stream, Job). Danach gilt wieder die
+     * vorige, auch bei verschachtelten Aufrufen und bei einer Ausnahme. Andere Threads sehen sie
+     * nicht.
+     */
+    fun <T> using(language: AccountLanguage, block: () -> T): T {
+        val previous = fixed.get()
+        fixed.set(language)
+        try {
+            return block()
+        } finally {
+            if (previous == null) fixed.remove() else fixed.set(previous)
+        }
+    }
 
     /** Wählt die höchstgewichtete unterstützte Sprache aus einem `Accept-Language`-Wert. */
     fun fromAcceptLanguage(header: String?): AccountLanguage? {

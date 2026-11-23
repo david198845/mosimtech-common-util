@@ -18,11 +18,15 @@ dependencies {
     compileOnly(libs.spring.boot)
     compileOnly(libs.spring.boot.autoconfigure)
     compileOnly(libs.spring.cloud.commons)
+    compileOnly(libs.spring.security.oauth2.client)
 
     testImplementation(kotlin("test-junit5"))
     testImplementation(libs.spring.boot.autoconfigure)
     testImplementation(libs.spring.boot.test)
     testImplementation(libs.assertj.core)
+    testImplementation(libs.spring.security.oauth2.client)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
 }
 
 tasks.test {

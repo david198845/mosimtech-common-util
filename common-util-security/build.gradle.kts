@@ -27,6 +27,7 @@ dependencies {
     compileOnly(libs.spring.web)
     compileOnly(libs.jakarta.servlet.api)
     compileOnly(libs.spring.security.web)
+    compileOnly(libs.spring.security.oauth2.client)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.mockito.core)
@@ -36,6 +37,7 @@ dependencies {
     testImplementation(libs.spring.test)
     testImplementation(libs.jakarta.servlet.api)
     testImplementation(libs.spring.security.web)
+    testImplementation(libs.spring.security.oauth2.client)
 }
 
 tasks.test {

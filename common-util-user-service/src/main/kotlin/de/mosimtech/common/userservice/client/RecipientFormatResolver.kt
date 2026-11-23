@@ -54,7 +54,16 @@ class RecipientFormatResolver(
         cache.remove(userId)
     }
 
-    private companion object {
-        val DEFAULT = FormatPreferences()
+    companion object {
+        private val DEFAULT = FormatPreferences()
+
+        /**
+         * Ein Resolver, der den User Service nie fragt und immer die Vorgaben von
+         * [FormatPreferences] liefert (Deutsch, alles `AUTO`, Währung und Zeitzone unbekannt).
+         * Ihn richtet [RecipientDefaultsAutoConfiguration] ein, wenn der Dienst kein Dienstkonto-Token
+         * bereitstellt – Aufrufer brauchen dann keinen eigenen Ersatzweg.
+         */
+        fun defaultsOnly(): RecipientFormatResolver =
+            RecipientFormatResolver(UserLocaleClient.offline(), { "" })
     }
 }

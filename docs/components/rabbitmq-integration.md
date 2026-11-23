@@ -179,6 +179,71 @@ rabbitTemplate.convertAndSend(
 )
 ```
 
+## Bausteine aus common-util (statt eigener Kopien im Dienst)
+
+### Verbindung je vHost
+
+```kotlin
+@Bean(name = ["sharedConnectionFactory"])
+fun sharedConnectionFactory(): CachingConnectionFactory =
+    rabbitMQProperties.vhosts.getValue(SHARED_VHOST).createConnectionFactory()
+```
+
+`RabbitMQConfigPropertyItem.createConnectionFactory()` setzt Host, Port, vHost, Zugangsdaten und
+`connectionTimeout` (Vorgabe 5000 ms); mit `ssl.enabled` das Client-Zertifikat aus
+`RabbitMQSSLPropertiesTemplate.createSslContext()` (`<key_store_path>/<key_store>`, Typ
+`key_store_type`). Publisher Confirms o. Ä. setzt der Dienst danach auf dem Ergebnis.
+
+### Senden (System-Flow): signieren mit dem Dienstkonto-Token
+
+Ein Wrapper ist nicht nötig – `VaultTransitMessageSigner.sign` deckt das ab. Wichtig ist nur die
+Reihenfolge: Token **zuerst** holen, `issuedAt` mindestens dessen `iat` (die Keycloak-Uhr kann
+vorgehen):
+
+```kotlin
+val token = tokens.accessToken()                       // ClientCredentialsTokenSupplier
+val envelope = signer.sign(
+    payload = payload,
+    serviceAccountToken = token,
+    issuedAt = maxOf(Instant.now(), tokens.issuedAt(token)),
+    context = applicationName,
+)
+rabbitTemplate.convertAndSend(exchange, routingKey, envelope) {
+    it.messageProperties.setHeader(X_AUTH_SERVICE_TOKEN, token); it
+}
+```
+
+Im Dual-Token-Flow zusätzlich das per Token Exchange geholte `userToken` übergeben und
+`issuedAt = maxOf(now, iat(service), JwtIssuedAt.of(userToken))`.
+
+### Empfangen: `SignedMessageValidator` (common-util-vault)
+
+```kotlin
+val validator = SignedMessageValidator(verifier, MessageIdempotencyGuard(store), tokenDecoder)
+
+val serviceJwt = validator.validateSystem(envelope, serviceTokenHeader) { jwt -> requireRole(jwt) }
+// Dual-Token: validator.validateUser(envelope, serviceTokenHeader, userTokenHeader, serviceCheck, userCheck)
+```
+
+Prüft in der Pflicht-Reihenfolge: Signatur + `exp` → Idempotenz → Service-Token (Decoder, gültig
+zum `issuedAt` der Hülle, nicht gegen jetzt) → Prüfung des Aufrufers → ggf. User-Token genauso.
+Jede Ablehnung ist eine `SecurityException` (→ `AmqpRejectAndDontRequeueException`); Vault- oder
+JWK-Ausfälle gehen unverändert durch. Der Decoder darf keinen `JwtTimestampValidator` enthalten.
+Braucht `spring-security-oauth2-jose` im Dienst.
+
+Für Nachrichten, die ein Dienst **sich selbst** schickt (Fanout an alle eigenen Instanzen):
+
+```kotlin
+val decoder = OwnServiceTokenDecoders.fromRegistration(registrations.findByRegistrationId("service-account")!!)
+// Prüfregeln allein: AzpValidator.forOwnServiceToken(issuer, ownClientId) – Aussteller + azp, ohne aud
+```
+
+### Idempotenz-Speicher
+
+`InMemoryMessageIdStore` (common-util-vault) hält gesehene `messageId`s im Speicher der Instanz,
+bis ihre Frist abläuft. Nur für Queues, die genau eine Instanz liest (exklusive, flüchtige Queue);
+sonst einen gemeinsamen Speicher (Redis) verwenden.
+
 ## Best Practices
 
 ### Nachrichtenstruktur

@@ -78,6 +78,7 @@ spring-security-core = { module = "org.springframework.security:spring-security-
 spring-security-web = { module = "org.springframework.security:spring-security-web", version.ref = "springSecurity" }
 spring-security-oauth2-jose = { module = "org.springframework.security:spring-security-oauth2-jose", version.ref = "springSecurity" }
 spring-security-oauth2-resource-server = { module = "org.springframework.security:spring-security-oauth2-resource-server", version.ref = "springSecurity" }
+spring-security-oauth2-client = { module = "org.springframework.security:spring-security-oauth2-client", version.ref = "springSecurity" }
 spring-data-commons = { module = "org.springframework.data:spring-data-commons", version.ref = "springData" }
 spring-data-jpa = { module = "org.springframework.data:spring-data-jpa", version.ref = "springData" }
 spring-data-mongodb = { module = "org.springframework.data:spring-data-mongodb", version.ref = "springMongodb" }
