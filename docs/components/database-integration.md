@@ -66,6 +66,18 @@ class ExampleEntity {
 }
 ```
 
+#### MonetaryAmountConverter
+
+Speichert `javax.money.MonetaryAmount` als `VARCHAR` „<Betrag> <Währung>“ (`500.00 EUR`, `12.5 EUR`),
+immer ohne wissenschaftliche Notation. Das Format entspricht den bisherigen Kopien in den Diensten,
+bestehende Spalten bleiben ohne Migration lesbar.
+
+```kotlin
+@Convert(converter = MonetaryAmountConverter::class)   // de.mosimtech.common.jpa.converter
+@Column(name = "amount", nullable = false)
+lateinit var amount: MonetaryAmount
+```
+
 ### MongoDB-Integration
 
 Die MongoDB-Integration bietet Komponenten für die Arbeit mit MongoDB-Dokumenten.

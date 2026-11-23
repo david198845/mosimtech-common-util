@@ -68,10 +68,19 @@ Für Jobs und RabbitMQ-Ereignisse gibt es keine Anfrage, also auch keinen Token-
 kommt aus dem User Service (`GET /v1/users/{id}/locale`).
 
 ```kotlin
+@Bean(name = ["backgroundOAuth2AuthorizedClientManager"])
+fun backgroundClientManager(registrations: ClientRegistrationRepository) =
+    BackgroundAuthorizedClientManagers.clientCredentials(registrations)   // common-util-security
+
 @Bean
-fun serviceAccessTokenSupplier(tokens: ServiceTokenProvider) =
-    ServiceAccessTokenSupplier { tokens.serviceToken }
+fun serviceAccessTokenSupplier(
+    @Qualifier("backgroundOAuth2AuthorizedClientManager") manager: OAuth2AuthorizedClientManager,
+) = ClientCredentialsTokenSupplier(manager, "service-account")             // Registrierungs-ID
 ```
+
+`ClientCredentialsTokenSupplier` ist ein `ServiceAccessTokenSupplier` (braucht
+`spring-security-oauth2-client` im Dienst). Ein eigenes Lambda
+`ServiceAccessTokenSupplier { … }` funktioniert weiterhin.
 
 Damit legt die Auto-Configuration `RecipientLanguageResolver` an:
 
@@ -98,6 +107,32 @@ Eigenschaften (optional):
 Der Abruf blockiert höchstens 2 s. Läuft der Versand in einer `@Transactional`-Methode, die
 Sprache vorher außerhalb der Transaktion holen (z. B. in der Schleife des Jobs). Der Aufruf in der
 Transaktion trifft dann nur den Cache.
+
+### Ohne Dienstkonto: Vorgaben statt Fehler
+
+Stellt der Dienst **keinen** `ServiceAccessTokenSupplier` bereit (z. B. weil sein Dienstkonto per
+Schalter aus ist), legt `RecipientDefaultsAutoConfiguration` trotzdem `RecipientLanguageResolver`
+und `RecipientFormatResolver` an. Sie fragen den User Service nie und liefern die Vorgaben
+(Deutsch, alles `AUTO`, Währung/Zeitzone unbekannt). Aufrufer spritzen die Resolver also direkt
+ein – kein `ObjectProvider`, kein eigener Ersatzweg. Eigene Beans gehen vor; abschaltbar mit
+`mosimtech.user-service.defaults-fallback.enabled=false`. Von Hand: `RecipientFormatResolver.defaultsOnly()`.
+
+### Hintergrundläufe für einen Empfänger: `using`
+
+Rechnet ein Lauf ohne Anfrage für einen bestimmten Nutzer (Stream nach einer Änderung, Job), legt
+er Sprache und Formatvorgaben für seinen Thread fest. Alles, was darin `RequestLanguage.current()`
+bzw. `RequestFormats.current()` fragt, bekommt diese Werte statt der (fehlenden) Claims:
+
+```kotlin
+val preferences = recipientFormats.resolve(userId)
+RequestLanguage.using(preferences.language) {
+    RequestFormats.using(preferences) { dashboardAssembler.build(userId) }
+}
+```
+
+Nach dem Block gelten wieder die vorigen Werte – auch bei Verschachtelung und Ausnahmen; andere
+Threads sehen sie nie. `RequestFormats.current(profile)` ergänzt fehlende Währung/Zeitzone auch
+unter `using` aus `profile`.
 
 ## 4. Katalog prüfen
 
