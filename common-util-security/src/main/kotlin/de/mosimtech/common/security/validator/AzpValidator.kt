@@ -1,9 +1,11 @@
 package de.mosimtech.common.security.validator
 
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator
 import org.springframework.security.oauth2.core.OAuth2Error
 import org.springframework.security.oauth2.core.OAuth2TokenValidator
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult
 import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtIssuerValidator
 
 /**
  * Validates the "azp" (Authorized Party) claim in a JSON Web Token (JWT) against a list of allowed values.
@@ -34,5 +36,19 @@ class AzpValidator(private val allowedAzp: List<String>) : OAuth2TokenValidator<
         }
         val error = OAuth2Error("invalid_token", "The calling client (azp) '$azp' is not whitelisted", null)
         return OAuth2TokenValidatorResult.failure(error)
+    }
+
+    companion object {
+        /**
+         * Prüfregeln für das Service-Token einer Nachricht, die ein Dienst sich selbst schickt
+         * (z. B. eine Invalidierung an alle eigenen Instanzen): Aussteller ist der eigene Realm
+         * ([JwtIssuerValidator]), `azp` das eigene Dienstkonto. Die Signatur prüft der Decoder.
+         *
+         * Bewusst **ohne** Zeitprüfung gegen jetzt – das Token muss zum Sendezeitpunkt der Hülle
+         * gültig gewesen sein, das prüft der Empfänger – und **ohne** `aud`: Ein
+         * Client-Credentials-Token trägt seinen eigenen Client nicht als Audience.
+         */
+        fun forOwnServiceToken(issuer: String, ownClientId: String): OAuth2TokenValidator<Jwt> =
+            DelegatingOAuth2TokenValidator(JwtIssuerValidator(issuer), AzpValidator(listOf(ownClientId)))
     }
 }
