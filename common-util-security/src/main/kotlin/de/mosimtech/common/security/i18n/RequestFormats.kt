@@ -22,12 +22,15 @@ import de.mosimtech.common.security.FormatPreferenceClaims
  */
 object RequestFormats {
 
+    private val fixed = ThreadLocal<FormatPreferences>()
+
     /**
      * Die Vorgaben der Anfrage. Aus [profile] werden nur Werte übernommen, die das Token nicht
-     * hat: Währung immer, die Zeitzone nur ohne gültigen `zoneinfo`-Claim.
+     * hat: Währung immer, die Zeitzone nur ohne gültigen `zoneinfo`-Claim. Unter [using] treten
+     * die dort festgelegten Vorgaben an die Stelle der Claims; [profile] ergänzt sie genauso.
      */
     fun current(profile: FormatPreferences? = null): FormatPreferences {
-        val fromToken = FormatPreferenceClaims.fromToken(FormatPreferenceClaims.currentToken())
+        val fromToken = fixed.get() ?: FormatPreferenceClaims.fromToken(FormatPreferenceClaims.currentToken())
         return fromToken.copy(
             currency = fromToken.currency ?: profile?.currency,
             timezone = fromToken.timezone ?: profile?.timezone,
@@ -36,4 +39,20 @@ object RequestFormats {
 
     /** [LocalizedFormats] nach den Vorgaben der Anfrage; unbekannte Zeitzone: Europe/Berlin. */
     fun formats(profile: FormatPreferences? = null): LocalizedFormats = LocalizedFormats(current(profile))
+
+    /**
+     * Führt [block] mit [preferences] als Vorgaben dieses Threads aus – für Hintergrundläufe ohne
+     * Anfrage, die für einen bestimmten Empfänger rechnen (Stream, Job). Danach gelten wieder die
+     * vorigen, auch bei verschachtelten Aufrufen und bei einer Ausnahme. Die Sprache für Texte legt
+     * [RequestLanguage.using] fest.
+     */
+    fun <T> using(preferences: FormatPreferences, block: () -> T): T {
+        val previous = fixed.get()
+        fixed.set(preferences)
+        try {
+            return block()
+        } finally {
+            if (previous == null) fixed.remove() else fixed.set(previous)
+        }
+    }
 }

@@ -1,1 +1,2 @@
 de.mosimtech.common.userservice.client.UserServiceLanguageAutoConfiguration
+de.mosimtech.common.userservice.client.RecipientDefaultsAutoConfiguration

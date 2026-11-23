@@ -55,4 +55,14 @@ class RecipientLanguageResolver(
     }
 
     private data class CachedLanguage(val language: AccountLanguage, val expiresAt: Instant)
+
+    companion object {
+        /**
+         * Ein Resolver, der den User Service nie fragt und immer [AccountLanguage.DEFAULT] liefert.
+         * Ihn richtet [RecipientDefaultsAutoConfiguration] ein, wenn der Dienst kein Dienstkonto-Token
+         * bereitstellt.
+         */
+        fun defaultsOnly(): RecipientLanguageResolver =
+            RecipientLanguageResolver(UserLocaleClient.offline(), { "" })
+    }
 }

@@ -6,6 +6,8 @@ import de.mosimtech.common.core.i18n.enums.FirstDayOfWeekPreference
 import de.mosimtech.common.core.i18n.enums.TimeFormatPreference
 import de.mosimtech.common.core.i18n.enums.UnitSystem
 import de.mosimtech.common.core.urn.Urn
+import org.springframework.http.HttpStatus
+import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import tools.jackson.databind.JsonNode
@@ -49,4 +51,13 @@ class UserLocaleClient(
 
     private fun JsonNode.text(field: String): String? =
         path(field).takeIf { it.isString }?.asString()?.trim()?.takeIf { it.isNotEmpty() }
+
+    companion object {
+        /**
+         * Ein Client ohne Netzverbindung, der für jeden Nutzer kein Profil kennt (`204 No Content`).
+         * Grundlage der Resolver `defaultsOnly()`, wenn der User Service nicht gefragt werden soll.
+         */
+        fun offline(): UserLocaleClient =
+            UserLocaleClient(WebClient.builder().exchangeFunction { Mono.just(ClientResponse.create(HttpStatus.NO_CONTENT).build()) }.build())
+    }
 }
