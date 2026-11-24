@@ -1,6 +1,8 @@
 package de.mosimtech.common.delegation
 
 import de.mosimtech.common.core.urn.Urn
+import de.mosimtech.common.delegation.access.DelegationAccessHolder
+import de.mosimtech.common.delegation.access.DelegationContext
 import de.mosimtech.common.security.SecurityContextAdapter
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -11,7 +13,9 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
+@Suppress("DEPRECATION")
 class CurrentUserProviderTest {
 
     // urn:user:momasoft:own-uuid
@@ -28,6 +32,7 @@ class CurrentUserProviderTest {
     @AfterTest
     fun cleanup() {
         DelegationContextHolder.clear()
+        DelegationAccessHolder.clear()
         SecurityContextHolder.clearContext()
     }
 
@@ -57,5 +62,38 @@ class CurrentUserProviderTest {
         val result = provider.getEffectiveUserId()
 
         assertEquals(grantorUrn, result)
+    }
+
+    private fun verifiedContext(owner: Urn) =
+        DelegationAccessHolder.set(DelegationContext(ownerId = owner, actorId = ownUrn, scopes = setOf("plan:read"), delegationId = "urn:delegation:d-1"))
+
+    @Test
+    fun `returns owner from verified delegation context`() {
+        setupSecurityContext("own-uuid")
+        verifiedContext(grantorUrn)
+
+        assertEquals(grantorUrn, CurrentUserProvider().getEffectiveUserId())
+    }
+
+    @Test
+    fun `verified context wins over the deprecated holder`() {
+        setupSecurityContext("own-uuid")
+        DelegationContextHolder.set("urn:user:momasoft:other")
+        verifiedContext(grantorUrn)
+
+        assertEquals(grantorUrn, CurrentUserProvider().getEffectiveUserId())
+    }
+
+    @Test
+    fun `getActorUserId returns the authenticated user even when delegated`() {
+        setupSecurityContext("own-uuid")
+        verifiedContext(grantorUrn)
+
+        assertEquals(ownUrn, CurrentUserProvider().getActorUserId())
+    }
+
+    @Test
+    fun `getActorUserId throws when nobody is authenticated`() {
+        assertFailsWith<IllegalStateException> { CurrentUserProvider().getActorUserId() }
     }
 }

@@ -16,6 +16,7 @@ dependencies {
     api(libs.spring.web)
     api(libs.spring.security.core)
     compileOnly(libs.jakarta.servlet.api)
+    compileOnly(libs.spring.webmvc)
 
     api(libs.kotlin.stdlib)
     api(libs.kotlin.reflect)
@@ -26,6 +27,7 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.spring.boot.test)
     testImplementation(libs.jakarta.servlet.api)
+    testImplementation(libs.spring.webmvc)
 }
 
 tasks.test {

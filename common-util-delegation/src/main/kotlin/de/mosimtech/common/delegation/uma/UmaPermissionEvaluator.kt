@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.io.Serializable
 
+@Deprecated("UMA wird nicht verwendet; der Vergleich über Teilzeichenketten ist kein Zugriffsschutz. Ersatz: access.DelegatedAccessInterceptor")
 class UmaPermissionEvaluator : PermissionEvaluator {
 
     override fun hasPermission(authentication: Authentication, targetDomainObject: Any, permission: Any): Boolean = false

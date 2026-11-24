@@ -1,3 +1,6 @@
+> **Hinweis: Dieses Dokument beschreibt den verworfenen UMA-Ansatz und ist nicht mehr gültig.**
+> Maßgeblich ist die Spezifikation `C:\workspace-privat\mosimtech\MoMaSoft\Shift\momasoft-shiftcalc-api\docs\superpowers\specs\2026-11-24-delegation-design.md`.
+
 # Architektur-Spezifikation: Hybrides Delegations-System (UMA 2.0)
 
 **Projekt:** Momasoft Microservices  

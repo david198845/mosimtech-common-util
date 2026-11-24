@@ -9,6 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
+@Suppress("DEPRECATION")
 class DelegationHeaderFilterTest {
 
     private val filter = DelegationHeaderFilter()

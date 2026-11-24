@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.filter.OncePerRequestFilter
 
+@Deprecated("Übernimmt den Header ungeprüft. In keinem Dienst registrieren. Ersatz: access.DelegationAccessFilter")
 class DelegationHeaderFilter : OncePerRequestFilter() {
 
     override fun doFilterInternal(
