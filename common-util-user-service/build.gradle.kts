@@ -25,6 +25,7 @@ dependencies {
     testImplementation(libs.spring.boot.test)
     testImplementation(libs.assertj.core)
     testImplementation(libs.spring.security.oauth2.client)
+    testImplementation(libs.spring.cloud.commons)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
 }
